@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BetFriends - Social Betting</title>
+    <title>BetFriends - Cloud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -16,16 +16,13 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        dark: '#0f172a', card: '#1e293b', neonGreen: '#10b981', neonPurple: '#8b5cf6', danger: '#ef4444', gold: '#fbbf24'
-                    },
+                    colors: { dark: '#0f172a', card: '#1e293b', neonGreen: '#10b981', neonPurple: '#8b5cf6', danger: '#ef4444', gold: '#fbbf24' },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        /* ESTILOS BÁSICOS */
         html, body { height: 100%; width: 100%; margin: 0; padding: 0; background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
         .app-view { display: flex; flex-direction: column; height: 100%; width: 100%; overflow: hidden; }
         .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; padding-bottom: 80px; }
@@ -37,86 +34,78 @@
         .native-toast.show { transform: translateY(0); }
         .neon-input, .neon-select { background: #334155; border: 1px solid #475569; color: white; transition: all 0.3s; }
         .neon-input:focus, .neon-select:focus { border-color: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.3); outline: none; }
-        .option-card.selected { border-color: #10b981; background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .invite-check.selected { background-color: #8b5cf6; border-color: #8b5cf6; color: white; }
-        details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }
-        details[open] summary ~ * { animation: fadeIn 0.3s ease-in-out; }
-        .avatar-circle { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8; font-size: 14px; border: 2px solid #1e293b; overflow: hidden; position: relative; }
+        .avatar-circle { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8; font-size: 14px; border: 2px solid #1e293b; overflow: hidden; }
         .avatar-xl { width: 120px; height: 120px; font-size: 40px; border-width: 4px; }
         .avatar-sm { width: 24px; height: 24px; font-size: 10px; border-width: 1px; }
+        details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="modal-fullscreen-image" class="hidden fixed inset-0 bg-black z-[100] flex items-center justify-center animate-fade-in" onclick="app.closeFullscreenImage()">
-        <img id="fullscreen-image-src" src="" class="max-w-full max-h-full object-contain p-2 transition-transform duration-300 scale-95" onload="this.classList.remove('scale-95'); this.classList.add('scale-100')">
-        <button class="absolute top-6 right-6 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <div id="modal-fullscreen-image" class="hidden fixed inset-0 bg-black z-[100] flex items-center justify-center fade-in" onclick="document.getElementById('modal-fullscreen-image').classList.add('hidden')">
+        <img id="fullscreen-image-src" src="" class="max-w-full max-h-full object-contain p-2">
+        <button class="absolute top-6 right-6 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center"><i class="fa-solid fa-xmark text-xl"></i></button>
     </div>
 
     <div id="native-notification" class="native-toast fixed top-4 left-4 right-4 bg-slate-800/95 backdrop-blur-md border border-slate-600 rounded-2xl shadow-2xl z-[90] flex items-center gap-3 p-3 pointer-events-auto cursor-pointer" onclick="app.handleNotificationClick()">
         <div class="bg-neonPurple w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg shrink-0"><i class="fa-solid fa-bell"></i></div>
-        <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wide flex justify-between">BetFriends <span class="text-[9px] text-slate-500">Ahora</span></h4>
-            <p id="native-notification-text" class="text-sm text-white font-medium truncate">Notificación</p>
-        </div>
+        <div class="flex-1 min-w-0"><h4 class="text-xs font-bold text-slate-300 uppercase">BetFriends</h4><p id="native-notification-text" class="text-sm text-white font-medium truncate">...</p></div>
     </div>
 
     <div id="view-login" class="hidden app-view justify-center items-center p-6 bg-dark absolute inset-0 z-50">
         <div class="mb-8 text-center">
-            <img src="logo.png" class="h-24 w-auto mx-auto mb-4 animate-bounce" alt="Logo BetFriends">
+            <img src="logo.png" class="h-24 w-auto mx-auto mb-4 animate-bounce" alt="Logo">
             <h1 class="text-4xl font-bold tracking-tight text-white">Bet<span class="text-neonGreen">Friends</span></h1>
-            <p id="auth-subtitle" class="text-slate-400 mt-2">Crea tu liga. Invita amigos. Compite.</p>
+            <p class="text-slate-400 mt-2">Sincronizado en la Nube ☁️</p>
         </div>
-        
         <div class="w-full max-w-sm bg-card p-6 rounded-2xl border border-slate-700 shadow-xl">
             <h2 id="auth-title" class="text-xl font-bold text-white mb-4 text-center">Iniciar Sesión</h2>
             <div class="space-y-4">
-                <div>
-                    <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Usuario</label>
-                    <input type="text" id="auth-user" class="neon-input w-full p-3 rounded-lg" placeholder="Ej: Alex">
-                </div>
-                <div>
-                    <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Contraseña</label>
-                    <input type="password" id="auth-pass" class="neon-input w-full p-3 rounded-lg" placeholder="••••••••">
-                </div>
-                <button id="btn-auth-action" onclick="app.submitAuth()" class="w-full bg-neonPurple hover:bg-violet-600 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95 mt-2">
-                    ENTRAR
-                </button>
+                <div><label class="block text-xs uppercase font-bold text-slate-400 mb-1">Usuario</label><input type="text" id="auth-user" class="neon-input w-full p-3 rounded-lg" placeholder="Ej: Alex"></div>
+                <div><label class="block text-xs uppercase font-bold text-slate-400 mb-1">Contraseña</label><input type="password" id="auth-pass" class="neon-input w-full p-3 rounded-lg" placeholder="••••••••"></div>
+                <button id="btn-auth-action" onclick="app.submitAuth()" class="w-full bg-neonPurple hover:bg-violet-600 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95 mt-2">ENTRAR</button>
             </div>
-            <div class="mt-4 text-center">
-                <p class="text-xs text-slate-400">
-                    <span id="auth-toggle-text">¿No tienes cuenta?</span>
-                    <button id="auth-toggle-btn" onclick="app.toggleAuthMode()" class="text-neonGreen font-bold hover:underline ml-1">Regístrate aquí</button>
-                </p>
-            </div>
-        </div>
-        <div class="mt-8">
-            <button onclick="app.resetData()" class="text-slate-600 text-xs py-2 hover:text-danger transition flex items-center gap-2">
-                <i class="fa-solid fa-trash-can"></i> Reiniciar App
-            </button>
+            <div class="mt-4 text-center"><p class="text-xs text-slate-400"><span id="auth-toggle-text">¿No tienes cuenta?</span><button id="auth-toggle-btn" onclick="app.toggleAuthMode()" class="text-neonGreen font-bold hover:underline ml-1">Regístrate aquí</button></p></div>
         </div>
     </div>
 
-    <div id="view-leagues" class="hidden app-view bg-dark absolute inset-0 z-40"><div class="p-6 pt-10 shrink-0"><div class="flex justify-between items-center mb-6"><div><h2 class="text-2xl font-bold text-white">Mis Ligas</h2><p class="text-slate-400 text-sm">Hola, <span id="league-username" class="text-neonGreen font-bold">User</span></p></div><button onclick="app.logout()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-right-from-bracket"></i></button></div><div class="grid grid-cols-2 gap-3 mb-6"><button onclick="app.openModal('create-league')" class="bg-neonPurple/10 border border-neonPurple text-neonPurple p-4 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition"><i class="fa-solid fa-plus mb-1 block text-xl"></i> Crear Liga</button><button onclick="app.openModal('join-league')" class="bg-neonGreen/10 border border-neonGreen text-neonGreen p-4 rounded-xl font-bold text-sm hover:bg-neonGreen hover:text-dark transition"><i class="fa-solid fa-ticket mb-1 block text-xl"></i> Unirse</button></div><h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Tus Grupos Activos</h3></div><div id="leagues-list" class="scroll-area px-6 space-y-3"></div></div>
+    <div id="view-leagues" class="hidden app-view bg-dark absolute inset-0 z-40">
+        <div class="p-6 pt-10 shrink-0">
+            <div class="flex justify-between items-center mb-6"><div><h2 class="text-2xl font-bold text-white">Mis Ligas</h2><p class="text-slate-400 text-sm">Hola, <span id="league-username" class="text-neonGreen font-bold">User</span></p></div><button onclick="app.logout()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-right-from-bracket"></i></button></div>
+            <div class="grid grid-cols-2 gap-3 mb-6"><button onclick="app.openModal('create-league')" class="bg-neonPurple/10 border border-neonPurple text-neonPurple p-4 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition"><i class="fa-solid fa-plus mb-1 block text-xl"></i> Crear Liga</button><button onclick="app.openModal('join-league')" class="bg-neonGreen/10 border border-neonGreen text-neonGreen p-4 rounded-xl font-bold text-sm hover:bg-neonGreen hover:text-dark transition"><i class="fa-solid fa-ticket mb-1 block text-xl"></i> Unirse</button></div>
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Tus Grupos (Nube)</h3>
+        </div>
+        <div id="leagues-list" class="scroll-area px-6 space-y-3"><div class="text-center text-slate-500 py-4"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p>Cargando ligas...</p></div></div>
+    </div>
 
-    <div id="view-dashboard" class="hidden app-view bg-dark absolute inset-0 z-30"><header class="bg-card p-4 flex justify-between items-center shadow-md z-10 border-b border-slate-700 shrink-0"><div class="flex items-center gap-3"><button onclick="app.exitLeague()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button><div class="flex items-center gap-2 cursor-pointer" onclick="app.openProfileModal()"><div id="dash-my-avatar" class="avatar-circle border-neonPurple"><span>YO</span></div><div><h2 class="font-bold text-sm text-white leading-tight" id="dash-my-nickname">Nombre</h2><div class="flex items-center gap-1 text-neonGreen text-xs"><i class="fa-solid fa-coins"></i><span id="dash-balance" class="font-bold text-base">0</span></div></div></div></div><div class="flex gap-2 items-center"><button id="btn-header-daily" onclick="app.claimDailyBonus()" class="hidden px-3 py-1 rounded-full text-[10px] font-bold items-center gap-1 transition active:scale-95 border border-white/10"></button><button id="header-bell-btn" onclick="app.openNotificationsModal()" class="relative text-slate-400 bg-slate-800 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:bg-slate-700"><i class="fa-solid fa-bell"></i><span id="header-bell-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-danger rounded-full border-2 border-dark animate-pulse"></span></button><button onclick="app.openLeagueSettings()" class="text-slate-400 bg-slate-800 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:bg-slate-700"><i class="fa-solid fa-gear"></i></button><button onclick="app.showRanking()" class="text-gold bg-gold/10 px-3 py-1 rounded-full text-xs font-bold flex flex-col items-center justify-center w-8 h-8 hover:bg-gold/20"><i class="fa-solid fa-trophy"></i></button></div></header><main class="scroll-area p-4 space-y-6"><div class="bg-slate-800/50 p-3 rounded-lg flex justify-between items-center border border-slate-700/50"><div><span class="text-[10px] text-slate-500 uppercase block">Estás en la liga</span><span id="dash-league-name" class="font-bold text-white text-sm">Nombre Liga</span></div><button onclick="app.copyCode()" class="text-neonPurple font-mono font-bold text-sm tracking-widest flex items-center gap-2 bg-neonPurple/10 px-2 py-1 rounded cursor-pointer hover:bg-neonPurple/20 transition"><span id="dash-league-code">CODE</span> <i class="fa-regular fa-copy"></i></button></div><div onclick="app.openCreateBetModal()" class="bg-gradient-to-r from-violet-900 to-fuchsia-900 p-5 rounded-2xl shadow-lg relative overflow-hidden cursor-pointer transform transition active:scale-95 hover:shadow-neonPurple/20"><div class="absolute -right-4 -bottom-4 opacity-20 text-8xl text-white"><i class="fa-solid fa-plus"></i></div><h3 class="text-lg font-bold mb-1 text-white">Nueva Apuesta</h3><p class="text-slate-200 text-xs opacity-80">Reta a los miembros de la liga</p></div><div class="flex gap-2 overflow-x-auto py-1 shrink-0"><button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white transition-all">Activas</button><button onclick="app.filterBets('pending')" class="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all">Pendientes <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark animate-pulse">0</span></button><button onclick="app.filterBets('resolved')" class="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 transition-all">Historial</button></div><div id="bets-container" class="space-y-4"><div class="text-center text-slate-500 py-10"><i class="fa-solid fa-ghost text-4xl mb-2 opacity-30"></i><p>No hay apuestas en esta liga.</p></div></div></main></div>
+    <div id="view-dashboard" class="hidden app-view bg-dark absolute inset-0 z-30">
+        <header class="bg-card p-4 flex justify-between items-center shadow-md z-10 border-b border-slate-700 shrink-0">
+            <div class="flex items-center gap-3"><button onclick="app.exitLeague()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button><div class="flex items-center gap-2 cursor-pointer" onclick="app.openProfileModal()"><div id="dash-my-avatar" class="avatar-circle border-neonPurple"><span>YO</span></div><div><h2 class="font-bold text-sm text-white leading-tight" id="dash-my-nickname">Nombre</h2><div class="flex items-center gap-1 text-neonGreen text-xs"><i class="fa-solid fa-coins"></i><span id="dash-balance" class="font-bold text-base">0</span></div></div></div></div>
+            <div class="flex gap-2 items-center"><button id="btn-header-daily" onclick="app.claimDailyBonus()" class="hidden px-3 py-1 rounded-full text-[10px] font-bold items-center gap-1 border border-white/10"></button><button id="header-bell-btn" onclick="app.openNotificationsModal()" class="relative text-slate-400 bg-slate-800 p-2 rounded-full w-8 h-8 flex items-center justify-center hover:bg-slate-700"><i class="fa-solid fa-bell"></i><span id="header-bell-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-danger rounded-full border-2 border-dark animate-pulse"></span></button><button onclick="app.openLeagueSettings()" class="text-slate-400 bg-slate-800 p-2 rounded-full w-8 h-8 flex items-center justify-center hover:bg-slate-700"><i class="fa-solid fa-gear"></i></button><button onclick="app.showRanking()" class="text-gold bg-gold/10 px-3 py-1 rounded-full text-xs font-bold w-8 h-8 flex items-center justify-center hover:bg-gold/20"><i class="fa-solid fa-trophy"></i></button></div>
+        </header>
+        <main class="scroll-area p-4 space-y-6">
+            <div class="bg-slate-800/50 p-3 rounded-lg flex justify-between items-center border border-slate-700/50"><div><span class="text-[10px] text-slate-500 uppercase block">Estás en la liga</span><span id="dash-league-name" class="font-bold text-white text-sm">...</span></div><button onclick="app.copyCode()" class="text-neonPurple font-mono font-bold text-sm tracking-widest flex items-center gap-2 bg-neonPurple/10 px-2 py-1 rounded cursor-pointer hover:bg-neonPurple/20"><span id="dash-league-code">...</span> <i class="fa-regular fa-copy"></i></button></div>
+            <div onclick="app.openCreateBetModal()" class="bg-gradient-to-r from-violet-900 to-fuchsia-900 p-5 rounded-2xl shadow-lg relative overflow-hidden cursor-pointer active:scale-95 transition"><div class="absolute -right-4 -bottom-4 opacity-20 text-8xl text-white"><i class="fa-solid fa-plus"></i></div><h3 class="text-lg font-bold mb-1 text-white">Nueva Apuesta</h3><p class="text-slate-200 text-xs opacity-80">Reta a los miembros</p></div>
+            <div class="flex gap-2 overflow-x-auto py-1 shrink-0"><button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white">Activas</button><button onclick="app.filterBets('pending')" class="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative">Pendientes <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark">0</span></button><button onclick="app.filterBets('resolved')" class="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400">Historial</button></div>
+            <div id="bets-container" class="space-y-4"></div>
+        </main>
+    </div>
 
-    <div id="modal-notifications" class="hidden fixed inset-0 bg-black/80 z-[70] flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border-t border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-white"><i class="fa-solid fa-bell mr-2 text-neonPurple"></i>Notificaciones</h3><button onclick="app.closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button></div><div id="notifications-list" class="scroll-area space-y-3"></div><button onclick="app.closeModals()" class="w-full bg-slate-700 text-white py-3 rounded-lg font-bold text-sm mt-4 shrink-0">Cerrar</button></div></div>
-    <div id="modal-league-settings" class="hidden fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Opciones de Liga</h3><div id="settings-creator-options" class="hidden space-y-3"><p class="text-xs text-slate-400 mb-2">Eres el creador de esta liga.</p><button onclick="app.openAdminPanel()" class="w-full bg-slate-800 border border-neonPurple text-neonPurple py-3 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition flex items-center justify-center gap-2 mb-2"><i class="fa-solid fa-user-shield"></i> Panel de Control</button><div class="h-px bg-slate-700 my-2"></div><button onclick="app.deleteLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash-can mr-2"></i> Eliminar Liga para Todos</button><button onclick="app.showTransferList()" class="w-full bg-gold/10 border border-gold text-gold py-3 rounded-xl font-bold text-sm hover:bg-gold hover:text-dark transition"><i class="fa-solid fa-right-from-bracket mr-2"></i> Ceder Liderazgo y Salir</button></div><div id="settings-member-options" class="hidden space-y-3"><button onclick="app.leaveLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-person-walking-arrow-right mr-2"></i> Abandonar Liga</button></div><div id="settings-transfer-list" class="hidden mt-4"><h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Elige al nuevo líder:</h4><div id="transfer-members-container" class="max-h-40 overflow-y-auto space-y-2 custom-scrollbar"></div><button onclick="document.getElementById('settings-transfer-list').classList.add('hidden'); document.getElementById('settings-creator-options').classList.remove('hidden');" class="w-full text-slate-500 text-xs mt-2 py-2">Cancelar</button></div><button onclick="app.closeModals()" class="w-full text-slate-400 py-3 rounded-lg font-bold text-sm mt-4">Cerrar</button></div></div>
-    <div id="modal-admin-panel" class="hidden fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[85vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-neonPurple"><i class="fa-solid fa-user-shield mr-2"></i>Control de Liga</h3><button onclick="app.closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button></div><p class="text-[10px] text-slate-500 mb-2">Selecciona un miembro para gestionarlo.</p><div id="admin-members-list" class="scroll-area space-y-2 pr-1"></div></div></div>
-    <div id="modal-admin-edit-user" class="hidden fixed inset-0 bg-black/80 z-[95] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-1">Gestionar Usuario</h3><p id="admin-edit-username" class="text-sm text-neonGreen font-bold mb-4">@Usuario</p><div class="space-y-4"><div class="bg-slate-800 p-3 rounded-lg border border-slate-700"><label class="text-[10px] text-slate-400 uppercase font-bold block mb-2">Ajustar Saldo</label><div class="flex gap-2"><input type="number" id="admin-balance-input" class="neon-input w-full p-2 rounded text-sm" placeholder="+100 o -50"><button onclick="app.adminUpdateBalance()" class="bg-neonGreen text-dark px-3 rounded font-bold text-xs">OK</button></div></div><div class="bg-slate-800 p-3 rounded-lg border border-slate-700"><label class="text-[10px] text-slate-400 uppercase font-bold block mb-2">Nueva Contraseña</label><div class="flex gap-2"><input type="text" id="admin-pass-input" class="neon-input w-full p-2 rounded text-sm" placeholder="Nueva clave"><button onclick="app.adminResetPassword()" class="bg-neonPurple text-white px-3 rounded font-bold text-xs">Set</button></div><p class="text-[9px] text-slate-500 mt-1">*Cambia la contraseña global.</p></div><button onclick="app.adminKickUser()" class="w-full border border-danger text-danger py-2 rounded-lg font-bold text-xs hover:bg-danger hover:text-white transition"><i class="fa-solid fa-ban mr-1"></i> Expulsar de la Liga</button></div><button onclick="document.getElementById('modal-admin-edit-user').classList.add('hidden')" class="w-full text-slate-400 py-3 rounded-lg font-bold text-sm mt-2">Volver</button></div></div>
-    <div id="modal-confirm" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up text-center"><i class="fa-solid fa-triangle-exclamation text-4xl text-danger mb-4"></i><h3 class="text-lg font-bold text-white mb-2">¿Estás seguro?</h3><p id="confirm-msg" class="text-sm text-slate-400 mb-6">Esta acción no se puede deshacer.</p><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.confirmYes()" class="bg-danger text-white py-3 rounded-lg font-bold text-sm shadow-lg">Confirmar</button></div></div></div>
-    <div id="modal-profile" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up text-center"><h3 class="text-lg font-bold text-white mb-6">Personalizar Perfil</h3><div class="relative inline-block mb-6 group"><div id="profile-preview" class="avatar-circle avatar-xl border-neonPurple mx-auto"><i class="fa-solid fa-user text-4xl"></i></div><label for="file-upload" class="absolute bottom-1 right-1 bg-neonPurple text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg hover:bg-violet-500 transition"><i class="fa-solid fa-camera text-sm"></i></label><input id="file-upload" type="file" accept="image/*" class="hidden" onchange="app.handleImageUpload(this)"></div><div class="text-left space-y-4"><div><label class="text-xs text-slate-400 uppercase font-bold">Apodo</label><input type="text" id="profile-nickname" class="neon-input w-full p-3 rounded-lg mt-1 text-center font-bold"></div><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.saveProfile()" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm shadow-lg">Guardar</button></div></div></div></div>
-    <div id="modal-view-profile" class="hidden fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up text-center relative overflow-hidden shadow-2xl"><div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-neonPurple/20 to-transparent"></div><button onclick="document.getElementById('modal-view-profile').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white z-10 w-8 h-8 flex items-center justify-center bg-black/20 rounded-full"><i class="fa-solid fa-xmark text-xl"></i></button><div class="relative inline-block mb-4 mt-4"><div id="view-profile-avatar" class="avatar-circle avatar-xl border-neonPurple mx-auto shadow-2xl bg-dark relative group overflow-hidden"><i class="fa-solid fa-user text-4xl"></i></div></div><h3 id="view-profile-name" class="text-2xl font-bold text-white mb-1">Nombre</h3><p class="text-slate-400 text-xs mb-6">Miembro de la Liga</p><div class="grid grid-cols-3 gap-2 mb-6"><div class="bg-slate-800 p-2 rounded-lg border border-slate-700"><div class="text-[10px] text-slate-500 uppercase font-bold">Fichas</div><div id="view-profile-balance" class="text-neonGreen font-mono font-bold text-lg">0</div></div><div class="bg-slate-800 p-2 rounded-lg border border-slate-700"><div class="text-[10px] text-slate-500 uppercase font-bold">Victorias</div><div id="view-profile-wins" class="text-gold font-bold text-lg">0</div></div><div class="bg-slate-800 p-2 rounded-lg border border-slate-700"><div class="text-[10px] text-slate-500 uppercase font-bold">Jugadas</div><div id="view-profile-played" class="text-white font-bold text-lg">0</div></div></div><button onclick="document.getElementById('modal-view-profile').classList.add('hidden')" class="w-full bg-slate-700 text-white py-3 rounded-lg font-bold text-sm hover:bg-slate-600 transition">Cerrar</button></div></div>
-    <div id="modal-create-league" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[90vh] flex flex-col"><h3 class="text-lg font-bold text-white mb-4 shrink-0">Configurar Nueva Liga</h3><div class="scroll-area space-y-4"><div class="mb-4"><label class="text-xs text-slate-400 uppercase font-bold">Nombre</label><input type="text" id="new-league-name" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: La Liga de los Reyes"></div><div class="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden"><div class="bg-slate-800 p-2 border-b border-slate-700"><h4 class="text-neonPurple text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-gavel mr-1"></i> Reglas Económicas</h4></div><div class="p-4 space-y-5"><div class="flex justify-between items-center"><div><label class="text-sm font-bold text-white block">Saldo Inicial</label><p class="text-[10px] text-slate-500">Fichas al entrar.</p></div><input type="number" id="conf-start-balance" class="neon-input w-20 p-1 text-center font-mono font-bold text-neonGreen text-sm rounded" value="1000"></div><div class="flex justify-between items-center"><div><label class="text-sm font-bold text-white block">Bono Diario</label><p class="text-[10px] text-slate-500">Regalo cada 24h.</p></div><div class="flex items-center gap-2"><input type="number" id="conf-daily-bonus" class="neon-input w-16 p-1 text-center font-mono text-xs rounded disabled:opacity-50" value="50"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="check-daily-bonus" class="sr-only peer" checked onchange="document.getElementById('conf-daily-bonus').disabled = !this.checked"><div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neonGreen"></div></label></div></div><div class="flex justify-between items-center pt-2 border-t border-slate-700/50"><div><label class="text-sm font-bold text-white block">Modo Casino 🎰</label><p class="text-[10px] text-slate-500">Permitir jugar contra la Banca.</p></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="check-allow-bank" class="sr-only peer"><div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neonPurple"></div></label></div></div></div></div><div class="grid grid-cols-2 gap-3 mt-6 shrink-0"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.createLeague()" class="bg-gradient-to-r from-neonPurple to-violet-600 text-white py-3 rounded-lg font-bold text-sm shadow-lg hover:shadow-neonPurple/25 transition">Crear Liga</button></div></div></div>
-    <div id="modal-join-league" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Unirse a Liga</h3><label class="text-xs text-slate-400 uppercase font-bold">Código de Acceso</label><input type="text" id="join-league-code" class="neon-input w-full p-3 rounded-lg mt-1 mb-4 font-mono text-center uppercase tracking-widest" placeholder="ABCD12"><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.joinLeague()" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm shadow-lg">Entrar</button></div></div></div>
-    <div id="modal-ranking" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-gold"><i class="fa-solid fa-crown mr-2"></i>Clasificación</h3><button onclick="app.closeModals()" class="text-slate-400"><i class="fa-solid fa-xmark text-xl"></i></button></div><p class="text-[10px] text-slate-500 mb-2">Toca un jugador para ver su perfil.</p><div id="ranking-list" class="scroll-area pr-2"></div></div></div>
-    <div id="modal-create-bet" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-[30rem] rounded-t-2xl sm:rounded-2xl flex flex-col border-t border-slate-700 slide-up p-6 max-h-[90vh]"><h3 class="text-lg font-bold text-white mb-4 shrink-0">Nueva Apuesta</h3><div class="scroll-area space-y-4"><div><label class="text-xs text-slate-400 uppercase font-bold">Tipo</label><select id="create-type" onchange="app.toggleCreateFields()" class="neon-select w-full p-3 rounded-lg mt-1 bg-slate-800 text-white font-bold"><option value="duel">⚔️ Duelo (1 vs 1)</option><option value="group">💰 Bote General</option><option value="custom" selected>📊 Porra / Quiniela</option><option value="bank" id="opt-bank" class="hidden text-neonPurple font-bold">🎰 Contra la Banca</option></select></div><div><label class="text-xs text-slate-400 uppercase font-bold">Título</label><input type="text" id="create-title" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: Ganador del Partido"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Entrada (Fichas)</label><input type="number" id="create-amount" class="neon-input w-full p-3 rounded-lg mt-1 text-neonGreen font-bold" placeholder="50"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Visibilidad</label><div class="flex bg-slate-800 rounded-lg p-1 mt-2 mb-3"><button onclick="app.setInviteMode('public')" id="btn-mode-public" class="flex-1 py-2 text-xs font-bold rounded bg-neonPurple text-white transition">Pública</button><button onclick="app.setInviteMode('private')" id="btn-mode-private" class="flex-1 py-2 text-xs font-bold rounded text-slate-400 hover:text-white transition">Privada</button></div><div id="invite-list-container" class="hidden"><p class="text-[10px] text-slate-500 mb-2">Selecciona invitados:</p><div id="invite-checklist" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1"></div></div></div><div id="field-options" class="block"><div class="flex justify-between items-center mb-2"><label class="text-xs text-slate-400 uppercase font-bold">Opciones</label><button onclick="app.addOptionInput()" class="text-neonPurple text-xs font-bold">+ Añadir</button></div><div id="options-list" class="space-y-2"></div></div><button onclick="app.createBet()" class="w-full bg-neonPurple py-4 rounded-xl font-bold text-white shadow-lg mt-4 uppercase tracking-wider">CREAR</button><button onclick="app.closeModals()" class="w-full text-slate-400 py-2 text-sm">Cancelar</button></div></div></div>
-    <div id="modal-action" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up flex flex-col max-h-[80vh]"><h3 id="action-title" class="text-lg font-bold text-white mb-2 shrink-0">Acción</h3><p id="action-content" class="text-sm text-slate-400 mb-4 shrink-0">Detalles</p><div id="action-bet-input-container" class="hidden mb-4 bg-slate-800 p-3 rounded-lg border border-slate-600 shrink-0"><label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Tu Apuesta</label><div class="flex items-center gap-2"><input type="number" id="action-bet-amount" class="neon-input w-full p-2 rounded text-neonGreen font-bold font-mono text-lg" placeholder="0"><span class="text-xs text-slate-500 font-bold">Fichas</span></div><p id="action-potential-win" class="text-[10px] text-gold mt-2 text-right">Ganancia: 0</p></div><div id="action-dynamic-list" class="scroll-area mb-4 border-t border-b border-slate-700/50 py-2"></div><div class="grid grid-cols-2 gap-3 shrink-0"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cerrar</button><button id="action-confirm-btn" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm">Confirmar</button></div></div></div>
-    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 text-white px-4 py-2 rounded-full shadow-2xl z-[100] transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2 min-w-max"><i class="fa-solid fa-circle-info text-neonPurple text-xs"></i><span id="toast-msg" class="font-medium text-xs">Mensaje</span></div>
+    <div id="modal-create-league" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Nueva Liga</h3><div class="mb-4"><label class="text-xs text-slate-400 uppercase font-bold">Nombre</label><input type="text" id="new-league-name" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: La Liga de los Reyes"></div><div class="flex justify-between items-center mb-4"><div><label class="text-sm font-bold text-white block">Saldo Inicial</label></div><input type="number" id="conf-start-balance" class="neon-input w-20 p-1 text-center font-bold text-neonGreen text-sm rounded" value="1000"></div><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.createLeague()" class="bg-neonPurple text-white py-3 rounded-lg font-bold text-sm shadow-lg">Crear</button></div></div></div>
+    <div id="modal-join-league" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Unirse a Liga</h3><label class="text-xs text-slate-400 uppercase font-bold">Código</label><input type="text" id="join-league-code" class="neon-input w-full p-3 rounded-lg mt-1 mb-4 font-mono text-center uppercase tracking-widest" placeholder="ABCD12"><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.joinLeague()" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm shadow-lg">Entrar</button></div></div></div>
+    <div id="modal-create-bet" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-[30rem] rounded-t-2xl sm:rounded-2xl flex flex-col border-t border-slate-700 slide-up p-6 max-h-[90vh]"><h3 class="text-lg font-bold text-white mb-4">Nueva Apuesta</h3><div class="scroll-area space-y-4"><div><label class="text-xs text-slate-400 uppercase font-bold">Tipo</label><select id="create-type" onchange="app.toggleCreateFields()" class="neon-select w-full p-3 rounded-lg mt-1 bg-slate-800 text-white font-bold"><option value="duel">⚔️ Duelo (1 vs 1)</option><option value="group">💰 Bote General</option><option value="custom" selected>📊 Porra</option><option value="bank" id="opt-bank">🎰 Contra la Banca</option></select></div><div><label class="text-xs text-slate-400 uppercase font-bold">Título</label><input type="text" id="create-title" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: Ganador del Partido"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Entrada</label><input type="number" id="create-amount" class="neon-input w-full p-3 rounded-lg mt-1 text-neonGreen font-bold" placeholder="50"></div><div id="field-options" class="block"><div class="flex justify-between items-center mb-2"><label class="text-xs text-slate-400 uppercase font-bold">Opciones</label><button onclick="app.addOptionInput()" class="text-neonPurple text-xs font-bold">+ Añadir</button></div><div id="options-list" class="space-y-2"></div></div><button onclick="app.createBet()" class="w-full bg-neonPurple py-4 rounded-xl font-bold text-white shadow-lg mt-4">CREAR</button><button onclick="app.closeModals()" class="w-full text-slate-400 py-2 text-sm">Cancelar</button></div></div></div>
+    
+    <div id="modal-action" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up flex flex-col max-h-[80vh]"><h3 id="action-title" class="text-lg font-bold text-white mb-2">Acción</h3><p id="action-content" class="text-sm text-slate-400 mb-4">Detalles</p><div id="action-bet-input-container" class="hidden mb-4 bg-slate-800 p-3 rounded-lg border border-slate-600"><label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Tu Apuesta</label><input type="number" id="action-bet-amount" class="neon-input w-full p-2 rounded text-neonGreen font-bold font-mono text-lg" placeholder="0"></div><div id="action-dynamic-list" class="scroll-area mb-4 border-t border-b border-slate-700/50 py-2"></div><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cerrar</button><button id="action-confirm-btn" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm">Confirmar</button></div></div></div>
+    <div id="modal-profile" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up text-center"><h3 class="text-lg font-bold text-white mb-6">Perfil</h3><div class="relative inline-block mb-6"><div id="profile-preview" class="avatar-circle avatar-xl border-neonPurple mx-auto"></div><label for="file-upload" class="absolute bottom-1 right-1 bg-neonPurple text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"><i class="fa-solid fa-camera text-sm"></i></label><input id="file-upload" type="file" accept="image/*" class="hidden" onchange="app.handleImageUpload(this)"></div><input type="text" id="profile-nickname" class="neon-input w-full p-3 rounded-lg mt-1 text-center font-bold"><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.saveProfile()" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm shadow-lg">Guardar</button></div></div></div>
+    <div id="modal-ranking" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-gold"><i class="fa-solid fa-crown mr-2"></i>Ranking</h3><button onclick="app.closeModals()" class="text-slate-400"><i class="fa-solid fa-xmark text-xl"></i></button></div><div id="ranking-list" class="scroll-area pr-2"></div></div></div>
+    <div id="modal-notifications" class="hidden fixed inset-0 bg-black/80 z-[70] flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border-t border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-white">Notificaciones</h3><button onclick="app.closeModals()" class="text-slate-400"><i class="fa-solid fa-xmark text-xl"></i></button></div><div id="notifications-list" class="scroll-area space-y-3"></div></div></div>
+    <div id="modal-confirm" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up text-center"><i class="fa-solid fa-triangle-exclamation text-4xl text-danger mb-4"></i><h3 class="text-lg font-bold text-white mb-2">¿Seguro?</h3><p id="confirm-msg" class="text-sm text-slate-400 mb-6">Irreversible.</p><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">No</button><button onclick="app.confirmYes()" class="bg-danger text-white py-3 rounded-lg font-bold text-sm shadow-lg">Sí</button></div></div></div>
+    <div id="modal-league-settings" class="hidden fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Ajustes</h3><div class="space-y-3"><button onclick="app.deleteLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm">Eliminar Liga</button><button onclick="app.leaveLeague()" class="w-full bg-slate-800 border border-slate-600 text-slate-300 py-3 rounded-xl font-bold text-sm">Salir de Liga</button></div><button onclick="app.closeModals()" class="w-full text-slate-400 py-3 mt-4">Cerrar</button></div></div>
+
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 text-white px-4 py-2 rounded-full shadow-2xl z-[100] transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2 min-w-max"><i class="fa-solid fa-info-circle text-neonPurple"></i><span id="toast-msg" class="font-medium text-xs">Info</span></div>
 
     <script>
-        // 2. CONFIGURACIÓN FIREBASE (CLÁSICA)
+        // CONFIGURACION FIREBASE REAL
         const firebaseConfig = {
             apiKey: "AIzaSyBFwzQUXNkix4u0J9asPte8OvVQph_FfPY",
             authDomain: "betfriends-81bcc.firebaseapp.com",
@@ -125,210 +114,322 @@
             messagingSenderId: "618594781062",
             appId: "1:618594781062:web:f29996182529ad9bc04e07"
         };
-
-        // Iniciamos Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log("🔥 Firebase Clásico Iniciado");
-        } catch (e) {
-            console.error("Error iniciando Firebase:", e);
-        }
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        console.log("🔥 CONECTADO A NUBE REAL");
 
         const app = {
-            data: { user: null, leagues: [], currentLeagueId: null, filter: 'active', inviteMode: 'public', selectedInvites: [], tempAvatar: null, accounts: {}, editingUser: null },
+            data: { user: null, leagues: [], currentLeagueId: null, filter: 'active', inviteMode: 'public', selectedInvites: [], tempAvatar: null },
             pendingCallback: null,
             authMode: 'login',
+            unsubscribeLeagues: null, // Para dejar de escuchar si sales
 
-            // INICIO
             init() {
-                // Escuchamos si hay usuario logueado en Firebase
-                firebase.auth().onAuthStateChanged((user) => {
+                auth.onAuthStateChanged((user) => {
                     if (user) {
-                        console.log("Usuario detectado:", user.email);
-                        // Cargar perfil desde Firestore
-                        const db = firebase.firestore();
-                        db.collection("users").doc(user.uid).get().then((doc) => {
-                            if (doc.exists) {
-                                // Usuario existente
-                                const data = doc.data();
-                                this.performLogin(data.nickname);
-                            } else {
-                                // Si por algo no tiene documento, usar la parte del email
-                                this.performLogin(user.email.split('@')[0]);
-                            }
-                        }).catch((error) => {
-                            console.error("Error recuperando perfil:", error);
-                            this.performLogin(user.email.split('@')[0]);
-                        });
+                        this.data.user = user.email.split('@')[0]; // Usamos parte del email como ID visual
+                        // Buscar perfil real en BD
+                        db.collection('users').doc(user.uid).get().then(doc => {
+                           if(doc.exists && doc.data().nickname) this.data.user = doc.data().nickname;
+                           this.performLoginSuccess();
+                        }).catch(()=>this.performLoginSuccess());
                     } else {
-                        console.log("No hay usuario activo.");
                         document.getElementById('view-login').classList.remove('hidden');
                         document.getElementById('view-login').classList.add('flex');
                     }
                 });
             },
 
-            // --- AUTHENTICATION (CONECTADO A FIREBASE) ---
-            async submitAuth() {
-                const emailInput = document.getElementById('auth-user').value.trim(); 
-                const pass = document.getElementById('auth-pass').value.trim();
-
-                if (!emailInput || !pass) {
-                    this.toast("Faltan datos", "error");
-                    return;
-                }
-
-                // Truco del email falso
-                let finalEmail = emailInput;
-                if (!emailInput.includes('@')) {
-                    finalEmail = emailInput + "@betfriends.com"; 
-                }
-
-                this.toast("Conectando...", "info");
-                const auth = firebase.auth();
-                const db = firebase.firestore();
-
-                try {
-                    let userCredential;
-
-                    if (this.authMode === 'register') {
-                        // REGISTRO
-                        userCredential = await auth.createUserWithEmailAndPassword(finalEmail, pass);
-                        
-                        // Guardar en base de datos
-                        await db.collection("users").doc(userCredential.user.uid).set({
-                            nickname: emailInput.split('@')[0],
-                            balance: 1000,
-                            createdAt: new Date()
-                        });
-
-                        this.toast("¡Cuenta creada! Entrando...");
-                    } else {
-                        // LOGIN
-                        userCredential = await auth.signInWithEmailAndPassword(finalEmail, pass);
-                        this.toast("Sesión iniciada");
-                    }
-                    // La redirección la hace onAuthStateChanged automáticamente
-
-                } catch (error) {
-                    console.error("Error Firebase:", error);
-                    let msg = error.message;
-                    if (error.code === 'auth/wrong-password') msg = "Contraseña incorrecta";
-                    if (error.code === 'auth/user-not-found') msg = "Usuario no encontrado";
-                    if (error.code === 'auth/email-already-in-use') msg = "Ese usuario ya existe";
-                    if (error.code === 'auth/weak-password') msg = "Contraseña muy corta (min 6)";
-                    this.toast(msg, "error");
-                }
-            },
-
-            performLogin(u) {
-                this.data.user = u;
+            performLoginSuccess() {
                 document.getElementById('view-login').classList.remove('flex');
                 document.getElementById('view-login').classList.add('hidden');
-                document.getElementById('auth-user').value = '';
+                document.getElementById('auth-user').value = ''; 
                 document.getElementById('auth-pass').value = '';
                 this.showLeaguesView();
-                // Aquí cargaríamos las ligas de Firestore si quisieras persistencia total
-                // De momento usamos el localStorage para las ligas como tenías
-                this.loadLocalData();
-                this.checkAndNotify();
+                this.initRealtimeLeagues(); // <--- AQUÍ ESTÁ LA MAGIA
             },
-            
-            logout() { 
-                firebase.auth().signOut().then(() => {
-                    this.data.user=null; 
-                    this.data.currentLeagueId=null; 
-                    document.querySelectorAll('.app-view').forEach(e=>e.classList.add('hidden')); 
-                    document.getElementById('view-login').classList.remove('hidden'); 
-                    document.getElementById('view-login').classList.add('flex');
-                    this.toast("Sesión cerrada");
+
+            // ESCUCHAR CAMBIOS EN LA NUBE
+            initRealtimeLeagues() {
+                if(this.unsubscribeLeagues) this.unsubscribeLeagues();
+                // Escuchamos TODAS las ligas (podríamos filtrar, pero para empezar está bien)
+                this.unsubscribeLeagues = db.collection('leagues').onSnapshot((snapshot) => {
+                    const cloudLeagues = [];
+                    snapshot.forEach((doc) => {
+                        cloudLeagues.push(doc.data());
+                    });
+                    this.data.leagues = cloudLeagues;
+                    console.log("☁️ Ligas actualizadas desde la nube:", cloudLeagues.length);
+                    // Si estamos viendo ligas, refrescar lista
+                    if(!document.getElementById('view-leagues').classList.contains('hidden')) this.renderLeaguesList();
+                    // Si estamos dentro de una liga, refrescar dashboard
+                    if(this.data.currentLeagueId) this.renderDashboard();
+                    
+                    this.checkAndNotify();
                 });
             },
 
-            // --- PERSISTENCIA LOCAL PARA LIGAS (TEMPORAL) ---
-            loadLocalData() {
-                const d = localStorage.getItem('betfriends_v2_data');
-                if (d) {
-                    try {
-                        const p = JSON.parse(d);
-                        this.data.leagues = p.leagues || [];
-                        // Asegurar compatibilidad
-                        this.data.leagues.forEach(l => { 
-                            Object.keys(l.members).forEach(k => { 
-                                if(typeof l.members[k]==='number') l.members[k]={balance:l.members[k],nickname:k,avatar:null}; 
-                            }); 
-                        });
-                    } catch (e) {}
-                }
-                // Si ya teníamos ligas, renderizamos
-                if(this.data.currentLeagueId) this.renderDashboard(); else this.renderLeaguesList();
+            // GUARDAR EN LA NUBE (REEMPLAZA A LOCALSTORAGE)
+            saveLeagueToCloud(league) {
+                // Guardamos la liga completa en Firestore usando su ID como nombre de documento
+                db.collection('leagues').doc(league.id.toString()).set(league)
+                .then(() => console.log("✅ Liga guardada en nube"))
+                .catch((e) => this.toast("Error guardando: " + e.message, "error"));
             },
-            save() { localStorage.setItem('betfriends_v2_data', JSON.stringify({ leagues: this.data.leagues })); },
 
-            // --- RESTO DE FUNCIONES (UI, BETS, ETC) ---
-            copyCode() {
-                const text = document.getElementById('dash-league-code').innerText;
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
-                document.body.appendChild(textArea); textArea.focus(); textArea.select();
-                try { const ok = document.execCommand('copy'); if(ok) this.toast("Código copiado"); else this.toast("Error al copiar", "error"); } catch (err) { this.toast("Copia manualmente", "error"); }
-                document.body.removeChild(textArea);
+            // --- AUTH ---
+            async submitAuth() {
+                const email = document.getElementById('auth-user').value.trim(); 
+                const pass = document.getElementById('auth-pass').value.trim();
+                if(!email || !pass) return this.toast("Faltan datos", "error");
+                let finalEmail = email.includes('@') ? email : email + "@betfriends.com";
+                
+                this.toast("Conectando...", "info");
+                try {
+                    if (this.authMode === 'register') {
+                        const cred = await auth.createUserWithEmailAndPassword(finalEmail, pass);
+                        await db.collection("users").doc(cred.user.uid).set({ nickname: email.split('@')[0], createdAt: new Date() });
+                        this.toast("¡Cuenta creada!");
+                    } else {
+                        await auth.signInWithEmailAndPassword(finalEmail, pass);
+                        this.toast("Sesión iniciada");
+                    }
+                } catch (e) {
+                    let msg = e.message;
+                    if (e.code === 'auth/wrong-password') msg = "Contraseña mal";
+                    if (e.code === 'auth/user-not-found') msg = "Usuario no existe";
+                    if (e.code === 'auth/weak-password') msg = "Contraseña corta";
+                    this.toast(msg, "error");
+                }
             },
-            isUserWinner(b, user) { if(b.status !== 'resolved') return false; if(b.type === 'bank') { const r = b.selections ? b.selections[user] : null; return r && r.option === b.winningOption; } if(b.type === 'custom') { return b.selections && b.selections[user] === b.winningOption; } return b.winner === user; },
-            getNotificationStats(l) { if(!l) return {pending:0, wins:0, losses:0, listPending:[], listWins:[], listLosses:[], listAdmin:[], newPending:0, adminUpdates:0}; const me = this.data.user; const lastCheck = l.members[me]?.lastViewedNotifications || 0; const listPending = l.bets.filter(b => { if (b.status !== 'active') return false; if (b.creator === me) return false; if (b.participants.includes(me)) return false; if (b.type === 'duel') return b.invites && b.invites.includes(me); if (b.invites && b.invites.includes(me)) return true; if (!b.invites || b.invites.length === 0) return true; return false; }); const newPending = listPending.filter(b => b.id > lastCheck).length; const listWins = l.bets.filter(b => { if (b.status !== 'resolved') return false; if (b.resolvedAt && b.resolvedAt <= lastCheck) return false; return this.isUserWinner(b, me); }); const listLosses = l.bets.filter(b => { if (b.status !== 'resolved') return false; if (b.resolvedAt && b.resolvedAt <= lastCheck) return false; if (b.type === 'admin') return false; const participated = b.participants.includes(me); if (!participated) return false; const isWinner = this.isUserWinner(b, me); const isRefund = b.winner === "Nadie (Devuelto)"; return !isWinner && !isRefund; }); const listAdmin = l.bets.filter(b => { if (b.status !== 'resolved') return false; if (b.type !== 'admin') return false; if (!b.participants.includes(me)) return false; if (b.resolvedAt && b.resolvedAt <= lastCheck) return false; return true; }); return { pending: listPending.length, newPending: newPending, wins: listWins.length, losses: listLosses.length, adminUpdates: listAdmin.length, listPending, listWins, listLosses, listAdmin }; },
-            showNativeToast(t) { const el=document.getElementById('native-notification'); document.getElementById('native-notification-text').innerText=t; el.classList.add('show'); if(navigator.vibrate) navigator.vibrate(200); setTimeout(()=>el.classList.remove('show'),5000); },
-            handleNotificationClick() { document.getElementById('native-notification').classList.remove('show'); this.openNotificationsModal(); },
-            checkAndNotify() { if(!this.data.user) return; let tPend=0, tWins=0, tLosses=0, tAdmin=0; let lastWonBetTitle = ""; let lastLostBetTitle = ""; this.data.leagues.forEach(l=>{ if(l.members[this.data.user]) { const stats = this.getNotificationStats(l); tPend += stats.newPending; tWins += stats.wins; tLosses += stats.losses; tAdmin += stats.adminUpdates; if(stats.listWins.length > 0) lastWonBetTitle = stats.listWins[0].title; if(stats.listLosses.length > 0) lastLostBetTitle = stats.listLosses[0].title; } }); if(tAdmin > 0) { this.showNativeToast(`El administrador ha ajustado tu saldo ⚖️`); } else if(tWins > 0) { const msg = tWins === 1 ? `¡Has ganado en "${lastWonBetTitle}"!` : `¡Has ganado ${tWins} apuestas!`; this.showNativeToast(msg + " 🏆"); } else if (tLosses > 0) { const msg = tLosses === 1 ? `Has perdido en "${lastLostBetTitle}".` : `Has perdido ${tLosses} apuestas.`; this.showNativeToast(msg + " 😢"); } else if(tPend > 0) { this.showNativeToast(`Tienes ${tPend} nuevas invitaciones.`); } },
-            openNotificationsModal() { const l=this.getCurrentLeague(); const lst=document.getElementById('notifications-list'); lst.innerHTML=''; const stats = this.getNotificationStats(l); if (stats.listAdmin.length > 0) { lst.innerHTML += `<div class="text-[10px] text-slate-400 uppercase font-bold mb-2 ml-1">Ajustes de Comisionado</div>`; stats.listAdmin.forEach(b => { const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-slate-500 flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-slate-300 text-xs font-bold"><i class="fa-solid fa-scale-balanced mr-1"></i> Ajuste Saldo</p><p class="text-[10px] text-white">${b.winningOption}</p></div><div class="bg-slate-700 text-slate-400 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('resolved'); }; lst.appendChild(d); }); } if (stats.listWins.length > 0) { lst.innerHTML += `<div class="text-[10px] text-gold uppercase font-bold mb-2 ml-1 mt-4">Victorias Recientes</div>`; stats.listWins.forEach(b => { const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-gold flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-gold text-xs font-bold"><i class="fa-solid fa-trophy mr-1"></i> ¡Ganaste!</p><p class="text-[10px] text-white">${b.title}</p></div><div class="bg-gold/10 text-gold w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('resolved'); }; lst.appendChild(d); }); } if (stats.listLosses.length > 0) { lst.innerHTML += `<div class="text-[10px] text-danger uppercase font-bold mb-2 ml-1 mt-4">Derrotas Recientes</div>`; stats.listLosses.forEach(b => { const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-danger flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-danger text-xs font-bold"><i class="fa-solid fa-heart-crack mr-1"></i> Perdiste</p><p class="text-[10px] text-white">${b.title}</p></div><div class="bg-danger/10 text-danger w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('resolved'); }; lst.appendChild(d); }); } if (stats.listPending.length > 0) { lst.innerHTML += `<div class="text-[10px] text-slate-400 uppercase font-bold mb-2 ml-1 mt-4">Invitaciones / Pendientes</div>`; stats.listPending.forEach(b => { const c=this.getMember(l,b.creator).nickname; const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-neonPurple flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-white text-xs font-bold">${b.title}</p><p class="text-[10px] text-slate-400">De ${c} • ${b.amount} fichas</p></div><div class="bg-neonPurple/20 text-neonPurple w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('pending'); setTimeout(()=>this.joinBetModal(b.id),300); }; lst.appendChild(d); }); } if (stats.listPending.length === 0 && stats.listWins.length === 0 && stats.listLosses.length === 0 && stats.listAdmin.length === 0) { lst.innerHTML=`<div class="text-center text-slate-500 py-8"><i class="fa-regular fa-bell-slash text-3xl mb-2 opacity-50"></i><p class="text-xs">Sin notificaciones nuevas</p></div>`; } l.members[this.data.user].lastViewedNotifications = Date.now(); this.save(); this.renderDashboard(); this.openModal('notifications'); },
-            getMember(l,u) { if(!l.members[u]) return {balance:0,nickname:u,avatar:null}; return (typeof l.members[u]==='number')?{balance:l.members[u],nickname:u,avatar:null}:l.members[u]; },
-            getAvatarHtml(m,s='sm') { return m.avatar?`<img src="${m.avatar}" class="avatar-circle avatar-${s} border-neonPurple" alt="${m.nickname}">`:`<div class="avatar-circle avatar-${s} bg-slate-700 text-slate-400">${m.nickname.substring(0,2).toUpperCase()}</div>`; },
-            openFullscreenImage(src) { if(!src) return; document.getElementById('fullscreen-image-src').src=src; document.getElementById('modal-fullscreen-image').classList.remove('hidden'); },
-            closeFullscreenImage() { document.getElementById('modal-fullscreen-image').classList.add('hidden'); },
-            viewProfile(u) { const l=this.getCurrentLeague(); const m=this.getMember(l,u); const ac=document.getElementById('view-profile-avatar'); ac.innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i></div>`:`<i class="fa-solid fa-user text-4xl"></i>`; ac.classList[m.avatar?'add':'remove']('cursor-pointer'); ac.onclick=m.avatar?()=>this.openFullscreenImage(m.avatar):null; document.getElementById('view-profile-name').innerText=m.nickname; document.getElementById('view-profile-balance').innerText=m.balance; let w=0,p=0; l.bets.forEach(b=>{ if(b.status!=='resolved')return; if(b.participants.includes(u)){ p++; let iw=this.isUserWinner(b, u); if(iw) w++; } }); document.getElementById('view-profile-wins').innerText=w; document.getElementById('view-profile-played').innerText=p; this.openModal('view-profile'); },
-            renderDashboard() { const l=this.getCurrentLeague(); if(!l) return; if(this.checkDailyBonusVisibility) this.checkDailyBonusVisibility(l); const m=this.getMember(l,this.data.user); document.getElementById('dash-league-name').innerText=l.name; document.getElementById('dash-league-code').innerText=l.code; document.getElementById('dash-balance').innerText=m.balance; document.getElementById('dash-my-nickname').innerText=m.nickname; const ac=document.getElementById('dash-my-avatar'); ac.innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover rounded-full">`:`<span>${m.nickname.substring(0,2).toUpperCase()}</span>`; if(m.avatar) ac.style.border="2px solid #8b5cf6"; const stats = this.getNotificationStats(l); const totalNew = stats.newPending + stats.wins + stats.losses + stats.adminUpdates; const badge = document.getElementById('badge-pending'); const headerBadge = document.getElementById('header-bell-badge'); if(stats.pending > 0) { badge.innerText = stats.pending; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } if(totalNew > 0) { headerBadge.classList.remove('hidden'); } else { headerBadge.classList.add('hidden'); } const con=document.getElementById('bets-container'); con.innerHTML=''; const fil=l.bets.filter(b=>{ const ip=b.participants.includes(this.data.user); const ic=b.creator===this.data.user; const ir=b.status==='resolved'; if(this.data.filter==='active') return !ir && (ip||ic); if(this.data.filter==='pending') { if(ir||ip||ic) return false; if(b.type==='duel') return b.invites&&b.invites.includes(this.data.user); if(b.invites&&b.invites.includes(this.data.user)) return true; if(!b.invites||b.invites.length===0) return true; return false; } if(this.data.filter==='resolved') return ir; return false; }); if(fil.length===0) con.innerHTML=`<div class="text-center text-slate-500 py-10">No hay apuestas aquí.</div>`; fil.forEach(b=>this.renderBetCard(b,con,l)); },
-            renderBetCard(b,c,l) { const me=this.data.user; const ic=b.creator===me; const cd=this.getMember(l,b.creator); let bg='',acts='',inf='',pt=''; let avatarHtml = ''; let metaHtml = ''; if (b.type === 'bank') { avatarHtml = `<div class="avatar-circle avatar-sm bg-gradient-to-br from-amber-400 to-orange-600 text-white border-none shadow-lg flex items-center justify-center"><i class="fa-solid fa-crown text-xs"></i></div>`; metaHtml = `<div class="text-[10px] text-amber-400 mt-0.5 font-bold uppercase tracking-wider">Evento de Liga 🏆</div>`; } else if (b.type === 'admin') { avatarHtml = `<div class="avatar-circle avatar-sm bg-slate-600 text-white border-none shadow-lg flex items-center justify-center"><i class="fa-solid fa-gavel text-xs"></i></div>`; metaHtml = `<div class="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Ajuste de Comisionado ⚖️</div>`; } else { avatarHtml = this.getAvatarHtml(cd,'sm'); const tMap = { duel: 'Duelo', group: 'Bote', custom: 'Porra' }; metaHtml = `<div class="text-xs text-slate-500 mt-0.5">de ${cd.nickname} · ${tMap[b.type]||b.type}</div>`; } if(b.invites&&b.invites.length>0) pt=`<span class="text-[10px] text-slate-400 ml-2 border border-slate-700 px-1 rounded"><i class="fa-solid fa-lock mr-1"></i>${b.type==='duel'?'Duelo':'Privada'}</span>`; if(this.data.filter==='pending') { bg=`<span class="text-gold bg-gold/10 px-2 py-0.5 rounded text-[10px] font-bold">PROPUESTA</span>`; if(b.invites&&b.invites.length>0) inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-1">Invitados: ${b.invites.map(u=>this.getMember(l,u).nickname).join(', ')}</div>`; acts=`<div class="grid grid-cols-2 gap-2 mt-3"><button onclick="app.rejectBet(${b.id})" class="bg-slate-700 py-2 rounded text-xs font-bold text-white">Rechazar</button><button onclick="app.joinBetModal(${b.id})" class="bg-neonGreen text-dark py-2 rounded text-xs font-bold">Aceptar (${b.amount})</button></div>`; } else if(this.data.filter==='active') { bg=`<span class="text-neonGreen bg-neonGreen/10 px-2 py-0.5 rounded text-[10px] font-bold">EN JUEGO</span>`; inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-2"><div class="uppercase font-bold text-slate-600 mb-1">Participantes (${b.participants.length}):</div><div class="flex flex-wrap gap-1">${b.participants.map(u=>`<div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">${this.getAvatarHtml(this.getMember(l,u),'sm')}<span class="text-[10px] text-slate-300">${this.getMember(l,u).nickname}</span></div>`).join('')}</div></div>`; if(ic) { if (b.type === 'bank') { const mySel = b.selections ? b.selections[me] : null; let creatorBetHtml = ''; if (!mySel) { creatorBetHtml = `<button onclick="app.joinBetModal(${b.id})" class="w-full mb-2 bg-slate-700 text-white py-2 rounded text-xs font-bold hover:bg-slate-600 border border-slate-600">Jugar contra la Banca</button>`; } else { creatorBetHtml = `<div class="mb-2 text-xs bg-slate-800 p-2 rounded text-center text-slate-400 border border-slate-700">Tu apuesta: <span class="text-white font-bold">${mySel.option}</span> (${mySel.wager})</div>`; } const totalBets = b.selections ? Object.keys(b.selections).length : 0; let resolveBtn = ''; if(totalBets > 0) { resolveBtn = `<button onclick="app.resolveBetModal(${b.id})" class="w-full border border-neonPurple text-neonPurple py-2 rounded text-xs font-bold hover:bg-neonPurple hover:text-white transition mb-2">Resolver Evento</button>`; } const cancelBtn = `<button onclick="app.cancelBet(${b.id})" class="w-full border border-danger text-danger py-2 rounded text-xs font-bold hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash mr-1"></i> Cancelar Evento</button>`; acts = creatorBetHtml + resolveBtn + cancelBtn; } else { const hasRivals = b.participants.length > 1; if (hasRivals) { acts=`<button onclick="app.resolveBetModal(${b.id})" class="w-full border border-neonPurple text-neonPurple py-2 rounded text-xs font-bold hover:bg-neonPurple hover:text-white transition">Resolver Evento</button>`; } else { acts=`<button onclick="app.cancelBet(${b.id})" class="w-full border border-danger text-danger py-2 rounded text-xs font-bold hover:bg-danger hover:text-white transition mt-3"><i class="fa-solid fa-trash mr-1"></i> Cancelar Apuesta (Sin rivales)</button>`; } } } else { const s=b.selections?b.selections[me]:null; acts=`<div class="mt-3 text-xs bg-slate-800 p-2 rounded text-center text-slate-400">${s?`Tu apuesta: <span class="text-white font-bold">${(typeof s==='object')?s.option:s}</span>`:'Estás dentro'}</div>`; } } else if(b.status==='resolved') { if (b.type === 'admin') { const targetUser = b.participants[0]; const targetMember = this.getMember(l, targetUser); const isPositive = b.winningOption.includes('+'); const colorClass = isPositive ? 'text-neonGreen' : 'text-danger'; acts = `<div class="mt-3 text-xs bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center"><div class="flex items-center gap-2">${this.getAvatarHtml(targetMember, 'sm')}<span class="font-bold text-white">${targetMember.nickname}</span></div><div class="${colorClass} font-mono font-bold text-sm">${b.winningOption}</div></div><div class="text-[9px] text-right text-slate-500 mt-1">${b.timestamp}</div>`; } else { const listHtml = b.participants.map(p => { const m = this.getMember(l, p); let wager = b.amount; let prize = 0; let isWinner = false; let selectionHtml = ''; if (b.type === 'bank') { const record = b.selections ? b.selections[p] : null; if (record) { wager = record.wager; const pickedOption = record.option; const correct = pickedOption === b.winningOption; if (correct) { isWinner = true; prize = Math.floor(record.wager * record.odd); } selectionHtml = `<div class="text-[10px] text-slate-400">Apostó: <span class="${correct?'text-neonGreen':'text-slate-500'} font-bold">${pickedOption} (x${record.odd})</span></div>`; } } else { let winnersList = []; if (b.type === 'custom') { winnersList = Object.entries(b.selections || {}).filter(([u, s]) => s === b.winningOption).map(([u]) => u); } else { if (l.members[b.winner] || typeof l.members[b.winner] === 'object') winnersList = [b.winner]; } const potPrize = winnersList.length > 0 ? Math.floor(b.pot / winnersList.length) : 0; isWinner = winnersList.includes(p); prize = isWinner ? potPrize : 0; if (b.type === 'custom' && b.selections && b.selections[p]) { const picked = b.selections[p]; const correct = picked === b.winningOption; selectionHtml = `<div class="text-[10px] text-slate-400">Eligió: <span class="${correct?'text-neonGreen':'text-slate-500'} font-bold">${picked}</span></div>`; } } return `<div class="flex justify-between items-center bg-slate-800/50 p-2 rounded mb-1 border border-slate-700/50"><div class="flex items-center gap-2">${this.getAvatarHtml(m, 'sm')}<div><div class="text-xs font-bold ${isWinner ? 'text-neonGreen' : 'text-white'}">${m.nickname}</div>${selectionHtml}</div></div><div class="text-right text-[10px]"><div class="text-slate-400">Entrada: ${wager}</div><div class="${isWinner ? 'text-neonGreen font-bold' : 'text-slate-600'}">Ganó: ${prize}</div></div></div>`; }).join(''); acts=`<div class="mt-3 pt-3 border-t border-slate-700/50"><div class="flex justify-between items-center mb-2"><span class="text-xs text-slate-400 font-bold uppercase">Resultado:</span><span class="text-neonGreen font-bold text-sm bg-slate-800 px-3 py-1 rounded border border-neonGreen/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]">${b.winningOption || b.winner}</span></div><details class="group"><summary class="list-none cursor-pointer text-xs text-center text-slate-500 hover:text-white transition bg-slate-800/50 p-2 rounded flex items-center justify-center gap-2 select-none font-bold uppercase tracking-wider"><span>Ver Detalles</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition-transform"></i></summary><div class="mt-3 space-y-3 bg-slate-800/50 p-3 rounded text-xs text-slate-300 border border-slate-700"><div class="grid grid-cols-2 gap-2"><div class="bg-dark p-2 rounded text-center border border-slate-700"><div class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">${b.type === 'bank' ? 'Volumen Total' : 'Bote Total'}</div><div class="text-neonGreen font-mono font-bold text-lg">${b.pot}</div></div><div class="bg-dark p-2 rounded text-center border border-slate-700"><div class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Fecha</div><div class="text-white font-mono text-sm pt-1">${b.timestamp || '-'}</div></div></div><div><div class="text-[10px] text-slate-500 uppercase font-bold mb-2 border-b border-slate-600 pb-1">Desglose</div><div class="flex flex-col gap-1">${listHtml}</div></div></div></details></div>`; } } c.innerHTML+=`<div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg relative"><div class="flex justify-between items-start"><div class="flex gap-3"><div class="pt-1">${avatarHtml}</div><div><h4 class="font-bold text-white text-sm">${b.title} ${pt}</h4>${metaHtml}</div></div><div class="text-right"><div class="text-neonGreen font-mono font-bold">${b.pot}</div><div class="mt-1">${bg}</div></div></div>${(b.type==='custom'||b.type==='bank')&&b.status!=='resolved'?`<div class="flex gap-1 mt-2 overflow-x-auto opacity-60 ml-10">${b.options.map(o=>`<span class="text-[10px] border border-slate-600 px-2 rounded-full whitespace-nowrap">${o}</span>`).join('')}</div>`:''} <div class="ml-0 sm:ml-10">${inf}${acts}</div></div>`; },
-            showConfirm(msg, cb) { document.getElementById('confirm-msg').innerText = msg; this.pendingCallback = cb; this.openModal('confirm'); },
-            confirmYes() { if (this.pendingCallback) this.pendingCallback(); this.closeModals(); this.pendingCallback = null; },
-            cancelBet(id) { const l = this.getCurrentLeague(); const idx = l.bets.findIndex(b => b.id === id); if (idx === -1) return; const b = l.bets[idx]; if (b.type === 'bank') { if (b.selections) { Object.keys(b.selections).forEach(u => { if (l.members[u]) l.members[u].balance += b.selections[u].wager; }); } } else { b.participants.forEach(p => { if (l.members[p]) l.members[p].balance += b.amount; }); } l.bets.splice(idx, 1); this.save(); this.renderDashboard(); this.toast("Apuesta cancelada y reembolsada"); },
-            openProfileModal() { const l=this.getCurrentLeague(); const m=this.getMember(l,this.data.user); document.getElementById('profile-nickname').value=m.nickname; document.getElementById('profile-preview').innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-user text-4xl"></i>`; this.data.tempAvatar=m.avatar; this.openModal('profile'); },
-            handleImageUpload(i) { if(i.files&&i.files[0]){ const r=new FileReader(); r.onload=(e)=>{this.data.tempAvatar=e.target.result; document.getElementById('profile-preview').innerHTML=`<img src="${e.target.result}" class="w-full h-full object-cover">`;}; r.readAsDataURL(i.files[0]); } },
-            saveProfile() { const l=this.getCurrentLeague(); const n=document.getElementById('profile-nickname').value.trim()||this.data.user; if(typeof l.members[this.data.user]==='number') l.members[this.data.user]={balance:l.members[this.data.user],nickname:n,avatar:this.data.tempAvatar}; else {l.members[this.data.user].nickname=n; l.members[this.data.user].avatar=this.data.tempAvatar;} this.save(); this.closeModals(); this.renderDashboard(); this.toast("Perfil actualizado"); },
-            toggleAuthMode() { this.authMode = this.authMode === 'login' ? 'register' : 'login'; if(this.authMode === 'login') { document.getElementById('auth-title').innerText = "Iniciar Sesión"; document.getElementById('btn-auth-action').innerText = "ENTRAR"; document.getElementById('auth-toggle-text').innerText = "¿No tienes cuenta?"; document.getElementById('auth-toggle-btn').innerText = "Regístrate aquí"; document.getElementById('btn-auth-action').classList.remove('bg-neonGreen', 'text-dark'); document.getElementById('btn-auth-action').classList.add('bg-neonPurple', 'text-white'); } else { document.getElementById('auth-title').innerText = "Crear Cuenta Nueva"; document.getElementById('btn-auth-action').innerText = "CREAR CUENTA"; document.getElementById('auth-toggle-text').innerText = "¿Ya tienes cuenta?"; document.getElementById('auth-toggle-btn').innerText = "Inicia sesión"; document.getElementById('btn-auth-action').classList.remove('bg-neonPurple', 'text-white'); document.getElementById('btn-auth-action').classList.add('bg-neonGreen', 'text-dark'); } },
+            logout() { auth.signOut().then(() => location.reload()); },
+            toggleAuthMode() { 
+                this.authMode = this.authMode === 'login' ? 'register' : 'login';
+                document.getElementById('auth-title').innerText = this.authMode==='login'?"Iniciar Sesión":"Crear Cuenta";
+                document.getElementById('btn-auth-action').innerText = this.authMode==='login'?"ENTRAR":"CREAR";
+                document.getElementById('auth-toggle-text').innerText = this.authMode==='login'?"¿No tienes cuenta?":"¿Ya tienes?";
+                document.getElementById('auth-toggle-btn').innerText = this.authMode==='login'?"Regístrate":"Entra";
+            },
+
+            // --- LIGAS ---
+            createLeague() { 
+                const n = document.getElementById('new-league-name').value.trim();
+                if(!n) return this.toast("Pon nombre","error");
+                const l = {
+                    id: Date.now(), 
+                    name: n, 
+                    code: Math.random().toString(36).substring(2,8).toUpperCase(), 
+                    creator: this.data.user,
+                    members: {}, 
+                    bets: []
+                };
+                l.members[this.data.user] = { balance: 1000, nickname: this.data.user, avatar: null };
+                
+                // GUARDAR EN CLOUD
+                this.saveLeagueToCloud(l);
+                this.closeModals();
+                this.toast("Liga creada en la nube");
+            },
+            joinLeague() { 
+                const c = document.getElementById('join-league-code').value.trim().toUpperCase();
+                // Buscar en la lista local (que viene de la nube)
+                const l = this.data.leagues.find(x => x.code === c);
+                if(!l) return this.toast("No existe","error");
+                if(l.members[this.data.user]) return this.toast("Ya estás dentro","error");
+                
+                l.members[this.data.user] = { balance: 1000, nickname: this.data.user, avatar: null };
+                this.saveLeagueToCloud(l); // ACTUALIZAR EN CLOUD
+                this.closeModals();
+                this.toast("Unido correctamente");
+            },
+
+            // --- APUESTAS (AHORA ACTUALIZAN LA NUBE) ---
+            createBet() { 
+                const l=this.getCurrentLeague(); 
+                const t=document.getElementById('create-type').value; 
+                const ti=document.getElementById('create-title').value.trim(); 
+                let a=t==='bank'?0:parseInt(document.getElementById('create-amount').value); 
+                if(!ti) return this.toast("Falta título","error"); 
+                
+                let o=[], od={}; 
+                if(t==='custom'||t==='bank'){ 
+                    for(let r of document.getElementById('options-list').children){ 
+                        const n=r.querySelector('.option-name').value.trim(); 
+                        const v=r.querySelector('.option-odd').value; 
+                        if(n){ o.push(n); if(t==='bank') od[n]=parseFloat(v)||1.5; } 
+                    } 
+                    if(o.length<2) return this.toast("Mínimo 2 opciones","error"); 
+                }
+                
+                if(t!=='bank'){ 
+                    if(l.members[this.data.user].balance < a) return this.toast("Sin saldo","error");
+                    l.members[this.data.user].balance -= a; 
+                }
+
+                const b = {
+                    id: Date.now(), type:t, creator:this.data.user, title:ti, amount:a, pot:t==='bank'?0:a,
+                    participants:t==='bank'?[]:[this.data.user], status:'active', options:o, odds:od, selections:{}, timestamp:new Date().toLocaleDateString()
+                };
+                l.bets.unshift(b);
+                
+                this.saveLeagueToCloud(l); // GUARDAR
+                this.closeModals();
+                this.toast("Apuesta publicada");
+            },
+            
+            // --- UPDATERS ---
+            updateBet(action, betId, payload) {
+                const l = this.getCurrentLeague();
+                const b = l.bets.find(x => x.id === betId);
+                if(!b) return;
+
+                if(action === 'join') {
+                    const cost = b.type==='bank' ? payload.amount : b.amount;
+                    if(l.members[this.data.user].balance < cost) return this.toast("Sin saldo","error");
+                    l.members[this.data.user].balance -= cost;
+                    b.pot += cost;
+                    if(!b.participants.includes(this.data.user)) b.participants.push(this.data.user);
+                    
+                    if(b.type==='bank') b.selections[this.data.user] = {option: payload.selection, wager: cost, odd: payload.odd};
+                    else b.selections[this.data.user] = payload.selection;
+                }
+                else if(action === 'resolve') {
+                    b.status = 'resolved'; b.winner = payload.winner; b.winningOption = payload.winner; b.resolvedAt = Date.now();
+                    // Logica pagos
+                    if(b.type==='bank') {
+                        Object.keys(b.selections).forEach(u=>{
+                            const r=b.selections[u];
+                            if(r && r.option===payload.winner && l.members[u]) l.members[u].balance += Math.floor(r.wager*r.odd);
+                        });
+                    } else {
+                        // Logica standard
+                        let winners = [];
+                        if(b.type==='custom') winners = Object.entries(b.selections).filter(([u,s])=>s===payload.winner).map(([u])=>u);
+                        else if(l.members[payload.winner]) winners = [payload.winner];
+                        
+                        if(winners.length > 0) {
+                            const prize = Math.floor(b.pot / winners.length);
+                            winners.forEach(w => { if(l.members[w]) l.members[w].balance += prize; });
+                        } else {
+                            l.members[b.creator].balance += b.pot; // Devolver
+                        }
+                    }
+                }
+                else if(action === 'cancel') {
+                    // Devolver dinero
+                     if (b.type === 'bank') {
+                        if (b.selections) Object.keys(b.selections).forEach(u => { if (l.members[u]) l.members[u].balance += b.selections[u].wager; });
+                    } else {
+                        b.participants.forEach(p => { if (l.members[p]) l.members[p].balance += b.amount; });
+                    }
+                    l.bets = l.bets.filter(x => x.id !== betId);
+                }
+
+                this.saveLeagueToCloud(l); // GUARDAR
+                this.closeModals();
+                this.toast("Actualizado");
+            },
+
+            // --- UI HELPERS ---
             showLeaguesView() { document.querySelectorAll('.app-view').forEach(e=>e.classList.add('hidden')); document.getElementById('view-leagues').classList.remove('hidden'); document.getElementById('view-leagues').classList.add('flex'); document.getElementById('league-username').innerText=this.data.user; this.renderLeaguesList(); },
-            exitLeague() { this.data.currentLeagueId=null; this.showLeaguesView(); },
-            createLeague() { const n=document.getElementById('new-league-name').value.trim(); const sb=parseInt(document.getElementById('conf-start-balance').value)||1000; if(!n) return this.toast("Falta nombre","error"); const c=Math.random().toString(36).substring(2,8).toUpperCase(); const l={id:Date.now(),name:n,code:c,creator:this.data.user,settings:{startBalance:sb,dailyBonus:document.getElementById('check-daily-bonus').checked?(parseInt(document.getElementById('conf-daily-bonus').value)||0):0,allowBank:document.getElementById('check-allow-bank').checked},members:{},bets:[]}; l.members[this.data.user]={balance:sb,nickname:this.data.user,avatar:null,lastBonusDate:0}; this.data.leagues.push(l); this.save(); this.closeModals(); document.getElementById('new-league-name').value=''; this.toast("Liga creada"); this.renderLeaguesList(); },
-            joinLeague() { const c=document.getElementById('join-league-code').value.trim().toUpperCase(); const l=this.data.leagues.find(x=>x.code===c); if(!l) return this.toast("No encontrada","error"); if(l.members[this.data.user]) return this.toast("Ya estás dentro","error"); l.members[this.data.user]={balance:l.settings.startBalance||1000,nickname:this.data.user,avatar:null,lastLogin:Date.now()}; this.save(); this.closeModals(); document.getElementById('join-league-code').value=''; this.toast("Unido"); this.renderLeaguesList(); },
             selectLeague(id) { this.data.currentLeagueId=id; document.querySelectorAll('.app-view').forEach(e=>e.classList.add('hidden')); document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-dashboard').classList.add('flex'); this.renderDashboard(); },
             getCurrentLeague() { return this.data.leagues.find(l=>l.id===this.data.currentLeagueId); },
-            showRanking() { const l = this.getCurrentLeague(); const el = document.getElementById('ranking-list'); el.innerHTML = ''; Object.keys(l.members).sort((a,b) => this.getMember(l,b).balance - this.getMember(l,a).balance).forEach((k,i) => { const m = this.getMember(l,k); const me = k === this.data.user; const isAdmin = k === l.creator; const adminBadge = isAdmin ? `<i class="fa-solid fa-crown text-gold ml-2 text-[10px]" title="Administrador"></i>` : ''; el.innerHTML += `<div class="flex justify-between items-center p-3 rounded-lg ${me?'bg-neonPurple/20 border border-neonPurple':'bg-slate-800'} cursor-pointer mb-2" onclick="app.viewProfile('${k}')"><div class="flex items-center gap-3"><span class="font-bold text-slate-500 w-6 text-center">${i+1}</span>${this.getAvatarHtml(m,'sm')}<span class="font-bold text-white text-sm flex items-center">${m.nickname}${adminBadge}</span></div><span class="font-mono text-neonGreen font-bold">${m.balance}</span></div>`; }); this.openModal('ranking'); },
-            filterBets(t) { this.data.filter=t; document.querySelectorAll('.filter-btn').forEach(b=>{ b.className="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all"; if(b.innerText.toLowerCase().includes(t==='active'?'activas':(t==='pending'?'pendientes':'historial'))) {b.classList.remove('text-slate-400'); b.classList.add('bg-neonPurple','text-white');} if(b.innerText.includes('Pendientes')){ const bg=document.getElementById('badge-pending'); if(!bg.classList.contains('hidden')) b.appendChild(bg); } }); this.renderDashboard(); },
+            renderLeaguesList() {
+                const el = document.getElementById('leagues-list'); el.innerHTML = '';
+                const my = this.data.leagues.filter(x => x.members[this.data.user]);
+                if (my.length === 0) { el.innerHTML = `<div class="text-center text-slate-500 py-4">No estás en ninguna liga.</div>`; return; }
+                my.forEach(x => {
+                    const m = x.members[this.data.user] || {balance:0};
+                    el.innerHTML += `<div class="bg-card p-4 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer mb-3" onclick="app.selectLeague(${x.id})"><div><h4 class="font-bold text-white text-lg">${x.name}</h4><p class="text-xs text-slate-400">Código: ${x.code}</p></div><div class="text-right"><div class="text-neonGreen font-mono font-bold text-xl">${m.balance}</div></div></div>`;
+                });
+            },
+            renderDashboard() {
+                const l=this.getCurrentLeague(); if(!l) return;
+                const m=l.members[this.data.user];
+                document.getElementById('dash-league-name').innerText=l.name; document.getElementById('dash-league-code').innerText=l.code;
+                document.getElementById('dash-balance').innerText=m.balance; document.getElementById('dash-my-nickname').innerText=m.nickname;
+                document.getElementById('dash-my-avatar').innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover rounded-full">`:`<span>${m.nickname.substring(0,2).toUpperCase()}</span>`;
+                
+                const con=document.getElementById('bets-container'); con.innerHTML='';
+                const fil=l.bets.filter(b=>{
+                    const ip=b.participants.includes(this.data.user); const ic=b.creator===this.data.user; const ir=b.status==='resolved';
+                    if(this.data.filter==='active') return !ir && (ip||ic);
+                    if(this.data.filter==='pending') return !ir && !ip && !ic; 
+                    if(this.data.filter==='resolved') return ir;
+                });
+                if(fil.length===0) con.innerHTML=`<div class="text-center text-slate-500 py-10">Nada por aquí.</div>`;
+                fil.forEach(b=>this.renderBetCard(b,con,l));
+            },
+            // RENDER CARD SIMPLIFICADO
+            renderBetCard(b,c,l) {
+                const me=this.data.user; 
+                let acts = '';
+                if(this.data.filter==='active') {
+                    if(b.creator===me) acts=`<button onclick="app.resolveBetModal(${b.id})" class="w-full border border-neonPurple text-neonPurple py-2 rounded text-xs font-bold mt-2">Resolver</button><button onclick="app.updateBet('cancel',${b.id})" class="w-full text-danger text-xs mt-2">Cancelar</button>`;
+                    else acts=`<div class="text-center text-xs text-slate-500 mt-2">Estás participando</div>`;
+                } else if(this.data.filter==='pending') {
+                    acts=`<button onclick="app.joinBetModal(${b.id})" class="w-full bg-neonGreen text-dark py-2 rounded text-xs font-bold mt-2">Entrar (${b.amount})</button>`;
+                } else {
+                    acts=`<div class="text-center text-neonGreen font-bold text-xs mt-2">Ganador: ${b.winningOption}</div>`;
+                }
+                c.innerHTML+=`<div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg"><div class="flex justify-between"><div><h4 class="font-bold text-white text-sm">${b.title}</h4><p class="text-xs text-slate-500">${b.type}</p></div><div class="text-neonGreen font-bold">${b.pot}</div></div>${acts}</div>`;
+            },
+            
+            // --- MODALES Y AUX ---
+            joinBetModal(id) { 
+                const l=this.getCurrentLeague(); const b=l.bets.find(x=>x.id===id); 
+                document.getElementById('modal-action').classList.remove('hidden'); document.getElementById('action-title').innerText="Unirse"; 
+                const lst=document.getElementById('action-dynamic-list'); lst.innerHTML=''; let s=null;
+                if(b.type==='bank') {
+                    document.getElementById('action-bet-input-container').classList.remove('hidden');
+                    document.getElementById('action-content').innerText = "Elige opción y cantidad:";
+                } else {
+                    document.getElementById('action-bet-input-container').classList.add('hidden');
+                    document.getElementById('action-content').innerText = "Entrada: "+b.amount;
+                }
+                (b.options||[]).forEach(o=>{ 
+                    const d=document.createElement('div'); d.className="bg-slate-700 p-3 rounded mb-1 cursor-pointer hover:bg-slate-600"; 
+                    d.innerText=b.type==='bank'?`${o} (x${b.odds[o]})`:o; 
+                    d.onclick=()=>{ Array.from(lst.children).forEach(x=>x.classList.remove('border','border-neonGreen')); d.classList.add('border','border-neonGreen'); s=o; }; 
+                    lst.appendChild(d); 
+                });
+                document.getElementById('action-confirm-btn').onclick=()=>{ 
+                    const amt=b.type==='bank'?parseInt(document.getElementById('action-bet-amount').value):b.amount;
+                    if(!s) return this.toast("Elige opción","error");
+                    this.updateBet('join', id, {selection:s, amount:amt, odd:(b.odds?b.odds[s]:0)}); 
+                };
+            },
+            resolveBetModal(id) {
+                const l=this.getCurrentLeague(); const b=l.bets.find(x=>x.id===id);
+                document.getElementById('modal-action').classList.remove('hidden'); document.getElementById('action-title').innerText="Resolver"; 
+                document.getElementById('action-bet-input-container').classList.add('hidden');
+                const lst=document.getElementById('action-dynamic-list'); lst.innerHTML='';
+                const opts = b.type==='duel'||b.type==='group' ? b.participants : b.options;
+                opts.forEach(o=>{
+                    const btn=document.createElement('button'); btn.className="w-full bg-slate-700 p-2 rounded mb-1 text-left hover:bg-slate-600"; btn.innerText=o;
+                    btn.onclick=()=>{ this.updateBet('resolve', id, {winner:o}); };
+                    lst.appendChild(btn);
+                });
+            },
+            saveProfile() {
+                const l=this.getCurrentLeague(); 
+                l.members[this.data.user].nickname = document.getElementById('profile-nickname').value;
+                l.members[this.data.user].avatar = this.data.tempAvatar;
+                this.saveLeagueToCloud(l); this.closeModals();
+            },
             openModal(id) { document.getElementById(`modal-${id}`).classList.remove('hidden'); },
             closeModals() { document.querySelectorAll('[id^="modal-"]').forEach(el=>el.classList.add('hidden')); },
-            toast(m,t='s') { const el=document.getElementById('toast'); el.querySelector('span').innerText=m; el.querySelector('i').className=t==='error'?'fa-solid fa-circle-xmark text-danger':'fa-solid fa-circle-check text-neonGreen'; el.classList.remove('opacity-0'); setTimeout(()=>el.classList.add('opacity-0'),3000); },
-            resetData() { if(confirm("¿Seguro?")) { localStorage.removeItem('betfriends_v2_data'); location.reload(); } },
-            toggleCreateFields() { const t=document.getElementById('create-type').value; const bPub=document.getElementById('btn-mode-public'); const bPriv=document.getElementById('btn-mode-private'); document.getElementById('field-options').style.display=(t==='custom'||t==='bank')?'block':'none'; document.querySelectorAll('.option-odd').forEach(e=>e.classList[t==='bank'?'remove':'add']('hidden')); document.getElementById('create-amount').parentElement.style.display=t==='bank'?'none':'block'; bPub.disabled=false; bPub.classList.remove('opacity-50','cursor-not-allowed'); bPriv.disabled=false; bPriv.classList.remove('opacity-50','cursor-not-allowed'); if(t==='bank') { this.setInviteMode('public'); bPriv.disabled=true; bPriv.classList.add('opacity-50','cursor-not-allowed'); } else if(t==='duel') { this.setInviteMode('private'); bPub.disabled=true; bPub.classList.add('opacity-50','cursor-not-allowed'); } else { this.setInviteMode(this.data.inviteMode); } },
-            setInviteMode(m) { this.data.inviteMode=m; document.getElementById('btn-mode-public').className=`flex-1 py-2 text-xs font-bold rounded ${m==='public'?'bg-neonPurple text-white':'text-slate-400 hover:text-white'} transition`; document.getElementById('btn-mode-private').className=`flex-1 py-2 text-xs font-bold rounded ${m==='private'?'bg-neonPurple text-white':'text-slate-400 hover:text-white'} transition`; document.getElementById('invite-list-container').classList[m==='private'?'remove':'add']('hidden'); },
-            addOptionInput() { const c=document.getElementById('options-list'); const d=document.createElement('div'); d.className="flex gap-2 mb-2"; d.innerHTML=`<input type="text" class="option-name neon-input flex-1 p-2 rounded text-sm" placeholder="Opción"><input type="number" class="option-odd neon-input w-20 p-2 rounded text-sm text-center border-neonPurple text-neonPurple font-bold ${document.getElementById('create-type').value!=='bank'?'hidden':''}" placeholder="x1.5" step="0.1">`; c.appendChild(d); },
-            openCreateBetModal() { const l=this.getCurrentLeague(); document.getElementById('opt-bank').classList[(l.creator===this.data.user&&l.settings.allowBank)?'remove':'add']('hidden'); document.getElementById('create-type').value='duel'; this.renderInviteList(l); this.toggleCreateFields(); this.openModal('create-bet'); },
-            renderInviteList(l) { const checkList = document.getElementById('invite-checklist'); checkList.innerHTML = ''; this.data.selectedInvites = []; Object.keys(l.members).forEach(key => { if (key !== this.data.user) { const mem = this.getMember(l, key); const div = document.createElement('div'); div.className = "invite-check border border-slate-600 rounded p-2 flex items-center gap-2 cursor-pointer hover:bg-slate-700 transition select-none"; div.innerHTML = `${this.getAvatarHtml(mem, 'sm')} <span class="text-xs font-bold truncate">${mem.nickname}</span>`; div.onclick = () => { if (div.classList.contains('selected')) { div.classList.remove('selected'); this.data.selectedInvites = this.data.selectedInvites.filter(u => u !== key); } else { div.classList.add('selected'); this.data.selectedInvites.push(key); } }; checkList.appendChild(div); } }); },
-            createBet() { const l=this.getCurrentLeague(); const t=document.getElementById('create-type').value; const ti=document.getElementById('create-title').value.trim(); let a=t==='bank'?0:parseInt(document.getElementById('create-amount').value); const me=this.data.user; if(!ti) return this.toast("Falta título","error"); if (this.data.inviteMode === 'private') { if (t === 'group' && this.data.selectedInvites.length < 2) { return this.toast("Mínimo 2 invitados para Bote", "error"); } if (this.data.selectedInvites.length < 1) { return this.toast("Selecciona al menos 1 invitado", "error"); } } let o=[], od={}; if(t==='custom'||t==='bank'){ for(let r of document.getElementById('options-list').children){ const n=r.querySelector('.option-name').value.trim(); const v=r.querySelector('.option-odd').value; if(n){ o.push(n); if(t==='bank') od[n]=parseFloat(v)||1.5; } } if(o.length<2) return this.toast("Mínimo 2 opciones","error"); } const b={id:Date.now(),type:t,creator:me,title:ti,amount:a,pot:0,participants:[],invites:t==='bank'?[]:(this.data.inviteMode==='private'?this.data.selectedInvites:[]),status:'active',options:o,odds:od,selections:{},timestamp:new Date().toLocaleDateString()}; if(t!=='bank'){ if(l.members[me].balance<a) return this.toast("Saldo bajo","error"); l.members[me].balance-=a; b.pot=a; b.participants.push(me); } l.bets.unshift(b); this.save(); this.closeModals(); this.renderDashboard(); this.toast("Creado"); this.checkAndNotify(); },
-            joinBetModal(id) { const l=this.getCurrentLeague(); const b=l.bets.find(x=>x.id===id); document.getElementById('modal-action').classList.remove('hidden'); document.getElementById('action-title').innerText=b.type==='bank'?"Apostar":"Unirse"; document.getElementById('action-content').innerText=b.type==='bank'?"Elige y pon cantidad:":"Entrada: "+b.amount; const lst=document.getElementById('action-dynamic-list'); lst.innerHTML=''; let s=null, odd=0; const ic=document.getElementById('action-bet-input-container'); const i=document.getElementById('action-bet-amount'); const p=document.getElementById('action-potential-win'); if(b.type==='bank'){ ic.classList.remove('hidden'); i.value=''; i.oninput=()=>{ const v=parseInt(i.value)||0; if(s) p.innerText="Ganarás: "+Math.floor(v*odd); }; } else { ic.classList.add('hidden'); } (b.type==='custom'||b.type==='bank'?b.options:[]).forEach(opt=>{ const d=document.createElement('div'); d.className="bg-slate-700 p-3 rounded cursor-pointer hover:bg-slate-600 border border-transparent flex justify-between mb-1"; d.innerHTML=b.type==='bank'?`${opt} <span class="text-neonPurple font-bold">x${b.odds[opt]}</span>`:opt; d.onclick=()=>{ Array.from(lst.children).forEach(x=>x.classList.remove('border-neonGreen','text-neonGreen')); d.classList.add('border-neonGreen','text-neonGreen'); s=opt; if(b.type==='bank'){ odd=b.odds[opt]; i.oninput(); } }; lst.appendChild(d); }); document.getElementById('action-confirm-btn').onclick=()=>{ const c=b.type==='bank'?parseInt(i.value):b.amount; if(!c||c<=0) return this.toast("Cantidad mal","error"); if(l.members[this.data.user].balance<c) return this.toast("Sin saldo","error"); if((b.type==='custom'||b.type==='bank')&&!s) return this.toast("Elige opción","error"); l.members[this.data.user].balance-=c; b.pot+=c; if(b.type==='bank') { if(!b.selections) b.selections={}; b.selections[this.data.user]={option:s,wager:c,odd:odd}; if(!b.participants.includes(this.data.user)) b.participants.push(this.data.user); } else { if(!b.selections) b.selections={}; b.selections[this.data.user]=s; if(!b.participants.includes(this.data.user)) b.participants.push(this.data.user); } this.save(); this.closeModals(); this.renderDashboard(); this.toast("Hecho"); }; },
-            resolveBetModal(id) { const l=this.getCurrentLeague(); const b=l.bets.find(x=>x.id===id); document.getElementById('modal-action').classList.remove('hidden'); document.getElementById('action-title').innerText="Resolver"; document.getElementById('action-content').innerText="¿Ganador?"; document.getElementById('action-bet-input-container').classList.add('hidden'); const lst=document.getElementById('action-dynamic-list'); lst.innerHTML=''; let w=null; const ops=(b.type==='bank'||b.type==='custom')?b.options:b.participants; ops.forEach(c=>{ const btn=document.createElement('button'); btn.className="w-full text-left bg-slate-700 p-3 rounded mb-2 hover:bg-slate-600 font-bold"; btn.innerText=c; btn.onclick=()=>{ w=c; lst.innerHTML=`<div class="text-center py-4 text-neonGreen text-xl font-bold border border-neonGreen rounded bg-slate-800">Ganador: ${c}</div>`; }; lst.appendChild(btn); }); document.getElementById('action-confirm-btn').onclick=()=>{ if(!w) return; b.winningOption=w; b.status='resolved'; b.winner=w; b.resolvedAt = Date.now(); if(b.type==='bank'){ Object.keys(b.selections).forEach(u=>{ const r=b.selections[u]; if(r&&r.option===w && l.members[u]) l.members[u].balance+=Math.floor(r.wager*r.odd); }); } else { let ws=[]; if(b.type==='custom') ws=Object.entries(b.selections||{}).filter(([u,s])=>s===w).map(([u])=>u); else ws=[w]; if(ws.length>0){ const p=Math.floor(b.pot/ws.length); ws.forEach(x=>{ if(l.members[x]) l.members[x].balance+=p; }); } else { l.members[b.creator].balance+=b.pot; b.winner="Nadie (Devuelto)"; } } this.save(); this.closeModals(); this.renderDashboard(); this.toast("Resuelto"); }; },
-            rejectBet(id) { const l=this.getCurrentLeague(); const b=l.bets.find(x=>x.id===id); if(!b.rejectedBy) b.rejectedBy=[]; b.rejectedBy.push(this.data.user); this.save(); this.renderDashboard(); this.toast("Ocultada"); },
-            checkDailyBonusVisibility(l) { const b=document.getElementById('btn-header-daily'); if(!l.settings?.dailyBonus){ b.classList.add('hidden'); return; } b.classList.remove('hidden'); b.classList.add('flex'); const m=l.members[this.data.user]; const n=new Date(); const la=new Date(m.lastBonusDate||0); if(la.toDateString()!==n.toDateString()){ b.className="flex px-3 py-1.5 rounded-full text-xs font-bold items-center gap-1 transition active:scale-95 border border-white/20 bg-gradient-to-r from-pink-500 to-rose-500 text-white animate-pulse shadow-[0_0_10px_rgba(236,72,153,0.5)] cursor-pointer"; b.innerHTML=`<i class="fa-solid fa-gift animate-bounce"></i> <span>RECLAMAR</span>`; b.onclick=()=>this.claimDailyBonus(); } else { b.className="flex px-3 py-1.5 rounded-full text-[10px] font-bold items-center gap-2 transition border border-slate-700 bg-slate-800 text-slate-500 cursor-not-allowed opacity-70"; b.onclick=null; const t=new Date(); t.setHours(24,0,0,0); const d=t-n; b.innerHTML=`<i class="fa-solid fa-check text-neonGreen"></i> <span>${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m</span>`; } },
-            claimDailyBonus() { const l=this.getCurrentLeague(); l.members[this.data.user].balance+=l.settings.dailyBonus; l.members[this.data.user].lastBonusDate=Date.now(); this.save(); this.toast(`¡+${l.settings.dailyBonus} fichas!`); this.checkDailyBonusVisibility(l); this.renderDashboard(); },
-            openLeagueSettings() { const l = this.getCurrentLeague(); const isCreator = l.creator === this.data.user; document.getElementById('settings-creator-options').classList.add('hidden'); document.getElementById('settings-member-options').classList.add('hidden'); document.getElementById('settings-transfer-list').classList.add('hidden'); if (isCreator) { document.getElementById('settings-creator-options').classList.remove('hidden'); } else { document.getElementById('settings-member-options').classList.remove('hidden'); } this.openModal('league-settings'); },
-            openAdminPanel() { const l = this.getCurrentLeague(); const list = document.getElementById('admin-members-list'); list.innerHTML = ''; Object.keys(l.members).sort().forEach(u => { const m = this.getMember(l, u); const item = document.createElement('div'); item.className = "flex justify-between items-center p-3 rounded bg-slate-800 hover:bg-slate-700 cursor-pointer border border-slate-700 transition"; item.innerHTML = `<div class="flex items-center gap-3">${this.getAvatarHtml(m, 'sm')}<div><p class="text-sm font-bold text-white">${m.nickname}</p><p class="text-[10px] text-neonGreen font-mono">Saldo: ${m.balance}</p></div></div><i class="fa-solid fa-pen-to-square text-slate-400"></i>`; item.onclick = () => this.openAdminEditUser(u); list.appendChild(item); }); this.openModal('admin-panel'); },
-            openAdminEditUser(u) { this.data.editingUser = u; document.getElementById('admin-edit-username').innerText = "@" + u; document.getElementById('admin-balance-input').value = ''; document.getElementById('admin-pass-input').value = ''; this.openModal('admin-edit-user'); },
-            adminUpdateBalance() { const amount = parseInt(document.getElementById('admin-balance-input').value); const user = this.data.editingUser; const l = this.getCurrentLeague(); if (!amount || amount === 0) return this.toast("Introduce una cantidad válida", "error"); if (l.members[user]) { l.members[user].balance += amount; if(l.members[user].balance < 0) l.members[user].balance = 0; const adminLog = { id: Date.now(), type: 'admin', creator: this.data.user, title: `Ajuste de Saldo: ${this.getMember(l, user).nickname}`, amount: Math.abs(amount), pot: 0, participants: [user], invites: [], status: 'resolved', resolvedAt: Date.now(), options: [], odds: {}, selections: {}, timestamp: new Date().toLocaleDateString(), winningOption: amount > 0 ? `+${amount} Fichas` : `${amount} Fichas` }; l.bets.unshift(adminLog); this.save(); this.toast(`Saldo actualizado: ${amount > 0 ? '+' : ''}${amount}`); this.renderDashboard(); this.openAdminPanel(); document.getElementById('modal-admin-edit-user').classList.add('hidden'); } },
-            adminResetPassword() { const newPass = document.getElementById('admin-pass-input').value.trim(); const user = this.data.editingUser; if (!newPass) return this.toast("La contraseña no puede estar vacía", "error"); if (!this.data.accounts) this.data.accounts = {}; this.data.accounts[user] = newPass; this.save(); this.toast(`Contraseña de ${user} cambiada`); document.getElementById('modal-admin-edit-user').classList.add('hidden'); },
-            adminKickUser() { const user = this.data.editingUser; if (user === this.data.user) return this.toast("No puedes expulsarte a ti mismo", "error"); this.showConfirm(`¿Expulsar a ${user} de la liga? Perderá sus fichas.`, () => { const l = this.getCurrentLeague(); delete l.members[user]; this.save(); this.toast(`${user} expulsado`); this.openAdminPanel(); document.getElementById('modal-admin-edit-user').classList.add('hidden'); }); },
-            deleteLeague() { this.showConfirm("¿Estás seguro? Se borrará la liga y todos sus datos para TODOS los participantes de forma irreversible.", () => { const idx = this.data.leagues.findIndex(l => l.id === this.data.currentLeagueId); if(idx > -1) { this.data.leagues.splice(idx, 1); this.save(); this.exitLeague(); this.toast("Liga eliminada"); } }); },
-            leaveLeague() { this.showConfirm("¿Seguro que quieres salir de esta liga? Perderás tus fichas acumuladas.", () => { const l = this.getCurrentLeague(); delete l.members[this.data.user]; this.save(); this.exitLeague(); this.toast("Has abandonado la liga"); }); },
-            showTransferList() { const l = this.getCurrentLeague(); const list = document.getElementById('transfer-members-container'); list.innerHTML = ''; const members = Object.keys(l.members).filter(u => u !== this.data.user); if (members.length === 0) { this.toast("No hay otros miembros para ceder el liderazgo.", "error"); return; } document.getElementById('settings-creator-options').classList.add('hidden'); document.getElementById('settings-transfer-list').classList.remove('hidden'); members.forEach(m => { const memData = this.getMember(l, m); const btn = document.createElement('button'); btn.className = "w-full flex items-center gap-3 p-2 rounded bg-slate-800 hover:bg-slate-700 transition"; btn.innerHTML = `${this.getAvatarHtml(memData, 'sm')} <span class="text-sm font-bold text-white">${memData.nickname}</span>`; btn.onclick = () => this.confirmTransferAndLeave(m); list.appendChild(btn); }); },
-            confirmTransferAndLeave(newLeader) { this.showConfirm(`¿Hacer líder a ${newLeader} y salir de la liga?`, () => { const l = this.getCurrentLeague(); l.creator = newLeader; delete l.members[this.data.user]; this.save(); this.exitLeague(); this.toast(`Liderazgo transferido a ${newLeader}`); }); },
-            renderLeaguesList() { const l = document.getElementById('leagues-list'); l.innerHTML = ''; const my = this.data.leagues.filter(x => x.members[this.data.user]); if (my.length === 0) { l.innerHTML = `<div class="text-center text-slate-500 py-4">No tienes ligas.</div>`; return; } my.forEach(x => { const m = this.getMember(x, this.data.user); const sortedMembers = Object.keys(x.members).sort((a,b) => this.getMember(x,b).balance - this.getMember(x,a).balance); const rank = sortedMembers.indexOf(this.data.user) + 1; l.innerHTML += `<div class="bg-card p-4 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-neonPurple transition mb-3" onclick="app.selectLeague(${x.id})"><div><h4 class="font-bold text-white text-lg">${x.name}</h4><p class="text-xs text-slate-400">Código: ${x.code}</p></div><div class="text-right"><div class="text-neonGreen font-mono font-bold text-xl mb-1">${m.balance}</div><div class="text-gold text-xs font-bold flex items-center justify-end gap-1"><i class="fa-solid fa-trophy"></i> #${rank}</div></div></div>`; }); }
+            toast(m,t='s') { const el=document.getElementById('toast'); el.querySelector('span').innerText=m; el.classList.remove('opacity-0'); setTimeout(()=>el.classList.add('opacity-0'),3000); },
+            copyCode() { navigator.clipboard.writeText(document.getElementById('dash-league-code').innerText).then(()=>this.toast("Copiado")); },
+            openProfileModal() { const m=this.getCurrentLeague().members[this.data.user]; document.getElementById('profile-nickname').value=m.nickname; this.data.tempAvatar=m.avatar; document.getElementById('profile-preview').innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover">`:''; this.openModal('profile'); },
+            handleImageUpload(i) { if(i.files[0]){ const r=new FileReader(); r.onload=(e)=>{this.data.tempAvatar=e.target.result; document.getElementById('profile-preview').innerHTML=`<img src="${e.target.result}" class="w-full h-full object-cover">`;}; r.readAsDataURL(i.files[0]); } },
+            checkAndNotify() {}, 
+            addOptionInput() { const c=document.getElementById('options-list'); c.innerHTML+=`<div class="flex gap-2 mb-2"><input type="text" class="option-name neon-input flex-1 p-2 rounded text-sm" placeholder="Opción"><input type="number" class="option-odd neon-input w-20 p-2 rounded text-sm" placeholder="x1.5"></div>`; },
+            toggleCreateFields() { const t=document.getElementById('create-type').value; document.getElementById('field-options').style.display=(t==='custom'||t==='bank')?'block':'none'; document.getElementById('opt-bank').style.display=this.getCurrentLeague().creator===this.data.user?'block':'none'; },
+            deleteLeague() { if(confirm("¿Borrar liga?")) { db.collection('leagues').doc(this.data.currentLeagueId.toString()).delete(); this.exitLeague(); } },
+            leaveLeague() { if(confirm("¿Salir?")) { const l=this.getCurrentLeague(); delete l.members[this.data.user]; this.saveLeagueToCloud(l); this.exitLeague(); } },
+            exitLeague() { this.data.currentLeagueId=null; this.showLeaguesView(); }
         };
         window.onload = () => app.init();
     </script>
