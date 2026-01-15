@@ -423,6 +423,7 @@ const auth = firebase.auth();
                     if(!document.getElementById('view-leagues').classList.contains('hidden')) this.renderLeaguesList();
                     
                     this.checkAndNotify();
+                    this.checkDeepLinks(); 
                 });
             },
 
@@ -1185,32 +1186,81 @@ stats.listAdmin.forEach(adj => {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
                 
-                // Mensaje completo
-                const title = `🔥 ¡Apuesta en BetFriends!`;
-                const text = `⚽ *${b.title}*\n🏆 Liga: ${l.name}\n🔑 Código: ${l.code}\n\n¡Entra y participa!`;
-                const url = window.location.href;
-                const fullMsg = `${title}\n${text}\n${url}`;
+                // 1. TU DOMINIO PÚBLICO
+                const publicUrl = "https://santi06gh.github.io/betfriends-web/"; 
+                
+                // 2. CONSTRUIMOS EL LINK INTELIGENTE
+                // Añadimos ?bet=ID y &league=CODE para saber qué abrir
+                const smartLink = `${publicUrl}?bet=${id}&league=${l.code}`;
 
-                // OPCIÓN 1: API NATIVA DEL NAVEGADOR (Chrome, Safari, etc.)
+                // Mensaje
+                const title = `🔥 ¡Apuesta en BetFriends!`;
+                const text = `⚽ *${b.title}*\n🏆 Liga: ${l.name}\n👇 Toca para entrar:`;
+                
+                const fullMsg = `${title}\n${text}\n${smartLink}`;
+
+                // LÓGICA DE COMPARTIR (IGUAL QUE ANTES)
                 if (navigator.share) {
-                    navigator.share({
-                        title: title,
-                        text: text,
-                        url: url
-                    }).catch((error) => console.log('Error compartiendo', error));
+                    navigator.share({ title: title, text: text, url: smartLink })
+                    .catch((e) => console.log('Error share', e));
                 } 
-                // OPCIÓN 2: TRUCO PARA APK ANDROID (WebView)
-                // Si navigator.share falla, detectamos si es Android y lanzamos un Intent
                 else if (/Android/i.test(navigator.userAgent)) {
-                    // Creamos una URL especial que Android entiende como "Compartir Texto"
-                    const androidIntent = `intent:#Intent;action=android.content.Intent.ACTION_SEND;type=text/plain;S.android.content.Intent.EXTRA_TEXT=${encodeURIComponent(fullMsg)};end`;
+                    const androidIntent = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(fullMsg)};end`;
                     window.location.href = androidIntent;
                 }
-                // OPCIÓN 3: FALLBACK (PC O MÓVILES ANTIGUOS)
                 else {
-                    navigator.clipboard.writeText(fullMsg).then(() => {
-                        this.toast("Enlace copiado al portapapeles");
-                    });
+                    navigator.clipboard.writeText(fullMsg).then(() => this.toast("Enlace copiado"));
+                }
+            },
+
+checkDeepLinks() {
+                // 1. Leer parámetros de la URL
+                const params = new URLSearchParams(window.location.search);
+                const betId = params.get('bet');
+                const leagueCode = params.get('league');
+
+                if (betId && leagueCode) {
+                    console.log("🔗 Deep Link detectado:", betId);
+
+                    // 2. Buscar la liga
+                    const l = this.data.leagues.find(x => x.code === leagueCode);
+                    
+                    if (l) {
+                        // Si no estamos en esa liga, entramos visualmente
+                        if (this.data.currentLeagueId !== l.id) {
+                            this.selectLeague(l.id);
+                        }
+
+                        // 3. Buscar y abrir la apuesta
+                        // Pequeño timeout para dar tiempo a que cargue la interfaz
+                        setTimeout(() => {
+                            const b = l.bets.find(x => String(x.id) === String(betId));
+                            if (b) {
+                                if (b.status === 'resolved') {
+                                    // Si está resuelta, filtramos historial y mostramos
+                                    this.filterBets('resolved');
+                                    // Expandir detalles (opcional, requiere lógica extra)
+                                    this.toast("Mostrando apuesta del enlace 🔗");
+                                } else {
+                                    // Si está activa, abrimos el modal de apostar/ver
+                                    this.filterBets(b.status === 'active' ? 'active' : 'pending');
+                                    this.joinBetModal(b.id);
+                                    this.toast("Has entrado desde WhatsApp 🚀");
+                                }
+                                
+                                // Limpiamos la URL para que no se abra siempre al recargar
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            } else {
+                                this.toast("La apuesta ya no existe", "error");
+                            }
+                        }, 1000); // Esperamos 1 segundo a que todo renderice
+                    } else {
+                        // Si el usuario no tiene esa liga, podrías abrir el modal de "Unirse a Liga"
+                        // y pre-rellenar el código.
+                        this.openModal('join-league');
+                        document.getElementById('join-league-code').value = leagueCode;
+                        this.toast("Únete a la liga para ver la apuesta");
+                    }
                 }
             },
            renderBets(l) {
