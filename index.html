@@ -1185,27 +1185,34 @@ stats.listAdmin.forEach(adj => {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
                 
-                // Mensaje que se compartirá
+                // Mensaje completo
                 const title = `🔥 ¡Apuesta en BetFriends!`;
                 const text = `⚽ *${b.title}*\n🏆 Liga: ${l.name}\n🔑 Código: ${l.code}\n\n¡Entra y participa!`;
-                const url = window.location.href; // Enlace a tu web
+                const url = window.location.href;
+                const fullMsg = `${title}\n${text}\n${url}`;
 
+                // OPCIÓN 1: API NATIVA DEL NAVEGADOR (Chrome, Safari, etc.)
                 if (navigator.share) {
-                    // API NATIVA: Abre el menú del móvil (WhatsApp, Telegram, etc.)
                     navigator.share({
                         title: title,
                         text: text,
                         url: url
                     }).catch((error) => console.log('Error compartiendo', error));
-                } else {
-                    // FALLBACK: Si es un PC viejo, copia al portapapeles
-                    const fullMsg = `${title}\n${text}\n${url}`;
+                } 
+                // OPCIÓN 2: TRUCO PARA APK ANDROID (WebView)
+                // Si navigator.share falla, detectamos si es Android y lanzamos un Intent
+                else if (/Android/i.test(navigator.userAgent)) {
+                    // Creamos una URL especial que Android entiende como "Compartir Texto"
+                    const androidIntent = `intent:#Intent;action=android.content.Intent.ACTION_SEND;type=text/plain;S.android.content.Intent.EXTRA_TEXT=${encodeURIComponent(fullMsg)};end`;
+                    window.location.href = androidIntent;
+                }
+                // OPCIÓN 3: FALLBACK (PC O MÓVILES ANTIGUOS)
+                else {
                     navigator.clipboard.writeText(fullMsg).then(() => {
                         this.toast("Enlace copiado al portapapeles");
                     });
                 }
             },
-
            renderBets(l) {
                 const container = document.getElementById('bets-container');
                 container.innerHTML = '';
