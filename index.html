@@ -1282,7 +1282,7 @@ stats.listAdmin.forEach(adj => {
                 let avatarHtml = ''; 
                 let metaHtml = ''; 
 
-                // --- 1. LÓGICA DE FECHA Y CIERRE ---
+                // --- 1. FECHAS Y CIERRE ---
                 const isTimeExpired = b.closingTime && Date.now() > b.closingTime;
                 const isLocked = b.locked || isTimeExpired; 
                 
@@ -1291,7 +1291,8 @@ stats.listAdmin.forEach(adj => {
                     const d = new Date(b.closingTime);
                     const dateStr = d.toLocaleString('es-ES', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                     const colorTime = isTimeExpired ? 'text-danger border-danger/30' : 'text-orange-400 border-orange-400/30';
-                    timeLabel = `<span class="text-[9px] ${colorTime} font-bold ml-2 border px-1 rounded" title="Cierre automático"><i class="fa-regular fa-clock mr-1"></i>${dateStr}</span>`;
+                    // Nota: 'whitespace-nowrap' evita que la fecha se parta en dos líneas
+                    timeLabel = `<span class="text-[9px] ${colorTime} font-bold ml-1 border px-1 rounded whitespace-nowrap inline-block mt-1" title="Cierre automático"><i class="fa-regular fa-clock mr-1"></i>${dateStr}</span>`;
                 }
 
                 // --- 2. CABECERA ---
@@ -1306,19 +1307,21 @@ stats.listAdmin.forEach(adj => {
                     const tMap = { duel: 'Duelo', group: 'Bote', custom: 'Porra' }; 
                     metaHtml = `<div class="text-xs text-slate-500 mt-0.5">de ${cd.nickname} · ${tMap[b.type]||b.type}</div>`; 
                 } 
-                if(b.invites&&b.invites.length>0) pt=`<span class="text-[10px] text-slate-400 ml-2 border border-slate-700 px-1 rounded"><i class="fa-solid fa-lock mr-1"></i>${b.type==='duel'?'Duelo':'Privada'}</span>`; 
+                
+                // Candado de privada (inline-block para que fluya con el texto)
+                if(b.invites&&b.invites.length>0) pt=`<span class="text-[10px] text-slate-400 ml-1 border border-slate-700 px-1 rounded whitespace-nowrap inline-block"><i class="fa-solid fa-lock mr-1"></i>Privada</span>`; 
 
-                // --- 3. ESTADOS ---
+                // --- 3. ESTADOS Y BOTONES ---
                 if(this.data.filter==='pending') { 
-                    bg=`<span class="text-gold bg-gold/10 px-2 py-0.5 rounded text-[10px] font-bold">PROPUESTA</span>`; 
+                    bg=`<span class="text-gold bg-gold/10 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">PROPUESTA</span>`; 
                     if(b.invites&&b.invites.length>0) inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-1">Invitados: ${b.invites.map(u=>this.getMember(l,u).nickname).join(', ')}</div>`; 
                     acts=`<div class="grid grid-cols-2 gap-2 mt-3"><button onclick="app.rejectBet(${b.id})" class="bg-slate-700 py-2 rounded text-xs font-bold text-white">Rechazar</button><button onclick="app.joinBetModal(${b.id})" class="bg-neonGreen text-dark py-2 rounded text-xs font-bold">Aceptar (${b.amount})</button></div>`; 
                 
                 } else if(this.data.filter==='active') { 
                     if (isLocked) {
-                        bg=`<span class="text-danger bg-danger/10 px-2 py-0.5 rounded text-[10px] font-bold border border-danger/20"><i class="fa-solid fa-lock mr-1"></i>CERRADA</span>`;
+                        bg=`<span class="text-danger bg-danger/10 px-2 py-0.5 rounded text-[10px] font-bold border border-danger/20 whitespace-nowrap"><i class="fa-solid fa-lock mr-1"></i>CERRADA</span>`;
                     } else {
-                        bg=`<span class="text-neonGreen bg-neonGreen/10 px-2 py-0.5 rounded text-[10px] font-bold">EN JUEGO</span>`;
+                        bg=`<span class="text-neonGreen bg-neonGreen/10 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">EN JUEGO</span>`;
                     }
                     
                     inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-2"><div class="uppercase font-bold text-slate-600 mb-1">Participantes (${b.participants.length}):</div><div class="flex flex-wrap gap-1">${b.participants.map(u=>`<div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">${this.getAvatarHtml(this.getMember(l,u),'sm')}<span class="text-[10px] text-slate-300">${this.getMember(l,u).nickname}</span></div>`).join('')}</div></div>`; 
@@ -1398,26 +1401,27 @@ stats.listAdmin.forEach(adj => {
                     } 
                 } 
 
-                // --- 4. RENDER FINAL (AQUÍ ESTÁ EL CAMBIO) ---
+                // --- 4. RENDER FINAL (AQUÍ ESTÁ LA CORRECCIÓN DE LAYOUT) ---
                 
-                // Definimos el botón Share (solo si está activa o pendiente)
                 const shareBtn = (b.status === 'active' || b.status === 'pending') 
-                    ? `<button onclick="app.shareBet(${b.id})" class="text-slate-500 hover:text-white transition p-1 mr-1" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>` 
+                    ? `<button onclick="app.shareBet(${b.id})" class="text-slate-500 hover:text-white transition p-1" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>` 
                     : '';
 
-                // Modificamos el bloque final para integrar el botón en la esquina derecha
+                // Usamos 'shrink-0' en la derecha para que NO se encoja.
+                // Usamos 'break-words' en la izquierda para que el texto salte de línea.
                 c.innerHTML+=`
                 <div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg relative">
-                    <div class="flex justify-between items-start">
-                        <div class="flex gap-3 flex-1">
+                    <div class="flex justify-between items-start gap-3">
+                        
+                        <div class="flex gap-3 min-w-0 flex-1">
                             <div class="pt-1 shrink-0">${avatarHtml}</div>
-                            <div class="min-w-0">
-                                <h4 class="font-bold text-white text-sm truncate pr-2">${b.title} ${pt} ${timeLabel}</h4>
+                            <div class="min-w-0 flex-1">
+                                <h4 class="font-bold text-white text-sm break-words leading-tight">${b.title} ${pt} ${timeLabel}</h4>
                                 ${metaHtml}
                             </div>
                         </div>
                         
-                        <div class="flex flex-col items-end gap-1">
+                        <div class="flex flex-col items-end gap-1 shrink-0 ml-1">
                             <div class="flex items-center gap-2">
                                 ${shareBtn}
                                 <div class="text-neonGreen font-mono font-bold">${b.pot}</div>
