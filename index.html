@@ -102,46 +102,91 @@
 
     <div id="view-leagues" class="hidden app-view bg-dark absolute inset-0 z-40"><div class="p-6 pt-10 shrink-0"><div class="flex justify-between items-center mb-6"><div><h2 class="text-2xl font-bold text-white">Mis Ligas</h2><p class="text-slate-400 text-sm">Hola, <span id="league-username" class="text-neonGreen font-bold">User</span></p></div><button onclick="app.logout()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-right-from-bracket"></i></button></div><div class="grid grid-cols-2 gap-3 mb-6"><button onclick="app.openModal('create-league')" class="bg-neonPurple/10 border border-neonPurple text-neonPurple p-4 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition"><i class="fa-solid fa-plus mb-1 block text-xl"></i> Crear Liga</button><button onclick="app.openModal('join-league')" class="bg-neonGreen/10 border border-neonGreen text-neonGreen p-4 rounded-xl font-bold text-sm hover:bg-neonGreen hover:text-dark transition"><i class="fa-solid fa-ticket mb-1 block text-xl"></i> Unirse</button></div><h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Tus Grupos Activos</h3></div><div id="leagues-list" class="scroll-area px-6 space-y-3"></div></div>
 
-    <div id="view-dashboard" class="hidden app-view bg-dark absolute inset-0 z-30"><header class="bg-card p-4 flex justify-between items-center shadow-md z-10 border-b border-slate-700 shrink-0">
-            <div class="flex items-center gap-3">
-                <button onclick="app.exitLeague()" class="text-slate-400 hover:text-white">
+    <div id="view-dashboard" class="hidden app-view bg-dark absolute inset-0 z-30 flex flex-col">
+        
+        <header class="bg-card/90 backdrop-blur-md px-4 py-3 flex justify-between items-center shadow-md z-10 border-b border-slate-700 shrink-0">
+            
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <button onclick="app.exitLeague()" class="text-slate-400 hover:text-white shrink-0">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
                 
-                <div class="flex items-center gap-2 cursor-pointer group" onclick="app.openProfileModal()">
-                    <div id="dash-my-avatar" class="avatar-circle border-neonPurple transition group-hover:scale-105">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div id="dash-my-avatar" onclick="app.openProfileModal()" class="avatar-circle border-neonPurple transition hover:scale-105 w-10 h-10 shrink-0 text-xs cursor-pointer">
                         <span>YO</span>
                     </div>
-                    <div>
-                        <h2 class="font-bold text-sm text-white leading-tight group-hover:text-neonPurple transition" id="dash-my-nickname">Nombre</h2>
+                    
+                    <div class="flex flex-col justify-center min-w-0">
+                        <h2 onclick="app.openProfileModal()" class="font-bold text-sm text-white leading-tight truncate max-w-[120px] cursor-pointer hover:text-neonPurple transition" id="dash-my-nickname">
+                            Nombre
+                        </h2>
+                        
+                        <div id="balance-wrapper" class="flex items-center gap-1.5 mt-0.5 cursor-pointer transition active:scale-95 w-fit" onclick="app.showHistory()">
+                            <i id="balance-icon" class="fa-solid fa-coins text-neonGreen text-[10px]"></i>
+                            <span id="dash-balance" class="font-mono font-bold text-sm text-neonGreen leading-none">0</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+            <div class="flex items-center gap-2 shrink-0">
+                <button id="btn-header-daily" onclick="app.claimDailyBonus()" class="hidden"></button>
 
-                <div class="flex items-center gap-1 text-neonGreen text-xs cursor-pointer hover:text-white transition bg-slate-800/50 px-2 py-1 rounded-lg border border-slate-700/50 hover:border-neonGreen/50" onclick="app.showHistory()">
-                    <i class="fa-solid fa-coins"></i>
-                    <span id="dash-balance" class="font-bold text-base">0</span>
+                <div class="flex gap-1 ml-1">
+                    <button id="header-bell-btn" onclick="app.openNotificationsModal()" class="relative text-slate-400 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:text-white">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="header-bell-badge" class="hidden absolute top-1.5 right-2 w-2 h-2 bg-danger rounded-full border border-dark"></span>
+                    </button>
+                    
+                    <button onclick="app.openLeagueSettings()" class="text-slate-400 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:text-white">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    
+                    <button onclick="app.showRanking()" class="text-gold p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:text-yellow-300">
+                        <i class="fa-solid fa-trophy"></i>
+                    </button>
                 </div>
             </div>
-
-            <div class="flex gap-2 items-center">
-                <button id="btn-header-daily" onclick="app.claimDailyBonus()" class="hidden px-3 py-1 rounded-full text-[10px] font-bold items-center gap-1 transition active:scale-95 border border-white/10"></button>
+        </header>
+        <main class="scroll-area p-4 space-y-6 bg-dark flex-1">
+            
+            <div class="bg-slate-800/80 p-4 rounded-xl flex justify-between items-center border border-slate-700/50 shadow-sm backdrop-blur-sm">
+                <div class="min-w-0 pr-2">
+                    <span class="text-[10px] text-slate-500 uppercase font-bold block tracking-wider mb-0.5">Estás en la liga</span>
+                    <h1 id="dash-league-name" class="font-black text-white text-lg truncate leading-tight">Nombre Liga</h1>
+                </div>
                 
-                <button id="header-bell-btn" onclick="app.openNotificationsModal()" class="relative text-slate-400 bg-slate-800 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:bg-slate-700">
-                    <i class="fa-solid fa-bell"></i>
-                    <span id="header-bell-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-danger rounded-full border-2 border-dark animate-pulse"></span>
-                </button>
-                
-                <button onclick="app.openLeagueSettings()" class="text-slate-400 bg-slate-800 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:bg-slate-700">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-                
-                <button onclick="app.showRanking()" class="text-gold bg-gold/10 px-3 py-1 rounded-full text-xs font-bold flex flex-col items-center justify-center w-8 h-8 hover:bg-gold/20">
-                    <i class="fa-solid fa-trophy"></i>
+                <button onclick="app.copyCode()" class="bg-slate-700/50 text-neonPurple border border-slate-600/50 px-3 py-2 rounded-lg font-mono font-bold text-xs tracking-widest flex items-center gap-2 hover:bg-slate-700 hover:text-white transition shrink-0 group">
+                    <span id="dash-league-code">CODE</span> 
+                    <i class="fa-regular fa-copy group-active:scale-90 transition"></i>
                 </button>
             </div>
-        </header><main class="scroll-area p-4 space-y-6"><div class="bg-slate-800/50 p-3 rounded-lg flex justify-between items-center border border-slate-700/50"><div><span class="text-[10px] text-slate-500 uppercase block">Estás en la liga</span><span id="dash-league-name" class="font-bold text-white text-sm">Nombre Liga</span></div><button onclick="app.copyCode()" class="text-neonPurple font-mono font-bold text-sm tracking-widest flex items-center gap-2 bg-neonPurple/10 px-2 py-1 rounded cursor-pointer hover:bg-neonPurple/20 transition"><span id="dash-league-code">CODE</span> <i class="fa-regular fa-copy"></i></button></div><div onclick="app.openCreateBetModal()" class="bg-gradient-to-r from-violet-900 to-fuchsia-900 p-5 rounded-2xl shadow-lg relative overflow-hidden cursor-pointer transform transition active:scale-95 hover:shadow-neonPurple/20"><div class="absolute -right-4 -bottom-4 opacity-20 text-8xl text-white"><i class="fa-solid fa-plus"></i></div><h3 class="text-lg font-bold mb-1 text-white">Nueva Apuesta</h3><p class="text-slate-200 text-xs opacity-80">Reta a los miembros de la liga</p></div><div class="flex gap-2 overflow-x-auto py-1 shrink-0"><button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white transition-all">Activas</button><button onclick="app.filterBets('pending')" class="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all">Pendientes <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark animate-pulse">0</span></button><button onclick="app.filterBets('resolved')" class="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 transition-all">Historial</button></div><div id="bets-container" class="space-y-4"><div class="text-center text-slate-500 py-10"><i class="fa-solid fa-ghost text-4xl mb-2 opacity-30"></i><p>No hay apuestas en esta liga.</p></div></div></main></div>
+
+            <div onclick="app.openCreateBetModal()" class="bg-gradient-to-r from-violet-900 to-fuchsia-900 p-5 rounded-2xl shadow-lg relative overflow-hidden cursor-pointer transform transition active:scale-95 hover:shadow-neonPurple/20 border border-white/5">
+                <div class="absolute -right-4 -bottom-4 opacity-20 text-8xl text-white">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-1 text-white">Nueva Apuesta</h3>
+                <p class="text-slate-200 text-xs opacity-80">Reta a los miembros de la liga</p>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto py-1 shrink-0 no-scrollbar">
+                <button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white transition-all">Activas</button>
+                <button onclick="app.filterBets('pending')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all">
+                    Pendientes 
+                    <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark animate-pulse">0</span>
+                </button>
+                <button onclick="app.filterBets('resolved')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 transition-all">Historial</button>
+            </div>
+
+            <div id="bets-container" class="space-y-4 pb-20">
+                <div class="text-center text-slate-500 py-10">
+                    <i class="fa-solid fa-ghost text-4xl mb-2 opacity-30"></i>
+                    <p>Cargando...</p>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <div id="modal-notifications" class="hidden fixed inset-0 bg-black/80 z-[70] flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border-t border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-white"><i class="fa-solid fa-bell mr-2 text-neonPurple"></i>Notificaciones</h3><button onclick="app.closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button></div><div id="notifications-list" class="scroll-area space-y-3"></div><button onclick="app.closeModals()" class="w-full bg-slate-700 text-white py-3 rounded-lg font-bold text-sm mt-4 shrink-0">Cerrar</button></div></div>
     <div id="modal-league-settings" class="hidden fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Opciones de Liga</h3><div id="settings-creator-options" class="hidden space-y-3"><p class="text-xs text-slate-400 mb-2">Eres el creador de esta liga.</p><button onclick="app.openAdminPanel()" class="w-full bg-slate-800 border border-neonPurple text-neonPurple py-3 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition flex items-center justify-center gap-2 mb-2"><i class="fa-solid fa-user-shield"></i> Panel de Control</button><div class="h-px bg-slate-700 my-2"></div><button onclick="app.deleteLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash-can mr-2"></i> Eliminar Liga para Todos</button><button onclick="app.showTransferList()" class="w-full bg-gold/10 border border-gold text-gold py-3 rounded-xl font-bold text-sm hover:bg-gold hover:text-dark transition"><i class="fa-solid fa-right-from-bracket mr-2"></i> Ceder Liderazgo y Salir</button></div><div id="settings-member-options" class="hidden space-y-3"><button onclick="app.leaveLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-person-walking-arrow-right mr-2"></i> Abandonar Liga</button></div><div id="settings-transfer-list" class="hidden mt-4"><h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Elige al nuevo líder:</h4><div id="transfer-members-container" class="max-h-40 overflow-y-auto space-y-2 custom-scrollbar"></div><button onclick="document.getElementById('settings-transfer-list').classList.add('hidden'); document.getElementById('settings-creator-options').classList.remove('hidden');" class="w-full text-slate-500 text-xs mt-2 py-2">Cancelar</button></div><button onclick="app.closeModals()" class="w-full text-slate-400 py-3 rounded-lg font-bold text-sm mt-4">Cerrar</button></div></div>
@@ -306,6 +351,34 @@
             </div>
         </div>
     </div>
+<div id="modal-bankruptcy" class="hidden fixed inset-0 bg-black/95 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-slate-900 w-full max-w-sm rounded-2xl p-6 border-2 border-red-600/50 shadow-[0_0_50px_rgba(220,38,38,0.2)] slide-up text-center relative overflow-hidden">
+        
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
+        <i class="fa-solid fa-ban absolute -bottom-10 -right-10 text-9xl text-red-900/20 pointer-events-none"></i>
+
+        <div class="mb-4 relative inline-block">
+            <div class="w-20 h-20 rounded-full bg-red-900/30 flex items-center justify-center border border-red-500/50 animate-pulse">
+                <i class="fa-solid fa-lock text-4xl text-red-500"></i>
+            </div>
+            <div class="absolute -bottom-2 -right-2 bg-slate-900 rounded-full p-1 border border-slate-700">
+                <i class="fa-solid fa-faucet-drip text-slate-500 text-xl"></i>
+            </div>
+        </div>
+
+        <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-wider">Grifo Cerrado</h3>
+        <p class="text-red-400 font-bold text-sm mb-4">Límite Máximo de Deuda Alcanzado</p>
+        
+        <div class="bg-black/40 p-3 rounded-lg border border-red-900/30 mb-6 text-xs text-slate-400 text-left">
+            <p class="mb-2"><i class="fa-solid fa-circle-exclamation text-red-500 mr-2"></i>Has llegado al tope absoluto del sistema (200%).</p>
+            <p>La organización no fía ni una ficha más. Sobrevive con los bonos diarios o negocia con el Administrador.</p>
+        </div>
+
+        <button onclick="document.getElementById('modal-bankruptcy').classList.add('hidden')" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95 uppercase tracking-widest text-xs">
+            Entendido
+        </button>
+    </div>
+</div>
     <script>
         // 2. CONFIGURACIÓN FIREBASE (CLÁSICA)
         const firebaseConfig = {
@@ -602,31 +675,13 @@ stats.listAdmin.forEach(adj => {
                 ac.classList[m.avatar ? 'add' : 'remove']('cursor-pointer');
                 ac.onclick = m.avatar ? () => this.openFullscreenImage(m.avatar) : null;
                 
-                // NUEVO: Icono de Factura para la Deuda 🧾
+                // Icono de Factura para la Deuda 🧾
                 const debtHtml = (m.debt && m.debt > 0) ? ` <span class="text-danger text-sm animate-pulse font-bold" title="Deuda pendiente: ${m.debt}"><i class="fa-solid fa-file-invoice-dollar"></i> -${m.debt}</span>` : '';
                 
                 document.getElementById('view-profile-name').innerHTML = m.nickname + debtHtml;
                 document.getElementById('view-profile-balance').innerText = m.balance;
                 
-                // --- NUEVO: BOTÓN DE PRÉSTAMO ---
-                let loanBtn = document.getElementById('btn-take-loan');
-                if (!loanBtn) {
-                    loanBtn = document.createElement('button');
-                    loanBtn.id = 'btn-take-loan';
-                    loanBtn.className = "w-full mt-3 bg-red-900/50 hover:bg-red-800 border border-red-500 text-red-200 py-2 rounded font-bold uppercase text-xs flex items-center justify-center gap-2 hidden";
-                    loanBtn.innerHTML = '<i class="fa-solid fa-hand-holding-dollar"></i> Solicitar Préstamo';
-                    loanBtn.onclick = () => this.openLoanModal();
-                    // Lo insertamos debajo del saldo
-                    document.getElementById('view-profile-balance').parentElement.parentElement.appendChild(loanBtn);
-                }
-
-                // Lógica: Solo visible si eres tú, tienes <10% del saldo inicial y no tienes deudas
-                if (u === me && m.balance < (base * 0.10) && (!m.debt || m.debt <= 0)) {
-                    loanBtn.classList.remove('hidden');
-                } else {
-                    loanBtn.classList.add('hidden');
-                }
-                // ------------------------------------------------
+                // --- (BLOQUE ELIMINADO: AQUÍ ESTABA EL BOTÓN DE PRÉSTAMO QUE NO QUERÍAS) ---
 
                 // 2. CÁLCULOS: Estadísticas Generales
                 let totalWins = 0, totalPlayed = 0;
@@ -720,13 +775,100 @@ stats.listAdmin.forEach(adj => {
 
                 this.openModal('view-profile');
             },
+// --- NUEVA FUNCIÓN: RESCATE DE EMERGENCIA ---
+            requestBailout() {
+                const l = this.getCurrentLeague();
+                const m = this.getMember(l, this.data.user);
+                const base = l.startBalance || 1000;
+                
+                // --- 1. VALIDACIONES PREVIAS ---
+                // Calculamos límites
+                const maxTotalDebt = Math.floor(base * 0.50); // Límite Préstamo Normal (500)
+                const currentDebt = m.debt || 0;
+                const availableToBorrow = maxTotalDebt - currentDebt; // Hueco préstamo normal
+
+                // Si aún tiene hueco en el préstamo NORMAL (>10), le mandamos allí
+                if (availableToBorrow > 10) {
+                     this.toast(`Aún tienes crédito (${availableToBorrow}). Pide un préstamo normal.`, "error");
+                     return;
+                }
+
+                // Si tiene dinero en el bolsillo, no puede pedir rescate
+                if (m.balance > 10) return this.toast("Aún tienes fichas, no puedes pedir rescate.", "error");
+
+                // --- 2. LÓGICA DEL "GRIFO" Y EL LÍMITE ABSOLUTO ---
+                
+                const maxAbsoluteDebt = base * 2; // El límite del 200% (2000 fichas)
+                const standardBailout = Math.floor(base * 0.15); // Lo que suele dar el rescate (150)
+                
+                // Calculamos cuánto espacio EXACTO queda hasta el límite absoluto
+                const gapToLimit = maxAbsoluteDebt - currentDebt;
+
+                // CASO A: Ya no cabe nada (Estás en 2000 o más)
+                if (gapToLimit <= 0) {
+                    // AQUÍ ABRIMOS EL NUEVO MODAL "CUTRE-FREE"
+                    document.getElementById('modal-bankruptcy').classList.remove('hidden');
+                    return;
+                }
+
+                // CASO B: Cabe algo, pero hay que decidir cuánto dar
+                // Si el hueco (50) es menor que el rescate estándar (150), damos el hueco.
+                // Si el hueco es enorme, damos el estándar.
+                let amountToGive = 0;
+                
+                if (gapToLimit < standardBailout) {
+                    amountToGive = gapToLimit; // Te doy lo justo para llegar al tope
+                } else {
+                    amountToGive = standardBailout; // Te doy el rescate normal
+                }
+
+                // --- 3. EJECUCIÓN ---
+                m.balance += amountToGive;
+                m.debt = (m.debt || 0) + amountToGive; 
+                m.isGarnished = true; // Activar embargo
+
+                if (!m.transactions) m.transactions = [];
+                m.transactions.unshift({
+                    type: 'loan', 
+                    amount: amountToGive,
+                    desc: `Rescate (Embargo) 🆘`,
+                    date: new Date().toLocaleString(),
+                    timestamp: Date.now()
+                });
+
+                this.saveLeagueToCloud(l);
+                this.renderDashboard();
+                this.showHistory(); 
+                
+                if (amountToGive < standardBailout) {
+                    this.toast(`Solo se te han concedido ${amountToGive} hasta alcanzar el límite máximo.`);
+                } else {
+                    this.toast(`Rescate de ${amountToGive} activado. Retención del 70% aplicada.`);
+                }
+            },
 
             // --- NUEVA FUNCIÓN: ABRE LA VENTANA DE PRÉSTAMO ---
             openLoanModal() {
                 const l = this.getCurrentLeague();
                 const me = this.data.user;
                 const base = l.startBalance || 1000;
-                const maxLoan = Math.floor(base * 0.50);
+                
+                // --- LÓGICA DE CRÉDITO ---
+                const maxPrincipal = Math.floor(base * 0.50); // Límite de Capital (ej: 500)
+                const currentDebt = l.members[me].debt || 0;  // Deuda Total (con intereses)
+                
+                // TRUCO MATEMÁTICO: Convertimos la deuda total a "capital pedido"
+                // Si debes 240, es que pediste 200 (240 / 1.2 = 200)
+                const usedPrincipal = currentDebt / 1.2; 
+                
+                // El disponible es el Límite (500) menos lo que ya has pedido (200) = 300
+                const availableToBorrow = Math.floor(maxPrincipal - usedPrincipal);
+
+                // Validación de seguridad
+                if (availableToBorrow <= 0) {
+                    this.toast("Has alcanzado tu límite de crédito.", "error");
+                    return;
+                }
 
                 // Referencias al HTML
                 const modal = document.getElementById('modal-loan');
@@ -738,16 +880,19 @@ stats.listAdmin.forEach(adj => {
                 // Resetear valores
                 input.value = '';
                 repayDisplay.innerText = "A devolver: 0 (+20%)";
-                maxDisplay.innerText = maxLoan;
+                
+                // Mostramos el disponible corregido
+                maxDisplay.innerText = availableToBorrow;
 
                 // Evento: Calcular en tiempo real mientras escribes
                 input.oninput = () => {
                     let val = parseInt(input.value);
                     if (isNaN(val)) val = 0;
                     
-                    if (val > maxLoan) {
-                        val = maxLoan;
-                        input.value = maxLoan; // Corregir si se pasa
+                    if (val > availableToBorrow) {
+                        val = availableToBorrow;
+                        input.value = val; 
+                        this.toast("No puedes superar tu límite restante", "info");
                     }
                     
                     const debt = Math.floor(val * 1.20);
@@ -763,75 +908,170 @@ stats.listAdmin.forEach(adj => {
                         return;
                     }
 
+                    if (amount > availableToBorrow) {
+                        this.toast("Supera el límite permitido", "error");
+                        return;
+                    }
+
                     const debtAmount = Math.floor(amount * 1.20);
 
                     // EJECUTAR EL PRÉSTAMO
                     l.members[me].balance += amount;
-                    l.members[me].debt = debtAmount;
+                    
+                    // Sumamos a la deuda existente
+                    l.members[me].debt = (l.members[me].debt || 0) + debtAmount;
                     
                     this.addTransaction(l, me, 'loan', amount, `Préstamo Mafia Solicitado 🦈`);
                     this.saveLeagueToCloud(l);
                     
                     modal.classList.add('hidden'); // Cerrar modal
                     this.renderDashboard(); // Actualizar todo
-                    this.toast(`Has recibido ${amount} fichas. Tienes una deuda de ${debtAmount}.`);
+                    this.toast(`Recibido: ${amount}. Deuda Total: ${l.members[me].debt}`);
                 };
 
                 // Mostrar Modal
                 modal.classList.remove('hidden');
             },
             // --- FUNCIÓN DE GRÁFICA ---
+            // --- FUNCIÓN DE GRÁFICA CORREGIDA ---
+            // --- FUNCIÓN DE GRÁFICA BLINDADA ---
+            // --- FUNCIÓN DE GRÁFICA INTELIGENTE (Anti-Admin Bruto) ---
             renderBalanceChart(member) {
                 const ctx = document.getElementById('balanceChart').getContext('2d');
                 if (this.chartInstance) this.chartInstance.destroy();
 
-                let history = [member.balance];
+                let currentBal = member.balance; 
+                
+                // Empezamos por el final (Ahora)
+                let history = [currentBal];
                 let labels = ['Actual'];
-                let currentBal = member.balance;
 
                 const txs = member.transactions || [];
-                // Usamos las últimas 20 para que la gráfica tenga más detalle
-                const recentTxs = txs.slice(0, 20); 
+                
+                // 1. Ordenamos por fecha (Lo más nuevo primero)
+                const sortedTxs = [...txs]
+                    .sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0))
+                    .slice(0, 30);
 
-                recentTxs.forEach(t => {
-                    if (t.type === 'bet') currentBal += t.amount;
-                    else if (t.type === 'win') currentBal -= t.amount;
-                    else if (t.type === 'bonus') currentBal -= t.amount;
-                    else if (t.type === 'admin') currentBal -= t.amount; // Simplificado
-                    else if (t.type === 'refund') currentBal -= t.amount;
-                    else if (t.type === 'loan') currentBal -= t.amount; // Nuevo: Préstamo
+                // 2. Rebobinamos hacia el pasado
+                sortedTxs.forEach(t => {
+                    let effectiveAmount = 0;
+                    
+                    // A) Gastos (Siempre negativos)
+                    if (t.type === 'bet' || t.type === 'debt_pay' || t.type === 'loss') {
+                        effectiveAmount = -Math.abs(t.amount);
+                    }
+                    // B) Ingresos (Siempre positivos)
+                    else if (t.type === 'win' || t.type === 'bonus' || t.type === 'refund' || t.type === 'loan') {
+                        effectiveAmount = Math.abs(t.amount);
+                    }
+                    // C) Admin: Aquí está el truco
+                    else if (t.type === 'admin') {
+                        effectiveAmount = t.amount;
+                    }
 
-                    history.push(currentBal);
-                    labels.push('');
+                    // Calculamos el saldo anterior
+                    let prevBal = currentBal - effectiveAmount;
+
+                    // --- CORRECCIÓN DE "ZAPATAZO ADMIN" ---
+                    // Si el admin quitó un millón (-1.000.000) para dejarte a 0, 
+                    // la matemática dice: 0 - (-1.000.000) = 1.000.000 (ERROR).
+                    // Pero sabemos que el usuario probablemente tenía poco dinero.
+                    // 
+                    // Lógica: Si es un movimiento de ADMIN muy grande negativo 
+                    // y el resultado anterior se dispara absurdamente, lo ignoramos 
+                    // y asumimos que simplemente se le vació la cuenta.
+                    
+                    if (t.type === 'admin' && t.amount < -5000 && currentBal === 0) {
+                        // Si le quitaron más de 5000 y se quedó a 0, 
+                        // asumimos que fue un reset. 
+                        // El saldo anterior NO era 1.000.000, era "lo que tuviera antes".
+                        // Como es imposible saberlo exacto sin recalcular todo desde el inicio de los tiempos,
+                        // un truco visual es suavizarlo o dejarlo igual al siguiente punto conocido válido.
+                        
+                        // Opción visual: Simplemente no subimos hasta el millón.
+                        // Detectamos que es un reset forzoso.
+                    }
+
+                    // NOTA TÉCNICA: El método de "rebobinar" (ir del futuro al pasado) siempre fallará
+                    // con los resets a 0 porque se pierde la información de cuánto había antes.
+                    // (x - 1000000 = 0 -> x = 1000000).
+                    
+                    // CAMBIO DE ESTRATEGIA: 
+                    // Para que esto sea perfecto, NO PODEMOS REBOBINAR. 
+                    // TENEMOS QUE CALCULAR HACIA ADELANTE.
+                });
+                
+                // --- ESTRATEGIA DEFINITIVA: CALCULAR DESDE EL PRINCIPIO (FORWARD) ---
+                // Esta es la única forma matemática de que no falle nunca.
+                
+                // 1. Saldo inicial base de la liga
+                const l = this.getCurrentLeague();
+                let runningBalance = l.startBalance || 1000; 
+                
+                // 2. Cogemos TODAS las transacciones y las ordenamos por fecha ANTIGUA -> NUEVA
+                const allTxs = [...txs].sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
+                
+                // 3. Reconstruimos la historia paso a paso
+                let fullHistory = [runningBalance]; // Punto 0: Inicio
+                let fullLabels = ['Inicio'];
+
+                allTxs.forEach(t => {
+                    let amount = 0;
+
+                    if (t.type === 'bet' || t.type === 'debt_pay' || t.type === 'loss') amount = -Math.abs(t.amount);
+                    else if (t.type === 'win' || t.type === 'bonus' || t.type === 'refund' || t.type === 'loan') amount = Math.abs(t.amount);
+                    else if (t.type === 'admin') amount = t.amount;
+
+                    // Aplicamos el movimiento
+                    runningBalance += amount;
+
+                    // CORRECCIÓN: Si el saldo baja de 0 (por el admin -1.000.000), lo forzamos a 0.
+                    if (runningBalance < 0) runningBalance = 0;
+
+                    fullHistory.push(runningBalance);
+                    fullLabels.push('');
                 });
 
-                history.reverse();
-                labels.reverse();
+                // 4. Recortamos para mostrar solo el final (últimos 30 puntos)
+                if (fullHistory.length > 30) {
+                    fullHistory = fullHistory.slice(fullHistory.length - 30);
+                    fullLabels = fullLabels.slice(fullLabels.length - 30);
+                }
 
+                // Renderizamos
                 this.chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: labels,
+                        labels: fullLabels,
                         datasets: [{
                             label: 'Saldo',
-                            data: history,
+                            data: fullHistory,
                             borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            backgroundColor: (context) => {
+                                const ctx = context.chart.ctx;
+                                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                                gradient.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
+                                gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                                return gradient;
+                            },
                             borderWidth: 2,
-                            tension: 0.4,
-                            pointRadius: 2,
+                            tension: 0.1,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#10b981',
                             fill: true
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
+                        interaction: { intersect: false, mode: 'index' },
+                        plugins: { legend: { display: false }, tooltip: { enabled: true } },
                         scales: {
                             x: { display: false },
                             y: { 
-                                grid: { color: '#334155' },
-                                ticks: { color: '#94a3b8', font: {size: 9} } 
+                                grid: { color: '#334155', drawBorder: false },
+                                ticks: { color: '#94a3b8', font: {size: 10}, maxTicksLimit: 5 } 
                             }
                         }
                     }
@@ -839,115 +1079,145 @@ stats.listAdmin.forEach(adj => {
             },
 
             renderDashboard() {
-    const l = this.getCurrentLeague();
-    if (!l) return; // Protección por si no carga la liga
+                const l = this.getCurrentLeague();
+                if (!l) return;
 
-    const user = this.data.user;
-    const mem = this.getMember(l, user);
-    const base = l.startBalance || 1000;
+                const user = this.data.user;
+                const mem = this.getMember(l, user);
+                const base = l.startBalance || 1000;
 
-    // 1. ACTUALIZAR TEXTOS DE LA CABECERA
-    document.getElementById('dash-league-name').innerText = l.name;
-    document.getElementById('dash-league-code').innerText = l.code;
-    document.getElementById('dash-my-nickname').innerText = mem.nickname;
-    
-    // 2. ACTUALIZAR SALDO
-    document.getElementById('dash-balance').innerText = mem.balance;
-    
-    // --- NUEVO: MOSTRAR DEUDA EN EL MENÚ PRINCIPAL (AL LADO DE LAS FICHAS) ---
-    // Eliminamos el indicador si ya existía para no duplicar
-    const existingDebtBadge = document.getElementById('dash-debt-display');
-    if (existingDebtBadge) existingDebtBadge.remove();
+                // INFO BÁSICA
+                document.getElementById('dash-league-name').innerText = l.name;
+                document.getElementById('dash-league-code').innerText = l.code;
+                document.getElementById('dash-my-nickname').innerText = mem.nickname;
 
-    if (mem.debt && mem.debt > 0) {
-        const balanceContainer = document.getElementById('dash-balance').parentElement;
-        
-        // Creamos el elemento de la deuda
-        const debtDiv = document.createElement('div');
-        debtDiv.id = 'dash-debt-display';
-        // Estilo: Rojo, parpadeante, con borde y fondo suave
-        debtDiv.className = "flex items-center gap-1 text-danger text-[11px] font-black bg-danger/10 px-2 py-1 rounded-lg border border-danger/30 ml-2 animate-pulse";
-        debtDiv.innerHTML = `<i class="fa-solid fa-skull"></i> -${mem.debt}`;
-        
-        // Lo insertamos justo después del contenedor de las fichas
-        balanceContainer.after(debtDiv);
-    }
-    // -----------------------------------------------------------------------
+                // FUNCION COPIAR CÓDIGO
+                this.copyCode = () => {
+                    navigator.clipboard.writeText(l.code).then(() => this.toast('Código copiado'));
+                };
 
-    // 3. ACTUALIZAR AVATAR DE LA CABECERA
-    const avDiv = document.getElementById('dash-my-avatar');
-    if (mem.avatar) {
-        avDiv.innerHTML = `<img src="${mem.avatar}" class="w-full h-full object-cover">`;
-    } else {
-        avDiv.innerHTML = `<span>${mem.nickname.substring(0,2).toUpperCase()}</span>`;
-    }
+                // GESTIÓN DE SALDO (Colores y Estados)
+                const balWrapper = document.getElementById('balance-wrapper');
+                const balText = document.getElementById('dash-balance');
+                const balIcon = document.getElementById('balance-icon');
 
-    // 4. LÓGICA DE BOTONES EN EL HEADER
-    const btnDaily = document.getElementById('btn-header-daily');
-    
-    // A) Lógica del Bono Diario
-    if (!l.settings?.dailyBonus) {
-        btnDaily.classList.add('hidden');
-    } else {
-        btnDaily.classList.remove('hidden');
-        btnDaily.classList.add('flex');
-        const last = new Date(mem.lastBonusDate || 0);
-        const now = new Date();
-        
-        if (last.toDateString() !== now.toDateString()) {
-            btnDaily.className = "flex px-3 py-1 rounded-full text-[10px] font-bold items-center gap-1 transition active:scale-95 border border-white/20 bg-gradient-to-r from-neonGreen to-emerald-600 text-dark animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)] cursor-pointer mr-2";
-            btnDaily.innerHTML = `<i class="fa-solid fa-gift animate-bounce"></i> <span>RECLAMAR</span>`;
-            btnDaily.onclick = () => this.claimDailyBonus();
-        } else {
-            btnDaily.className = "hidden"; 
-        }
-    }
+                balText.innerText = mem.balance;
+                
+                // Reseteo de estilos
+                balWrapper.className = "flex items-center gap-1.5 mt-0.5 cursor-pointer transition active:scale-95 w-fit px-2 py-0.5 rounded";
+                balText.className = "font-mono font-bold text-sm leading-none";
 
-    // B) Lógica del Préstamo (Click en el saldo)
-    const balDiv = document.getElementById('dash-balance').parentElement;
-    // Solo permitimos pedir préstamo si no tiene deuda activa
-    if (mem.balance < (base * 0.10) && (!mem.debt || mem.debt <= 0)) {
-        balDiv.classList.remove('text-neonGreen', 'border-slate-700/50');
-        balDiv.classList.add('text-red-500', 'border-red-500', 'animate-pulse', 'cursor-pointer');
-        balDiv.title = "¡Toca para pedir Préstamo!";
-        balDiv.onclick = () => this.openLoanModal();
-    } else {
-        balDiv.classList.add('text-neonGreen', 'border-slate-700/50');
-        balDiv.classList.remove('text-red-500', 'border-red-500', 'animate-pulse', 'cursor-pointer');
-        balDiv.onclick = () => this.showHistory();
-    }
+                if (mem.debt && mem.debt > 0) {
+                    // DEUDA: Rojo
+                    balWrapper.classList.add('bg-danger/10', 'border', 'border-danger/30', 'animate-pulse');
+                    balText.classList.add('text-danger');
+                    balText.classList.remove('text-neonGreen', 'text-orange-400');
+                    balIcon.className = "fa-solid fa-skull text-[10px] text-danger";
+                } 
+                else if (mem.balance < (base * 0.10)) {
+                    // POBRE: Naranja
+                    balWrapper.classList.remove('bg-danger/10', 'border', 'border-danger/30', 'animate-pulse');
+                    balText.classList.add('text-orange-400');
+                    balText.classList.remove('text-neonGreen', 'text-danger');
+                    balIcon.className = "fa-solid fa-coins text-[10px] text-orange-400";
+                } 
+                else {
+                    // NORMAL: Verde
+                    balWrapper.classList.remove('bg-danger/10', 'border', 'border-danger/30', 'animate-pulse');
+                    balText.classList.add('text-neonGreen');
+                    balText.classList.remove('text-danger', 'text-orange-400');
+                    balIcon.className = "fa-solid fa-coins text-[10px] text-neonGreen";
+                }
 
-    // 5. RENDERIZAR LAS APUESTAS
-    this.renderBets(l);
+                // AVATAR
+                const avDiv = document.getElementById('dash-my-avatar');
+                if (mem.avatar) {
+                    avDiv.innerHTML = `<img src="${mem.avatar}" class="w-full h-full object-cover">`;
+                } else {
+                    avDiv.innerHTML = `<span>${mem.nickname.substring(0,2).toUpperCase()}</span>`;
+                }
 
-    // 6. LÓGICA DEL PUNTO ROJO DE LA CAMPANA
-    const stats = this.getNotificationStats(l);
-    const totalNotif = stats.newPending + stats.wins + stats.losses + stats.adminUpdates;
-    
-    const badge = document.getElementById('header-bell-badge');
-    if (badge) {
-        if (totalNotif > 0) {
-            badge.classList.remove('hidden'); 
-        } else {
-            badge.classList.add('hidden');    
-        }
-    }
-},
-            renderBets(l) {
+                // BONO DIARIO (Lógica de tiempo)
+                const btnDaily = document.getElementById('btn-header-daily');
+                if (!l.settings?.dailyBonus) {
+                    btnDaily.classList.add('hidden');
+                } else {
+                    btnDaily.classList.remove('hidden');
+                    const last = new Date(mem.lastBonusDate || 0);
+                    const now = new Date();
+                    const isSameDay = last.getDate() === now.getDate() && 
+                                      last.getMonth() === now.getMonth() && 
+                                      last.getFullYear() === now.getFullYear();
+
+                    if (!isSameDay) {
+                        btnDaily.className = "flex items-center gap-1.5 bg-gradient-to-r from-neonGreen to-emerald-600 text-dark px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg shadow-neonGreen/20 animate-pulse active:scale-95 transition";
+                        btnDaily.innerHTML = `<i class="fa-solid fa-gift animate-bounce"></i> <span>RECLAMAR</span>`;
+                        btnDaily.onclick = () => this.claimDailyBonus();
+                        btnDaily.disabled = false;
+                    } else {
+                        const tomorrow = new Date(now);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow.setHours(0,0,0,0);
+                        const diffMs = tomorrow - now;
+                        const diffHrs = Math.floor((diffMs % 86400000) / 3600000);
+                        const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
+                        
+                        btnDaily.className = "flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-slate-400 px-3 py-1.5 rounded-full text-[10px] font-mono cursor-not-allowed";
+                        btnDaily.innerHTML = `<i class="fa-regular fa-clock text-[9px]"></i> <span>${diffHrs}h ${diffMins}m</span>`;
+                        btnDaily.onclick = null;
+                        btnDaily.disabled = true;
+                    }
+                }
+
+                this.renderBets(l);
+                // Notificaciones (Punto rojo)
+                const stats = this.getNotificationStats(l);
+                const totalNotif = stats.newPending + stats.wins + stats.losses + stats.adminUpdates;
+                const badge = document.getElementById('header-bell-badge');
+                if (badge) {
+                     if (totalNotif > 0) badge.classList.remove('hidden');
+                     else badge.classList.add('hidden');
+                }
+            },
+
+            // --- FUNCIÓN COMPARTIR (AHORA ESTÁ FUERA, CORRECTAMENTE) ---
+            shareBet(id) {
+                const l = this.getCurrentLeague();
+                const b = l.bets.find(x => x.id === id);
+                
+                // Mensaje que se compartirá
+                const title = `🔥 ¡Apuesta en BetFriends!`;
+                const text = `⚽ *${b.title}*\n🏆 Liga: ${l.name}\n🔑 Código: ${l.code}\n\n¡Entra y participa!`;
+                const url = window.location.href; // Enlace a tu web
+
+                if (navigator.share) {
+                    // API NATIVA: Abre el menú del móvil (WhatsApp, Telegram, etc.)
+                    navigator.share({
+                        title: title,
+                        text: text,
+                        url: url
+                    }).catch((error) => console.log('Error compartiendo', error));
+                } else {
+                    // FALLBACK: Si es un PC viejo, copia al portapapeles
+                    const fullMsg = `${title}\n${text}\n${url}`;
+                    navigator.clipboard.writeText(fullMsg).then(() => {
+                        this.toast("Enlace copiado al portapapeles");
+                    });
+                }
+            },
+
+           renderBets(l) {
                 const container = document.getElementById('bets-container');
                 container.innerHTML = '';
 
                 let visibleBets = [];
                 const me = this.data.user;
 
+                // 1. FILTRADO (Exactamente igual que tu versión)
                 if (this.data.filter === 'active') {
-                    // Activas: Que NO estén resueltas (active)
-                    // Y que yo participe O que sean públicas O que yo sea el creador
                     visibleBets = l.bets.filter(b => b.status === 'active' && 
                         (b.participants.includes(me) || b.creator === me || !b.invites || b.invites.length === 0 || b.invites.includes(me))
                     );
-                    // Ocultamos las que son invitaciones pendientes (esas van a la pestaña pendientes)
-                    // Si no participo y tengo invitación, es pendiente, no activa
                     visibleBets = visibleBets.filter(b => {
                         if (b.participants.includes(me) || b.creator === me) return true;
                         if (b.invites && b.invites.includes(me)) return false; 
@@ -955,23 +1225,16 @@ stats.listAdmin.forEach(adj => {
                     });
 
                 } else if (this.data.filter === 'pending') {
-                    // Pendientes: Activas donde NO participo y tengo invitación (o son públicas)
                     visibleBets = l.bets.filter(b => {
                         if (b.status !== 'active') return false;
                         if (b.creator === me) return false;
                         if (b.participants.includes(me)) return false;
-                        
-                        // Si he rechazado esta apuesta, no la muestro
                         if (b.rejectedBy && b.rejectedBy.includes(me)) return false;
-
                         if (b.invites && b.invites.includes(me)) return true;
-                        // Si es pública y no participo, también puede salir aquí o en activas. 
-                        // Normalmente pendiente es solo si tienes invitación directa.
                         return false;
                     });
 
                 } else if (this.data.filter === 'resolved') {
-                    // Historial: Resueltas
                     visibleBets = l.bets.filter(b => b.status === 'resolved');
                 }
 
@@ -980,10 +1243,36 @@ stats.listAdmin.forEach(adj => {
                     return;
                 }
 
-                // Las ordenamos: Las nuevas primero
-                visibleBets.sort((a, b) => b.id - a.id);
+                // --- 2. ORDENACIÓN INTELIGENTE (EL ÚNICO CAMBIO) ---
+                // Si la apuesta tiene 'resolvedTime' (se acaba de resolver), usamos esa fecha.
+                // Si no, usamos 'id' (fecha de creación).
+                visibleBets.sort((a, b) => {
+                    const timeA = a.resolvedTime || a.id;
+                    const timeB = b.resolvedTime || b.id;
+                    return timeB - timeA; // De más reciente a más antiguo
+                });
 
-                visibleBets.forEach(b => this.renderBetCard(b, container, l));
+                // --- 3. OPTIMIZACIÓN ANTI-LAG (Exactamente igual que tu versión) ---
+                
+                // A) LIMITAR CANTIDAD
+                const totalResolved = visibleBets.length;
+                if (this.data.filter === 'resolved' && totalResolved > 50) {
+                    visibleBets = visibleBets.slice(0, 50);
+                }
+
+                // B) RENDERIZADO EN MEMORIA (BATCHING)
+                const tempDiv = document.createElement('div');
+                
+                // Pintamos todas las cartas en el contenedor temporal
+                visibleBets.forEach(b => this.renderBetCard(b, tempDiv, l));
+                
+                // Pegamos todo el bloque de una sola vez
+                container.innerHTML = tempDiv.innerHTML;
+
+                // Aviso de límite
+                if (this.data.filter === 'resolved' && totalResolved > 50) {
+                    container.innerHTML += `<div class="text-center text-[10px] text-slate-600 py-6 italic border-t border-slate-800 mt-4">Mostrando las 50 últimas operaciones de ${totalResolved}</div>`;
+                }
             },
             renderBetCard(b,c,l) { 
                 const me=this.data.user; 
@@ -993,23 +1282,19 @@ stats.listAdmin.forEach(adj => {
                 let avatarHtml = ''; 
                 let metaHtml = ''; 
 
-                // --- 1. LÓGICA DE FECHA Y CIERRE (LO NUEVO) ---
+                // --- 1. LÓGICA DE FECHA Y CIERRE ---
                 const isTimeExpired = b.closingTime && Date.now() > b.closingTime;
-                // La apuesta está cerrada si tiene el candado manual O si pasó la hora
                 const isLocked = b.locked || isTimeExpired; 
                 
-                // Etiqueta visual de la hora (si existe y está activa)
                 let timeLabel = '';
                 if (b.closingTime && b.status === 'active') {
                     const d = new Date(b.closingTime);
-                    // Formato: "15 ene, 22:30"
                     const dateStr = d.toLocaleString('es-ES', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    // Si ya expiró, la ponemos en rojo. Si no, naranja.
                     const colorTime = isTimeExpired ? 'text-danger border-danger/30' : 'text-orange-400 border-orange-400/30';
                     timeLabel = `<span class="text-[9px] ${colorTime} font-bold ml-2 border px-1 rounded" title="Cierre automático"><i class="fa-regular fa-clock mr-1"></i>${dateStr}</span>`;
                 }
 
-                // --- 2. CABECERA (ICONOS Y COLORES SEGÚN TIPO) ---
+                // --- 2. CABECERA ---
                 if (b.type === 'bank') { 
                     avatarHtml = `<div class="avatar-circle avatar-sm bg-gradient-to-br from-amber-400 to-orange-600 text-white border-none shadow-lg flex items-center justify-center"><i class="fa-solid fa-crown text-xs"></i></div>`; 
                     metaHtml = `<div class="text-[10px] text-amber-400 mt-0.5 font-bold uppercase tracking-wider">Evento de Liga 🏆</div>`; 
@@ -1023,18 +1308,13 @@ stats.listAdmin.forEach(adj => {
                 } 
                 if(b.invites&&b.invites.length>0) pt=`<span class="text-[10px] text-slate-400 ml-2 border border-slate-700 px-1 rounded"><i class="fa-solid fa-lock mr-1"></i>${b.type==='duel'?'Duelo':'Privada'}</span>`; 
 
-                // --- 3. ESTADOS (PENDIENTE, ACTIVA, RESUELTA) ---
-                
-                // A) PENDIENTES (Invitaciones)
+                // --- 3. ESTADOS ---
                 if(this.data.filter==='pending') { 
                     bg=`<span class="text-gold bg-gold/10 px-2 py-0.5 rounded text-[10px] font-bold">PROPUESTA</span>`; 
                     if(b.invites&&b.invites.length>0) inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-1">Invitados: ${b.invites.map(u=>this.getMember(l,u).nickname).join(', ')}</div>`; 
                     acts=`<div class="grid grid-cols-2 gap-2 mt-3"><button onclick="app.rejectBet(${b.id})" class="bg-slate-700 py-2 rounded text-xs font-bold text-white">Rechazar</button><button onclick="app.joinBetModal(${b.id})" class="bg-neonGreen text-dark py-2 rounded text-xs font-bold">Aceptar (${b.amount})</button></div>`; 
                 
-                // B) ACTIVAS (En Juego)
                 } else if(this.data.filter==='active') { 
-                    
-                    // Etiqueta de estado: CERRADA o EN JUEGO
                     if (isLocked) {
                         bg=`<span class="text-danger bg-danger/10 px-2 py-0.5 rounded text-[10px] font-bold border border-danger/20"><i class="fa-solid fa-lock mr-1"></i>CERRADA</span>`;
                     } else {
@@ -1043,17 +1323,11 @@ stats.listAdmin.forEach(adj => {
                     
                     inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-2"><div class="uppercase font-bold text-slate-600 mb-1">Participantes (${b.participants.length}):</div><div class="flex flex-wrap gap-1">${b.participants.map(u=>`<div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">${this.getAvatarHtml(this.getMember(l,u),'sm')}<span class="text-[10px] text-slate-300">${this.getMember(l,u).nickname}</span></div>`).join('')}</div></div>`; 
                     
-                    // BOTONES DE ACCIÓN
                     if(ic) { 
-                        // --- ERES EL CREADOR (ADMIN) ---
-                        // 1. Botón Candado (Para abrir/cerrar manualmente)
                         const lockBtn = `<button onclick="app.toggleBetLock(${b.id})" class="flex-1 border ${b.locked ? 'border-neonGreen text-neonGreen' : 'border-slate-500 text-slate-400'} py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition mr-1" title="${b.locked ? 'Abrir' : 'Cerrar entradas'}"><i class="fa-solid ${b.locked ? 'fa-lock-open' : 'fa-lock'}"></i></button>`;
-                        // 2. Botón Resolver
                         const resolveBtn = `<button onclick="app.resolveBetModal(${b.id})" class="flex-[4] border border-neonPurple text-neonPurple py-2 rounded-xl text-xs font-bold hover:bg-neonPurple hover:text-white transition">Resolver Evento</button>`;
-                        // 3. Botón Cancelar
                         const cancelBtn = `<button onclick="app.cancelBet(${b.id})" class="w-full mt-2 border border-danger text-danger py-2 rounded-xl text-xs font-bold hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash mr-1"></i> Cancelar</button>`;
 
-                        // Lógica especial: Si es porra/banca y NO has apostado, te dejo apostar aunque seas el creador
                         if (b.type === 'custom' && !b.participants.includes(me) && !isLocked) {
                             acts = `<button onclick="app.joinBetModal(${b.id})" class="w-full mb-2 bg-gradient-to-r from-neonGreen to-emerald-600 text-dark py-2 rounded-xl text-xs font-bold shadow-lg animate-pulse">🎯 Elige tu opción</button>`;
                             acts += `<div class="flex gap-1">${lockBtn}${resolveBtn}</div>${cancelBtn}`;
@@ -1065,27 +1339,20 @@ stats.listAdmin.forEach(adj => {
                             }
                             acts += `<div class="flex gap-1">${lockBtn}${resolveBtn}</div>${cancelBtn}`;
                         } else {
-                            // Duelos o ya participando
                             acts = `<div class="flex gap-1 mt-2">${lockBtn}${resolveBtn}</div>${cancelBtn}`;
                         }
 
                     } else { 
-                        // --- ERES UN USUARIO NORMAL ---
                         const s=b.selections?b.selections[me]:null;
-                        
                         if (isLocked && !b.participants.includes(me)) {
-                            // Está cerrada y NO entraste a tiempo
                             acts=`<div class="mt-3 text-xs bg-danger/10 border border-danger/30 p-2 rounded text-center text-danger font-bold"><i class="fa-solid fa-lock mr-1"></i> Apuestas Cerradas</div>`;
                         } else if (b.participants.includes(me)) {
-                            // Ya estás dentro
                             acts=`<div class="mt-3 text-xs bg-slate-800 p-2 rounded text-center text-slate-400">${s?`Tu apuesta: <span class="text-white font-bold">${(typeof s==='object')?s.option:s}</span>`:'Estás dentro'}</div>`;
                         } else {
-                            // Está abierta y puedes entrar
                             acts=`<button onclick="app.joinBetModal(${b.id})" class="w-full mt-2 bg-neonGreen text-dark py-2 rounded-xl text-xs font-bold shadow-lg">Unirse / Apostar</button>`;
                         }
                     } 
                 
-                // C) RESUELTAS (Historial)
                 } else if(b.status==='resolved') { 
                     if (b.type === 'admin') { 
                         const targetUser = b.participants[0]; 
@@ -1131,61 +1398,40 @@ stats.listAdmin.forEach(adj => {
                     } 
                 } 
 
-                // --- 4. RENDER FINAL ---
-                c.innerHTML+=`<div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg relative"><div class="flex justify-between items-start"><div class="flex gap-3"><div class="pt-1">${avatarHtml}</div><div><h4 class="font-bold text-white text-sm">${b.title} ${pt} ${timeLabel}</h4>${metaHtml}</div></div><div class="text-right"><div class="text-neonGreen font-mono font-bold">${b.pot}</div><div class="mt-1">${bg}</div></div></div>${(b.type==='custom'||b.type==='bank')&&b.status!=='resolved'?`<div class="flex gap-1 mt-2 overflow-x-auto opacity-60 ml-10">${b.options.map(o=>`<span class="text-[10px] border border-slate-600 px-2 rounded-full whitespace-nowrap">${o}</span>`).join('')}</div>`:''} <div class="ml-0 sm:ml-10">${inf}${acts}</div></div>`; 
+                // --- 4. RENDER FINAL (AQUÍ ESTÁ EL CAMBIO) ---
+                
+                // Definimos el botón Share (solo si está activa o pendiente)
+                const shareBtn = (b.status === 'active' || b.status === 'pending') 
+                    ? `<button onclick="app.shareBet(${b.id})" class="text-slate-500 hover:text-white transition p-1 mr-1" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>` 
+                    : '';
+
+                // Modificamos el bloque final para integrar el botón en la esquina derecha
+                c.innerHTML+=`
+                <div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg relative">
+                    <div class="flex justify-between items-start">
+                        <div class="flex gap-3 flex-1">
+                            <div class="pt-1 shrink-0">${avatarHtml}</div>
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-white text-sm truncate pr-2">${b.title} ${pt} ${timeLabel}</h4>
+                                ${metaHtml}
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col items-end gap-1">
+                            <div class="flex items-center gap-2">
+                                ${shareBtn}
+                                <div class="text-neonGreen font-mono font-bold">${b.pot}</div>
+                            </div>
+                            <div>${bg}</div>
+                        </div>
+
+                    </div>
+                    ${(b.type==='custom'||b.type==='bank')&&b.status!=='resolved'?`<div class="flex gap-1 mt-2 overflow-x-auto opacity-60 ml-10 no-scrollbar">${b.options.map(o=>`<span class="text-[10px] border border-slate-600 px-2 rounded-full whitespace-nowrap">${o}</span>`).join('')}</div>`:''} 
+                    <div class="ml-0 sm:ml-10">${inf}${acts}</div>
+                </div>`; 
             },
-// Función para bloquear/desbloquear apuestas (Solo Admin)
-            toggleBetLock(id) {
-                const l = this.getCurrentLeague();
-                const b = l.bets.find(x => x.id === id);
                 
-                // Cambiamos el estado: si está bloqueada, la abrimos. Si no, la cerramos.
-                b.locked = !b.locked;
-                
-                this.saveLeagueToCloud(l);
-                this.renderDashboard();
-                this.toast(b.locked ? "Apuestas Cerradas 🔒" : "Apuestas Abiertas 🔓");
-            },
-            showConfirm(msg, cb) { document.getElementById('confirm-msg').innerText = msg; this.pendingCallback = cb; this.openModal('confirm'); },
-            confirmYes() { if (this.pendingCallback) this.pendingCallback(); this.closeModals(); this.pendingCallback = null; },
-            cancelBet(id) {
-                const l = this.getCurrentLeague();
-                const idx = l.bets.findIndex(b => b.id === id);
-                if (idx === -1) return;
-                
-                const b = l.bets[idx];
-                
-                if (b.type === 'bank') {
-                    // Si era contra la banca, devolvemos dinero a todos los que apostaron
-                    if (b.selections) {
-                        Object.keys(b.selections).forEach(u => {
-                            if (l.members[u]) {
-                                const amount = b.selections[u].wager;
-                                l.members[u].balance += amount;
-                                // HISTORIAL: Registramos la devolución
-                                this.addTransaction(l, u, 'refund', amount, `Cancelada: ${b.title}`);
-                            }
-                        });
-                    }
-                } else {
-                    // Si era normal, devolvemos la entrada a los participantes
-                    b.participants.forEach(p => {
-                        if (l.members[p]) {
-                            l.members[p].balance += b.amount;
-                            // HISTORIAL: Registramos la devolución
-                            this.addTransaction(l, p, 'refund', b.amount, `Cancelada: ${b.title}`);
-                        }
-                    });
-                }
-                
-                // Borramos la apuesta de la lista
-                l.bets.splice(idx, 1);
-                
-                this.saveLeagueToCloud(l);
-                this.renderDashboard();
-                this.toast("Apuesta cancelada y reembolsada");
-            },
-            openProfileModal() { const l=this.getCurrentLeague(); const m=this.getMember(l,this.data.user); document.getElementById('profile-nickname').value=m.nickname; document.getElementById('profile-preview').innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-user text-4xl"></i>`; this.data.tempAvatar=m.avatar; this.openModal('profile'); },
+         openProfileModal() { const l=this.getCurrentLeague(); const m=this.getMember(l,this.data.user); document.getElementById('profile-nickname').value=m.nickname; document.getElementById('profile-preview').innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-user text-4xl"></i>`; this.data.tempAvatar=m.avatar; this.openModal('profile'); },
             handleImageUpload(i) {
                 if (i.files && i.files[0]) {
                     const file = i.files[0];
@@ -1306,8 +1552,14 @@ stats.listAdmin.forEach(adj => {
                 const el = document.getElementById('ranking-list'); 
                 el.innerHTML = ''; 
                 
-                // Ordenamos por saldo
-                const sorted = Object.keys(l.members).sort((a,b) => this.getMember(l,b).balance - this.getMember(l,a).balance);
+                // --- CAMBIO CLAVE: ORDENAR POR PATRIMONIO (Saldo - Deuda) ---
+                const sorted = Object.keys(l.members).sort((a,b) => {
+                    const mA = this.getMember(l, a);
+                    const mB = this.getMember(l, b);
+                    const netA = mA.balance - (mA.debt || 0);
+                    const netB = mB.balance - (mB.debt || 0);
+                    return netB - netA; // De mayor a menor
+                });
                 
                 sorted.forEach((k, i) => { 
                     const m = this.getMember(l,k); 
@@ -1340,41 +1592,53 @@ stats.listAdmin.forEach(adj => {
 
                     // 2. LÓGICA DE RACHA (FUEGO)
                     let streak = 0;
-                    const myBets = l.bets.filter(b => b.status === 'resolved' && b.type !== 'admin' && b.participants.includes(k));
-                    for (let b of myBets) {
-                        if (this.isUserWinner(b, k)) streak++;
-                        else break;
+                    if(l.bets) {
+                        const myBets = l.bets.filter(b => b.status === 'resolved' && b.type !== 'admin' && b.participants.includes(k));
+                        // Nota: isUserWinner debe estar definida en tu app para que esto funcione
+                        // Si no tienes isUserWinner a mano, podrías usar m.streak si lo guardas
+                         for (let b of myBets) {
+                             if (this.isUserWinner && this.isUserWinner(b, k)) streak++;
+                             else break;
+                         }
+                    } else if (m.streak) {
+                        streak = m.streak;
                     }
                     
-                    // Icono de Racha (Sin márgenes forzados, usaremos gap en el padre)
+                    // Icono de Racha
                     const fireIcon = streak >= 3 
                         ? `<div class="flex items-center gap-0.5 text-orange-500 animate-pulse whitespace-nowrap" title="Racha de ${streak}"><i class="fa-solid fa-fire"></i><span class="text-xs font-bold pt-0.5">${streak}</span></div>` 
                         : '';
 
-                    // 3. LÓGICA DE DEUDA (Añadido para que salga en la lista)
+                    // 3. LÓGICA DE DEUDA (VISUAL)
+                    // Si tiene deuda, mostramos una etiquetita roja al lado del nombre
                     const debtIcon = (m.debt && m.debt > 0)
-                        ? `<div class="flex items-center gap-1 text-[9px] text-danger border border-danger/50 px-1 rounded bg-danger/10 font-bold whitespace-nowrap"><i class="fa-solid fa-file-invoice-dollar"></i> -${m.debt}</div>`
+                        ? `<div class="flex items-center gap-1 text-[9px] text-red-400 border border-red-500/30 px-1 rounded bg-red-900/20 font-bold whitespace-nowrap ml-1" title="Deuda pendiente"><i class="fa-solid fa-file-invoice-dollar"></i> -${m.debt}</div>`
                         : '';
 
                     const adminBadge = isAdmin ? `<i class="fa-solid fa-user-shield text-neonPurple text-[10px]" title="Comisionado"></i>` : ''; 
                     
-                    // 4. RENDER FINAL CON ESTRUCTURA CORREGIDA (TODO EN FILA)
+                    // 4. RENDER FINAL
                     el.innerHTML += `
                     <div class="flex justify-between items-center p-3 rounded-lg bg-slate-800 border-2 ${borderClass} cursor-pointer mb-2 transition hover:scale-[1.02]" onclick="app.viewProfile('${k}')">
                         <div class="flex items-center gap-3 min-w-0">
                             ${rankIcon}
                             ${this.getAvatarHtml(m,'sm')}
                             
-                            <div class="flex items-center gap-2 overflow-hidden">
-                                <span class="font-bold text-white text-sm truncate">${m.nickname}</span>
-                                <div class="flex items-center gap-1 shrink-0">
+                            <div class="flex flex-col min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-white text-sm truncate">${m.nickname}</span>
                                     ${adminBadge}
+                                </div>
+                                <div class="flex items-center gap-1 mt-0.5">
                                     ${fireIcon}
                                     ${debtIcon}
                                 </div>
                             </div>
                         </div>
-                        <span class="font-mono ${i===0 ? 'text-gold' : 'text-neonGreen'} font-bold shrink-0 ml-2">${m.balance}</span>
+                        <div class="text-right">
+                             <span class="font-mono ${i===0 ? 'text-gold' : 'text-neonGreen'} font-bold text-lg">${m.balance}</span>
+                             ${(m.debt && m.debt > 0) ? `<div class="text-[9px] text-red-400 font-mono -mt-1">Neto: ${m.balance - m.debt}</div>` : ''}
+                        </div>
                     </div>`; 
                 }); 
                 this.openModal('ranking'); 
@@ -1421,14 +1685,24 @@ stats.listAdmin.forEach(adj => {
                 const l = this.getCurrentLeague();
                 const t = document.getElementById('create-type').value;
                 const ti = document.getElementById('create-title').value.trim();
+                
+                // Leemos la cantidad. Si es banca es 0, si no, lo que ponga el usuario.
                 let a = t === 'bank' ? 0 : parseInt(document.getElementById('create-amount').value);
                 const me = this.data.user;
 
                 if (!ti) return this.toast("Falta título", "error");
                 
+                // --- 🛡️ VALIDACIÓN DE CANTIDAD (NUEVO) ---
+                // Si NO es contra la banca, la entrada es obligatoria y debe ser >= 1
+                if (t !== 'bank') {
+                    if (isNaN(a) || a < 1) {
+                        return this.toast("La entrada debe ser mínimo 1 ficha", "error");
+                    }
+                }
+                // ------------------------------------------
+
                 // LEEMOS LA FECHA EXACTA
                 const dateInput = document.getElementById('create-deadline').value;
-                // Convertimos la fecha a un número (timestamp) para poder compararla fácil
                 const closingTime = dateInput ? new Date(dateInput).getTime() : null;
 
                 if (this.data.inviteMode === 'private') {
@@ -1463,19 +1737,30 @@ stats.listAdmin.forEach(adj => {
                     odds: od, 
                     selections: {}, 
                     timestamp: new Date().toLocaleDateString(),
-                    locked: false,           // Candado manual
-                    closingTime: closingTime // Candado automático (Fecha completa)
+                    locked: false,           
+                    closingTime: closingTime 
                 };
 
+                // Lógica de cobro al crear (Solo Duelo y Bote pagan al crear)
+                // La Quiniela (Custom) NO paga al crear, el creador paga al unirse después eligiendo opción
                 if (t !== 'bank' && t !== 'custom') {
                     if (l.members[me].balance < a) return this.toast("Saldo bajo", "error");
+                    
+                    // 1. RESTAR SALDO
                     l.members[me].balance -= a;
+                    
+                    // 2. GUARDAR EN HISTORIAL
+                    if (!l.members[me].transactions) l.members[me].transactions = [];
+                    l.members[me].transactions.push({
+                        type: 'bet',
+                        amount: -a,
+                        desc: `Apuesta: ${ti}`,
+                        date: new Date().toLocaleString(),
+                        timestamp: Date.now()
+                    });
+
                     b.pot = a;
                     b.participants.push(me);
-                    
-                    if (typeof this.addTransaction === 'function') {
-                        this.addTransaction(l, me, 'bet', a, `Crear: ${ti}`);
-                    }
                 }
 
                 l.bets.unshift(b);
@@ -1553,7 +1838,7 @@ if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
                 
-                // Preparar interfaz visual del modal
+                // --- PREPARAR INTERFAZ VISUAL ---
                 document.getElementById('modal-action').classList.remove('hidden');
                 document.getElementById('action-title').innerText = "Resolver Apuesta";
                 document.getElementById('action-content').innerText = "¿Quién ha ganado?";
@@ -1561,37 +1846,36 @@ if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
                 
                 const lst = document.getElementById('action-dynamic-list');
                 lst.innerHTML = '';
-                let w = null; // Ganador seleccionado
+                let w = null; 
 
-                // Mostrar opciones para elegir ganador
+                // Mostrar opciones
                 const ops = (b.type === 'bank' || b.type === 'custom') ? b.options : b.participants;
                 ops.forEach(c => {
                     const btn = document.createElement('button');
                     btn.className = "w-full text-left bg-slate-700 p-3 rounded mb-2 hover:bg-slate-600 font-bold transition";
                     btn.innerText = c;
                     btn.onclick = () => {
-                        w = c; // Guardamos ganador
+                        w = c; 
                         lst.innerHTML = `<div class="text-center py-4 text-neonGreen text-xl font-bold border border-neonGreen rounded bg-slate-800 animate-pulse">Ganador: ${c}</div>`;
                     };
                     lst.appendChild(btn);
                 });
 
-                // Acción al confirmar ganador
+                // --- ACCIÓN AL CONFIRMAR ---
                 document.getElementById('action-confirm-btn').onclick = () => {
-                    if (!w) return; // Si no ha elegido nadie, no hacemos nada
+                    if (!w) return; 
                     
                     b.winningOption = w;
                     b.status = 'resolved';
+b.resolvedTime = Date.now();
                     b.winner = w;
                     b.resolvedAt = Date.now();
 
-                    // Función auxiliar para calcular racha de victorias
+                    // Función auxiliar de racha
                     const getStreak = (userId) => {
                         let streak = 0;
                         const myBets = l.bets.filter(bet => bet.status === 'resolved' && bet.id !== b.id && bet.type !== 'admin' && bet.participants.includes(userId));
-                        // Ordenamos para ver las últimas
                         myBets.sort((x, y) => y.resolvedAt - x.resolvedAt);
-                        
                         for (let bet of myBets) {
                             if (this.isUserWinner(bet, userId)) streak++;
                             else break; 
@@ -1599,49 +1883,82 @@ if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
                         return streak;
                     };
 
-                    // --- FUNCIÓN DE PAGO MAESTRA (Gestiona Deudas, Bonus y Beneficios) ---
-const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
-    if (!l.members[userId]) return;
-    
-    // Convertimos a números por seguridad
-    const totalPrize = parseInt(prizeWithoutWager); 
-    const wager = parseInt(wagerPaid);
-    
-    // 1. Calculamos el BENEFICIO NETO
-    const profit = totalPrize - wager;
+                    // --- FUNCIÓN DE PAGO CON LÓGICA DE EMBARGO ---
+                    const payUser = (userId, basePrize, bonusAmount, wagerPaid, concept) => {
+                        const m = l.members[userId];
+                        if (!m) return;
+                        
+                        if (!m.transactions) m.transactions = [];
 
-    let debtPaid = 0;
+                        // 1. INGRESO DEL PREMIO BASE
+                        m.balance += basePrize;
+                        m.transactions.unshift({
+                            type: 'win',
+                            amount: basePrize,
+                            desc: concept,
+                            date: new Date().toLocaleString(),
+                            timestamp: Date.now()
+                        });
 
-    // 2. GESTIÓN DE DEUDA
-    if (profit > 0 && l.members[userId].debt && l.members[userId].debt > 0) {
-        if (l.members[userId].debt >= profit) {
-            debtPaid = profit;
-            l.members[userId].debt -= profit;
-        } else {
-            debtPaid = l.members[userId].debt;
-            l.members[userId].debt = 0;
-        }
-    }
+                        // 2. INGRESO DEL BONUS (Si hay)
+                        if (bonusAmount > 0) {
+                            m.balance += bonusAmount;
+                            m.transactions.unshift({
+                                type: 'bonus',
+                                amount: bonusAmount,
+                                desc: `Bono Racha 🔥`,
+                                date: new Date().toLocaleString(),
+                                timestamp: Date.now() + 1
+                            });
+                        }
 
-    // 3. ACTUALIZACIÓN DEL SALDO Y MOVIMIENTOS (AQUÍ ESTÁ LA CORRECCIÓN)
-    
-    // Primero: Sumamos TODO el premio al balance real
-    l.members[userId].balance += totalPrize;
-    // Registramos la ganancia total en el historial (+1000)
-    this.addTransaction(l, userId, 'win', totalPrize, concept);
+                        // 3. COBRO DE DEUDA (SISTEMA DE EMBARGO)
+                        const totalIncome = basePrize + bonusAmount;
+                        const profit = totalIncome - wagerPaid; // Beneficio neto real
 
-    // Segundo: Si hubo deuda, la restamos del balance real ahora
-    if (debtPaid > 0) {
-        l.members[userId].balance -= debtPaid;
-        // Registramos el cobro de la deuda en el historial (-200)
-        this.addTransaction(l, userId, 'refund', -debtPaid, `Cobro de Deuda (Beneficios) 🧾`);
-        this.toast(`El sistema ha cobrado ${debtPaid} de deuda a ${l.members[userId].nickname}`, 'info');
-    }
-};
+                        if (profit > 0 && m.debt && m.debt > 0) {
+                            
+                            // LÓGICA CLAVE:
+                            // Si está embargado (isGarnished) -> Cobramos 70% del beneficio.
+                            // Si es deuda normal -> Intentamos cobrar el 100% del beneficio (comportamiento clásico).
+                            let percentageToPay = m.isGarnished ? 0.70 : 1.0;
+                            
+                            let amountForDebt = Math.floor(profit * percentageToPay);
+                            
+                            // El pago real no puede superar lo que debe
+                            const payment = Math.min(m.debt, amountForDebt);
+                            
+                            if (payment > 0) {
+                                m.balance -= payment; 
+                                m.debt -= payment;    
+                                
+                                // Si paga toda la deuda, es libre del embargo
+                                if (m.debt <= 0) {
+                                    m.debt = 0;
+                                    if(m.isGarnished) {
+                                        m.isGarnished = false;
+                                        this.toast(`¡${m.nickname} ha salido de la bancarrota! 🎉`);
+                                    }
+                                }
+
+                                m.transactions.unshift({
+                                    type: 'debt_pay',
+                                    amount: -payment,
+                                    desc: m.isGarnished ? 'Cobro Embargo (70%) ⚖️' : 'Cobro Deuda (Beneficios) 🧾',
+                                    date: new Date().toLocaleString(),
+                                    timestamp: Date.now() + 2 
+                                });
+                                
+                                if (m.isGarnished) {
+                                    this.toast(`Embargo aplicado a beneficios: -${payment}`, 'info');
+                                }
+                            }
+                        }
+                    };
                     // ---------------------------------------------------------------
 
                     if (b.type === 'bank') {
-                        // --- APUESTAS CONTRA LA BANCA ---
+                        // --- CONTRA LA BANCA ---
                         Object.keys(b.selections).forEach(u => {
                             const r = b.selections[u];
                             if (r && r.option === w && l.members[u]) {
@@ -1649,18 +1966,17 @@ const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
                                 const currentStreak = getStreak(u);
                                 let bonus = 0;
                                 
-                                // Bonus de Racha (Banca)
                                 if (currentStreak >= 3) {
                                     bonus = Math.floor(winAmount * 0.15);
                                     this.toast(`¡Bonus Racha (+${bonus}) para ${l.members[u].nickname}! 🔥`);
                                 }
                                 
-                                // Enviamos (Premio + Bonus) y (Apuesta Inicial)
-                                payUser(u, winAmount + bonus, `Victoria: ${b.title}`, r.wager);
+                                // Pasamos winAmount y bonus SEPARADOS
+                                payUser(u, winAmount, bonus, r.wager, `Victoria: ${b.title}`);
                             }
                         });
                     } else {
-                        // --- APUESTAS ENTRE AMIGOS (Custom/Porra) ---
+                        // --- ENTRE AMIGOS ---
                         let ws = [];
                         if (b.type === 'custom') ws = Object.entries(b.selections || {}).filter(([u, s]) => s === w).map(([u]) => u);
                         else ws = [w];
@@ -1672,31 +1988,37 @@ const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
                                     const currentStreak = getStreak(x);
                                     let bonus = 0;
                                     
-                                    // 🔴 LÓGICA CORREGIDA: Solo hay bonus si juegas contra otros 🔴
                                     if (currentStreak >= 3 && b.participants.length > 1) {
                                         bonus = Math.floor(p * 0.15);
                                         this.toast(`¡Bonus Racha (+${bonus}) para ${l.members[x].nickname}! 🔥`);
                                     }
                                     
-                                    // Enviamos (Bote + Bonus) y (Apuesta Inicial)
-                                    // Al sumar el bonus al bote, el "profit" aumenta, y la deuda se cobrará de ahí.
-                                    payUser(x, p + bonus, `Victoria: ${b.title}`, b.wager);
+                                    // Pasamos p (bote compartido) y bonus SEPARADOS
+                                    payUser(x, p, bonus, b.wager, `Victoria: ${b.title}`);
                                 }
                             });
                         } else {
-                            // --- CASO DESIERTO (Devolución) ---
+                            // --- DEVOLUCIÓN ---
                             if (l.members[b.creator]) {
                                 l.members[b.creator].balance += b.pot;
-                                this.addTransaction(l, b.creator, 'refund', b.pot, `Devolución: ${b.title}`);
+                                
+                                if(!l.members[b.creator].transactions) l.members[b.creator].transactions = [];
+                                l.members[b.creator].transactions.push({
+                                    type: 'refund',
+                                    amount: b.pot,
+                                    desc: `Devolución: ${b.title}`,
+                                    date: new Date().toLocaleString(),
+                                    timestamp: Date.now()
+                                });
                             }
                             b.winner = "Nadie (Devuelto)";
                         }
                     }
 
-                    // Guardar y refrescar
                     this.saveLeagueToCloud(l);
                     this.closeModals();
                     this.renderDashboard();
+                    this.checkAndNotify(); 
                     this.toast("Apuesta resuelta correctamente");
                 };
             },
@@ -1707,57 +2029,30 @@ const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
                 const me = this.data.user;
                 const m = l.members[me];
                 
-                // Obtenemos el valor del bono (usamos el configurado o 0 si falla)
+                // 1. Validar Bono Configurado
                 const bonus = l.settings.dailyBonus || 0;
+                if (bonus === 0) return this.toast("Esta liga no tiene bono diario", "error");
 
-                // --- NUEVA LÓGICA: LA MAFIA SE COBRA DEL BONO 🦈 ---
-                let amountToUser = bonus;
-                let debtPaid = 0;
-
-                // Si tiene deuda, interceptamos el regalo
-                if (m.debt && m.debt > 0) {
-                    if (m.debt >= bonus) {
-                        // La deuda es mayor que el bono: Se lo queda todo el sistema
-                        debtPaid = bonus;
-                        m.debt -= bonus;
-                        amountToUser = 0; // Tú te quedas a cero, pero bajas deuda
-                    } else {
-                        // El bono paga la deuda restante y sobra dinero para ti
-                        debtPaid = m.debt;
-                        amountToUser = bonus - debtPaid;
-                        m.debt = 0;
-                    }
-                }
-                // -------------------------------------------
-
-                // 1. Ingresar lo que sobre al usuario (si sobra algo)
-                if (amountToUser > 0) {
-                    m.balance += amountToUser;
-                    // Guardamos en el historial que recibió el bono
-                    this.addTransaction(l, me, 'bonus', amountToUser, 'Bono Diario 🎁');
-                }
-
-                // 2. Registrar el embargo de la mafia (si hubo cobro)
-                if (debtPaid > 0) {
-                    // Guardamos en el historial que se pagó deuda
-                    this.addTransaction(l, me, 'refund', -debtPaid, 'Pago Deuda (Bono Diario) 🧾');
-                    
-                    if (amountToUser === 0) {
-                        this.toast(`La organización se ha quedado todo tu bono (${debtPaid}) para pagar deuda.`, 'error');
-                    } else {
-                        this.toast(`Se han cobrado ${debtPaid} de deuda. Recibes ${amountToUser}.`, 'info');
-                    }
-                } else {
-                     // Si no tenías deuda, mensaje de alegría normal
-                     this.toast(`¡+${amountToUser} fichas!`);
-                }
-                
-                // Actualizamos la fecha del último bono
+                // 2. SUMA LIMPIA AL BOLSILLO (Sin pagar deudas)
+                // El dinero entra directo para que pueda jugar, aunque deba millones.
+                m.balance += bonus;
                 m.lastBonusDate = Date.now();
-                
+
+                // 3. Registro en historial
+                // Usamos 'transactions' para mantener consistencia con tu HTML
+                if (!m.transactions) m.transactions = [];
+                m.transactions.unshift({
+                    type: 'bonus',
+                    amount: bonus,
+                    desc: 'Bono Diario 🎁',
+                    date: new Date().toLocaleString(),
+                    timestamp: Date.now()
+                });
+
                 this.saveLeagueToCloud(l);
-                this.checkDailyBonusVisibility(l); // Actualizamos el botón del header
+                this.checkDailyBonusVisibility(l); 
                 this.renderDashboard();
+                this.toast(`Has recibido +${bonus} fichas. ¡Es tu oportunidad para remontar!`);
             },
             openLeagueSettings() { const l = this.getCurrentLeague(); const isCreator = l.creator === this.data.user; document.getElementById('settings-creator-options').classList.add('hidden'); document.getElementById('settings-member-options').classList.add('hidden'); document.getElementById('settings-transfer-list').classList.add('hidden'); if (isCreator) { document.getElementById('settings-creator-options').classList.remove('hidden'); } else { document.getElementById('settings-member-options').classList.remove('hidden'); } this.openModal('league-settings'); },
             openAdminPanel() { const l = this.getCurrentLeague(); const list = document.getElementById('admin-members-list'); list.innerHTML = ''; Object.keys(l.members).sort().forEach(u => { const m = this.getMember(l, u); const item = document.createElement('div'); item.className = "flex justify-between items-center p-3 rounded bg-slate-800 hover:bg-slate-700 cursor-pointer border border-slate-700 transition"; item.innerHTML = `<div class="flex items-center gap-3">${this.getAvatarHtml(m, 'sm')}<div><p class="text-sm font-bold text-white">${m.nickname}</p><p class="text-[10px] text-neonGreen font-mono">Saldo: ${m.balance}</p></div></div><i class="fa-solid fa-pen-to-square text-slate-400"></i>`; item.onclick = () => this.openAdminEditUser(u); list.appendChild(item); }); this.openModal('admin-panel'); },
@@ -1779,10 +2074,17 @@ const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
                     l.members[user].balance += amount;
                     if(l.members[user].balance < 0) l.members[user].balance = 0;
 
-                    // 2. NUEVO: Lo guardamos en el Monedero/Historial
-                    this.addTransaction(l, user, 'admin', amount, 'Ajuste de Comisionado');
+                    // 2. NUEVO: Guardar en el Monedero
+                    if (!l.members[user].transactions) l.members[user].transactions = [];
+                    l.members[user].transactions.push({
+                        type: 'admin',
+                        amount: amount,
+                        desc: amount > 0 ? 'Ajuste Admin (Ingreso)' : 'Ajuste Admin (Retirada)',
+                        date: new Date().toLocaleString(),
+                        timestamp: Date.now()
+                    });
 
-                    // 3. Creamos el registro público (para el muro de apuestas)
+                    // 3. Registro público (Log de apuestas)
                     const adminLog = { 
                         id: Date.now(), 
                         type: 'admin', 
@@ -1807,7 +2109,7 @@ const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
                     this.toast(`Saldo actualizado: ${amount > 0 ? '+' : ''}${amount}`);
                     this.renderDashboard();
                     
-                    // Refrescamos el panel de admin y cerramos el modal pequeño
+                    // Refrescamos panel y cerramos modal
                     this.openAdminPanel();
                     document.getElementById('modal-admin-edit-user').classList.add('hidden');
                 }
@@ -1861,47 +2163,177 @@ const payUser = (userId, prizeWithoutWager, concept, wagerPaid) => {
                 const l = this.getCurrentLeague();
                 const m = this.getMember(l, this.data.user);
                 const list = document.getElementById('history-list');
+                const base = l.startBalance || 1000;
                 
-                document.getElementById('history-current-balance').innerText = m.balance;
                 list.innerHTML = '';
+                
+                // Ocultar saldo viejo si existe
+                const oldBal = document.getElementById('history-current-balance');
+                if(oldBal && oldBal.parentElement) oldBal.parentElement.style.display = 'none';
 
-                if (!m.transactions || m.transactions.length === 0) {
-                    list.innerHTML = `<div class="text-center text-slate-500 py-8 text-xs">Sin movimientos aún.</div>`;
+                // --- 1. CABECERA ---
+                const infoContainer = document.createElement('div');
+                infoContainer.className = "grid grid-cols-2 gap-3 mb-4 shrink-0"; 
+
+                // Tarjeta Saldo
+                infoContainer.innerHTML += `
+                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
+                        <div class="text-[9px] text-slate-400 uppercase tracking-wider font-bold mb-1 z-10">Saldo Actual</div>
+                        <div class="text-neonGreen font-mono text-2xl font-bold z-10 tracking-tight">${m.balance}</div>
+                        <i class="fa-solid fa-wallet absolute -bottom-2 -right-2 text-4xl text-slate-700 opacity-30"></i>
+                    </div>
+                `;
+
+                // Tarjeta Deuda
+                if (m.debt && m.debt > 0) {
+                    infoContainer.innerHTML += `
+                        <div class="bg-danger/10 p-3 rounded-xl border border-danger/50 flex flex-col items-center justify-center animate-pulse relative overflow-hidden">
+                            <div class="text-red-400 text-[9px] uppercase tracking-wider font-bold mb-1 z-10">Deuda Pendiente</div>
+                            <div class="text-white font-mono text-2xl font-bold z-10 tracking-tight">-${m.debt}</div>
+                            <i class="fa-solid fa-skull absolute -bottom-2 -right-2 text-4xl text-danger opacity-20"></i>
+                        </div>
+                    `;
                 } else {
-                    m.transactions.forEach(t => {
-                        let icon = 'fa-circle';
-                        let color = 'text-white';
-                        let sign = '';
+                    infoContainer.innerHTML += `
+                        <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 flex flex-col items-center justify-center opacity-60">
+                            <div class="text-slate-500 text-[9px] uppercase tracking-wider font-bold mb-1">Deuda</div>
+                            <div class="text-slate-400 font-mono text-2xl font-bold">0</div>
+                        </div>
+                    `;
+                }
+                list.appendChild(infoContainer);
 
-                        if (t.type === 'bet') { icon = 'fa-arrow-trend-down'; color = 'text-danger'; sign = '-'; }
-                        if (t.type === 'win') { icon = 'fa-trophy'; color = 'text-gold'; sign = '+'; }
-                        if (t.type === 'bonus') { icon = 'fa-gift'; color = 'text-neonGreen'; sign = '+'; }
-                        if (t.type === 'refund') { icon = 'fa-rotate-left'; color = 'text-slate-400'; sign = '+'; }
-                        if (t.type === 'admin') { icon = 'fa-gavel'; color = 'text-neonPurple'; sign = t.amount > 0 ? '+' : ''; }
+                // --- 2. LÓGICA DE BOTONES (CORREGIDA) ---
+                
+                const isPoor = m.balance < (base * 0.10); 
+                const isRuined = m.balance < 10;          
+                
+                const maxPrincipal = Math.floor(base * 0.50);
+                const currentDebt = m.debt || 0;
+                
+                // CÁLCULO CORREGIDO: Usamos la división entre 1.2
+                const usedPrincipal = currentDebt / 1.2;
+                const availableToBorrow = Math.floor(maxPrincipal - usedPrincipal);
 
-                        const item = document.createElement('div');
-                        item.className = "flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50";
-                        item.innerHTML = `
+                // CASO A: Pedir Préstamo
+                if (isPoor && availableToBorrow > 10) {
+                    const loanDiv = document.createElement('div');
+                    loanDiv.className = "mb-4";
+                    loanDiv.innerHTML = `
+                        <button onclick="app.closeModals(); app.openLoanModal()" class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg flex items-center justify-between group transition active:scale-95 border border-orange-400/50">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 ${color}">
-                                    <i class="fa-solid ${icon} text-xs"></i>
+                                <div class="bg-white/20 w-8 h-8 rounded-full flex items-center justify-center">
+                                    <i class="fa-solid fa-hand-holding-dollar"></i>
                                 </div>
-                                <div>
-                                    <p class="text-xs font-bold text-white leading-tight">${t.desc}</p>
-                                    <p class="text-[9px] text-slate-500">${t.date}</p>
+                                <div class="text-left leading-tight">
+                                    <div class="text-xs text-orange-100 uppercase font-bold">Disponible: ${availableToBorrow}</div>
+                                    <div class="text-sm">Pedir Préstamo</div>
                                 </div>
                             </div>
-                            <span class="font-mono font-bold text-sm ${t.type === 'bet' ? 'text-slate-400' : 'text-neonGreen'}">
-                                ${sign}${t.amount}
-                            </span>
-                        `;
+                            <i class="fa-solid fa-chevron-right opacity-50 group-hover:translate-x-1 transition"></i>
+                        </button>
+                    `;
+                    list.appendChild(loanDiv);
+                }
+                
+                // CASO B: Rescate / Embargo
+                else if (isRuined && availableToBorrow <= 10) {
+                    const bailoutDiv = document.createElement('div');
+                    bailoutDiv.className = "mb-4";
+                    bailoutDiv.innerHTML = `
+                        <button onclick="app.requestBailout()" class="w-full bg-gradient-to-r from-red-900 to-red-700 hover:from-red-800 hover:to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg flex items-center justify-between group transition active:scale-95 border border-red-500/50 animate-pulse">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white/20 w-8 h-8 rounded-full flex items-center justify-center text-red-200">
+                                    <i class="fa-solid fa-life-ring"></i>
+                                </div>
+                                <div class="text-left leading-tight">
+                                    <div class="text-xs text-red-200 uppercase font-bold">Límite Agotado</div>
+                                    <div class="text-sm">Pedir Rescate (Embargo)</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-triangle-exclamation opacity-50"></i>
+                        </button>
+                    `;
+                    list.appendChild(bailoutDiv);
+                }
+
+                // --- 3. LISTADO (IGUAL QUE SIEMPRE) ---
+                const title = document.createElement('p');
+                title.className = "text-[10px] text-slate-500 mb-2 uppercase font-bold shrink-0 ml-1";
+                title.innerText = "Historial Reciente";
+                list.appendChild(title);
+
+                if (!m.transactions || m.transactions.length === 0) {
+                    list.innerHTML += `<div class="text-center text-slate-500 py-8 text-xs italic">Sin movimientos aún.</div>`;
+                } else {
+                    const sorted = [...m.transactions].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    sorted.forEach(t => {
+                        let icon = 'fa-circle'; let color = 'text-white'; let amountColor = 'text-white';
+                        let absValue = Math.abs(t.amount); let sign = '+';
+                        
+                        if (t.type === 'bet' || t.type === 'debt_pay' || t.type === 'loss') sign = '-';
+                        else if (t.type === 'admin') sign = t.amount < 0 ? '-' : '+';
+                        else if (t.type === 'refund') sign = '+';
+
+                        if (t.type === 'bet') { icon = 'fa-money-bill-transfer'; color = 'text-slate-400'; amountColor = 'text-red-400 opacity-90'; }
+                        else if (t.type === 'win') { icon = 'fa-trophy'; color = 'text-gold'; amountColor = 'text-neonGreen'; }
+                        else if (t.type === 'bonus') { icon = 'fa-fire'; color = 'text-orange-500'; amountColor = 'text-orange-400'; }
+                        else if (t.type === 'debt_pay') { icon = 'fa-file-invoice-dollar'; color = 'text-red-500'; amountColor = 'text-red-400'; }
+                        else if (t.type === 'loan') { icon = 'fa-hand-holding-dollar'; color = 'text-blue-400'; amountColor = 'text-blue-300'; }
+                        else if (t.type === 'admin') { icon = 'fa-user-gear'; color = 'text-neonPurple'; amountColor = t.amount > 0 ? 'text-neonGreen' : 'text-red-400'; }
+                        else if (t.type === 'refund') { icon = 'fa-rotate-left'; color = 'text-slate-400'; amountColor = 'text-blue-300'; }
+
+                        const item = document.createElement('div');
+                        item.className = "flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 mb-2 hover:bg-slate-800 transition";
+                        item.innerHTML = `<div class="flex items-center gap-3 overflow-hidden"><div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center border border-slate-700/50 ${color} shrink-0"><i class="fa-solid ${icon} text-xs"></i></div><div class="min-w-0"><p class="text-xs font-bold text-white leading-tight truncate pr-2">${t.desc}</p><p class="text-[9px] text-slate-500">${t.date}</p></div></div><span class="font-mono font-bold text-sm ${amountColor} shrink-0">${sign}${absValue}</span>`;
                         list.appendChild(item);
                     });
                 }
                 this.openModal('history');
             },
-            renderLeaguesList() { const l = document.getElementById('leagues-list'); l.innerHTML = ''; const my = this.data.leagues.filter(x => x.members[this.data.user]); if (my.length === 0) { l.innerHTML = `<div class="text-center text-slate-500 py-4">No tienes ligas.</div>`; return; } my.forEach(x => { const m = this.getMember(x, this.data.user); const sortedMembers = Object.keys(x.members).sort((a,b) => this.getMember(x,b).balance - this.getMember(x,a).balance); const rank = sortedMembers.indexOf(this.data.user) + 1; l.innerHTML += `<div class="bg-card p-4 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-neonPurple transition mb-3" onclick="app.selectLeague(${x.id})"><div><h4 class="font-bold text-white text-lg">${x.name}</h4><p class="text-xs text-slate-400">Código: ${x.code}</p></div><div class="text-right"><div class="text-neonGreen font-mono font-bold text-xl mb-1">${m.balance}</div><div class="text-gold text-xs font-bold flex items-center justify-end gap-1"><i class="fa-solid fa-trophy"></i> #${rank}</div></div></div>`; }); }
-        };
+            renderLeaguesList() { 
+                const l = document.getElementById('leagues-list'); 
+                l.innerHTML = ''; 
+                const my = this.data.leagues.filter(x => x.members[this.data.user]); 
+                
+                if (my.length === 0) { 
+                    l.innerHTML = `<div class="text-center text-slate-500 py-4">No tienes ligas.</div>`; 
+                    return; 
+                } 
+                
+                my.forEach(x => { 
+                    const m = this.getMember(x, this.data.user); 
+                    
+                    // 1. ORDENAR POR PATRIMONIO (Saldo - Deuda)
+                    const sortedMembers = Object.keys(x.members).sort((a, b) => {
+                        const mA = this.getMember(x, a);
+                        const mB = this.getMember(x, b);
+                        const netA = mA.balance - (mA.debt || 0);
+                        const netB = mB.balance - (mB.debt || 0);
+                        return netB - netA;
+                    });
+
+                    // 2. CALCULAR PUESTO
+                    const rank = sortedMembers.indexOf(this.data.user) + 1;
+                    
+                    // 3. DIBUJAR TARJETA (Añadimos indicador de deuda si existe)
+                    const debtDisplay = (m.debt && m.debt > 0) ? `<div class="text-[10px] text-danger font-mono text-right leading-none mb-1">-${m.debt} deuda</div>` : '';
+
+                    l.innerHTML += `<div class="bg-card p-4 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-neonPurple transition mb-3" onclick="app.selectLeague(${x.id})">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">${x.name}</h4>
+                            <p class="text-xs text-slate-400">Código: ${x.code}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-neonGreen font-mono font-bold text-xl mb-1 leading-none">${m.balance}</div>
+                            ${debtDisplay}
+                            <div class="text-gold text-xs font-bold flex items-center justify-end gap-1 mt-1"><i class="fa-solid fa-trophy"></i> #${rank}</div>
+                        </div>
+                    </div>`; 
+                }); // Cierre del forEach
+            } // Cierre de renderLeaguesList
+        }; // Cierre del objeto app
+
         window.onload = () => app.init();
     </script>
 </body>
