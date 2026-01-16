@@ -1838,7 +1838,54 @@ checkDeepLinks() {
             joinBetModal(id) {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
-if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
+                const me = this.data.user; // Necesitamos saber quién eres
+
+                if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
+
+                // --- 🛡️ BLOQUEO DE SEGURIDAD (NUEVO) ---
+                // Si ya estás en la lista de participantes, NO dejamos apostar de nuevo.
+                if (b.participants.includes(me)) {
+                    document.getElementById('modal-action').classList.remove('hidden');
+                    document.getElementById('action-title').innerText = "Ya estás dentro ✅";
+                    
+                    // Recuperamos qué apostaste para mostrártelo
+                    let mySel = "Participando";
+                    let myWager = b.amount;
+
+                    if (b.type === 'bank') {
+                        const rec = b.selections[me];
+                        mySel = `${rec.option} (x${rec.odd})`;
+                        myWager = rec.wager;
+                    } else if (b.type === 'custom') {
+                        mySel = b.selections[me];
+                    }
+
+                    // Pintamos una tarjeta bonita con tu info
+                    document.getElementById('action-content').innerHTML = `
+                        <div class="bg-slate-800 p-4 rounded-xl text-center border border-neonGreen/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold mb-1">Tu apuesta actual</p>
+                            <p class="text-xl text-neonGreen font-bold mb-2">${mySel}</p>
+                            <div class="inline-block bg-slate-900 px-3 py-1 rounded text-xs text-white font-mono border border-slate-700">
+                                Jugado: <b>${myWager}</b> fichas
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 text-center mt-4">No puedes modificar tu apuesta una vez realizada.</p>
+                    `;
+
+                    // OCULTAMOS TODO LO QUE SEA EDITABLE
+                    document.getElementById('action-bet-input-container').classList.add('hidden');
+                    document.getElementById('action-dynamic-list').innerHTML = ''; // Borramos lista de opciones
+                    document.getElementById('action-confirm-btn').classList.add('hidden'); // Ocultamos botón confirmar
+                    
+                    return; // 🛑 AQUÍ PARAMOS. No se ejecuta el código de abajo.
+                }
+
+                // --- A PARTIR DE AQUÍ: MODO NORMAL (SI AÚN NO HAS JUGADO) ---
+                
+                // Reseteamos visualmente por si acaso veníamos de una bloqueada
+                document.getElementById('action-confirm-btn').classList.remove('hidden'); 
+                document.getElementById('action-content').innerHTML = ''; // Limpiamos tarjeta informativa
+
                 document.getElementById('modal-action').classList.remove('hidden');
                 document.getElementById('action-title').innerText = b.type === 'bank' ? "Apostar" : "Unirse";
                 document.getElementById('action-content').innerText = b.type === 'bank' ? "Elige y pon cantidad:" : "Entrada: " + b.amount;
