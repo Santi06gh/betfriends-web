@@ -1,7 +1,195 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <ige al nuevo líder:</h4><div id="transfer-members-container" class="max-h-40 overflow-y-auto space-y-2 custom-scrollbar"></div><button onclick="document.getElementById('settings-transfer-list').classList.add('hidden'); document.getElementById('settings-creator-options').classList.remove('hidden');" class="w-full text-slate-500 text-xs mt-2 py-2">Cancelar</button></div><button onclick="app.closeModals()" class="w-full text-slate-400 py-3 rounded-lg font-bold text-sm mt-4">Cerrar</button></div></div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BetFriends - Social Betting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a', card: '#1e293b', neonGreen: '#10b981', neonPurple: '#8b5cf6', danger: '#ef4444', gold: '#fbbf24'
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ESTILOS BÁSICOS */
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .app-view { display: flex; flex-direction: column; height: 100%; width: 100%; overflow: hidden; }
+        .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; padding-bottom: 80px; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .native-toast { transform: translateY(-150%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .native-toast.show { transform: translateY(0); }
+        .neon-input, .neon-select { background: #334155; border: 1px solid #475569; color: white; transition: all 0.3s; }
+        .neon-input:focus, .neon-select:focus { border-color: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.3); outline: none; }
+        .option-card.selected { border-color: #10b981; background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .invite-check.selected { background-color: #8b5cf6; border-color: #8b5cf6; color: white; }
+        details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: fadeIn 0.3s ease-in-out; }
+        .avatar-circle { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8; font-size: 14px; border: 2px solid #1e293b; overflow: hidden; position: relative; }
+        .avatar-xl { width: 120px; height: 120px; font-size: 40px; border-width: 4px; }
+        .avatar-sm { width: 24px; height: 24px; font-size: 10px; border-width: 1px; }
+    </style>
+</head>
+<body>
+
+    <div id="modal-fullscreen-image" class="hidden fixed inset-0 bg-black z-[100] flex items-center justify-center animate-fade-in" onclick="app.closeFullscreenImage()">
+        <img id="fullscreen-image-src" src="" class="max-w-full max-h-full object-contain p-2 transition-transform duration-300 scale-95" onload="this.classList.remove('scale-95'); this.classList.add('scale-100')">
+        <button class="absolute top-6 right-6 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm"><i class="fa-solid fa-xmark text-xl"></i></button>
+    </div>
+
+    <div id="native-notification" class="native-toast fixed top-4 left-4 right-4 bg-slate-800/95 backdrop-blur-md border border-slate-600 rounded-2xl shadow-2xl z-[90] flex items-center gap-3 p-3 pointer-events-auto cursor-pointer" onclick="app.handleNotificationClick()">
+        <div class="bg-neonPurple w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg shrink-0"><i class="fa-solid fa-bell"></i></div>
+        <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wide flex justify-between">BetFriends <span class="text-[9px] text-slate-500">Ahora</span></h4>
+            <p id="native-notification-text" class="text-sm text-white font-medium truncate">Notificación</p>
+        </div>
+    </div>
+
+    <div id="view-login" class="hidden app-view justify-center items-center p-6 bg-dark absolute inset-0 z-50">
+        <div class="mb-8 text-center">
+            <img src="logo.png" class="h-24 w-auto mx-auto mb-4 animate-bounce" alt="Logo BetFriends">
+            <h1 class="text-4xl font-bold tracking-tight text-white">Bet<span class="text-neonGreen">Friends</span></h1>
+            <p id="auth-subtitle" class="text-slate-400 mt-2">Crea tu liga. Invita amigos. Compite.</p>
+        </div>
+        
+        <div class="w-full max-w-sm bg-card p-6 rounded-2xl border border-slate-700 shadow-xl">
+            <h2 id="auth-title" class="text-xl font-bold text-white mb-4 text-center">Iniciar Sesión</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Usuario</label>
+                    <input type="text" id="auth-user" class="neon-input w-full p-3 rounded-lg" placeholder="Ej: Alex">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Contraseña</label>
+                    <input type="password" id="auth-pass" class="neon-input w-full p-3 rounded-lg" placeholder="••••••••">
+                </div>
+                <button id="btn-auth-action" onclick="app.submitAuth()" class="w-full bg-neonPurple hover:bg-violet-600 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95 mt-2">
+                    ENTRAR
+                </button>
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-xs text-slate-400">
+                    <span id="auth-toggle-text">¿No tienes cuenta?</span>
+                    <button id="auth-toggle-btn" onclick="app.toggleAuthMode()" class="text-neonGreen font-bold hover:underline ml-1">Regístrate aquí</button>
+                </p>
+            </div>
+        </div>
+        <div class="mt-8">
+            <button onclick="app.resetData()" class="text-slate-600 text-xs py-2 hover:text-danger transition flex items-center gap-2">
+                <i class="fa-solid fa-trash-can"></i> Reiniciar App
+            </button>
+        </div>
+    </div>
+
+    <div id="view-leagues" class="hidden app-view bg-dark absolute inset-0 z-40"><div class="p-6 pt-10 shrink-0"><div class="flex justify-between items-center mb-6"><div><h2 class="text-2xl font-bold text-white">Mis Ligas</h2><p class="text-slate-400 text-sm">Hola, <span id="league-username" class="text-neonGreen font-bold">User</span></p></div><button onclick="app.logout()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-right-from-bracket"></i></button></div><div class="grid grid-cols-2 gap-3 mb-6"><button onclick="app.openModal('create-league')" class="bg-neonPurple/10 border border-neonPurple text-neonPurple p-4 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition"><i class="fa-solid fa-plus mb-1 block text-xl"></i> Crear Liga</button><button onclick="app.openModal('join-league')" class="bg-neonGreen/10 border border-neonGreen text-neonGreen p-4 rounded-xl font-bold text-sm hover:bg-neonGreen hover:text-dark transition"><i class="fa-solid fa-ticket mb-1 block text-xl"></i> Unirse</button></div><h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Tus Grupos Activos</h3></div><div id="leagues-list" class="scroll-area px-6 space-y-3"></div></div>
+
+    <div id="view-dashboard" class="hidden app-view bg-dark absolute inset-0 z-30 flex flex-col">
+        
+        <header class="bg-card/90 backdrop-blur-md px-4 py-3 flex justify-between items-center shadow-md z-10 border-b border-slate-700 shrink-0">
+            
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <button onclick="app.exitLeague()" class="text-slate-400 hover:text-white shrink-0">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                
+                <div class="flex items-center gap-3 min-w-0">
+                    <div id="dash-my-avatar" onclick="app.openProfileModal()" class="avatar-circle border-neonPurple transition hover:scale-105 w-10 h-10 shrink-0 text-xs cursor-pointer">
+                        <span>YO</span>
+                    </div>
+                    
+                    <div class="flex flex-col justify-center min-w-0">
+                        <h2 onclick="app.openProfileModal()" class="font-bold text-sm text-white leading-tight truncate max-w-[120px] cursor-pointer hover:text-neonPurple transition" id="dash-my-nickname">
+                            Nombre
+                        </h2>
+                        
+                        <div id="balance-wrapper" class="flex items-center gap-1.5 mt-0.5 cursor-pointer transition active:scale-95 w-fit" onclick="app.showHistory()">
+                            <i id="balance-icon" class="fa-solid fa-coins text-neonGreen text-[10px]"></i>
+                            <span id="dash-balance" class="font-mono font-bold text-sm text-neonGreen leading-none">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button id="btn-header-daily" onclick="app.claimDailyBonus()" class="hidden"></button>
+
+                <div class="flex gap-1 ml-1">
+                    <button id="header-bell-btn" onclick="app.openNotificationsModal()" class="relative text-slate-400 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:text-white">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="header-bell-badge" class="hidden absolute top-1.5 right-2 w-2 h-2 bg-danger rounded-full border border-dark"></span>
+                    </button>
+                    
+                    <button onclick="app.openLeagueSettings()" class="text-slate-400 p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:text-white">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    
+                    <button onclick="app.showRanking()" class="text-gold p-2 rounded-full w-8 h-8 flex items-center justify-center transition active:scale-95 hover:text-yellow-300">
+                        <i class="fa-solid fa-trophy"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <main class="scroll-area p-4 space-y-6 bg-dark flex-1">
+            
+            <div class="bg-slate-800/80 p-4 rounded-xl flex justify-between items-center border border-slate-700/50 shadow-sm backdrop-blur-sm">
+                <div class="min-w-0 pr-2">
+                    <span class="text-[10px] text-slate-500 uppercase font-bold block tracking-wider mb-0.5">Estás en la liga</span>
+                    <h1 id="dash-league-name" class="font-black text-white text-lg truncate leading-tight">Nombre Liga</h1>
+                </div>
+                
+                <button onclick="app.copyCode()" class="bg-slate-700/50 text-neonPurple border border-slate-600/50 px-3 py-2 rounded-lg font-mono font-bold text-xs tracking-widest flex items-center gap-2 hover:bg-slate-700 hover:text-white transition shrink-0 group">
+                    <span id="dash-league-code">CODE</span> 
+                    <i class="fa-regular fa-copy group-active:scale-90 transition"></i>
+                </button>
+            </div>
+
+            <div onclick="app.openCreateBetModal()" class="bg-gradient-to-r from-violet-900 to-fuchsia-900 p-5 rounded-2xl shadow-lg relative overflow-hidden cursor-pointer transform transition active:scale-95 hover:shadow-neonPurple/20 border border-white/5">
+                <div class="absolute -right-4 -bottom-4 opacity-20 text-8xl text-white">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-1 text-white">Nueva Apuesta</h3>
+                <p class="text-slate-200 text-xs opacity-80">Reta a los miembros de la liga</p>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto py-1 shrink-0 no-scrollbar">
+                <button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white transition-all">Activas</button>
+                <button onclick="app.filterBets('pending')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all">
+                    Pendientes 
+                    <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark animate-pulse">0</span>
+                </button>
+                <button onclick="app.filterBets('resolved')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 transition-all">Historial</button>
+            </div>
+
+            <div id="bets-container" class="space-y-4 pb-20">
+                <div class="text-center text-slate-500 py-10">
+                    <i class="fa-solid fa-ghost text-4xl mb-2 opacity-30"></i>
+                    <p>Cargando...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-notifications" class="hidden fixed inset-0 bg-black/80 z-[70] flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border-t border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-white"><i class="fa-solid fa-bell mr-2 text-neonPurple"></i>Notificaciones</h3><button onclick="app.closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button></div><div id="notifications-list" class="scroll-area space-y-3"></div><button onclick="app.closeModals()" class="w-full bg-slate-700 text-white py-3 rounded-lg font-bold text-sm mt-4 shrink-0">Cerrar</button></div></div>
+    <div id="modal-league-settings" class="hidden fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Opciones de Liga</h3><div id="settings-creator-options" class="hidden space-y-3"><p class="text-xs text-slate-400 mb-2">Eres el creador de esta liga.</p><button onclick="app.openAdminPanel()" class="w-full bg-slate-800 border border-neonPurple text-neonPurple py-3 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition flex items-center justify-center gap-2 mb-2"><i class="fa-solid fa-user-shield"></i> Panel de Control</button><div class="h-px bg-slate-700 my-2"></div><button onclick="app.deleteLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash-can mr-2"></i> Eliminar Liga para Todos</button><button onclick="app.showTransferList()" class="w-full bg-gold/10 border border-gold text-gold py-3 rounded-xl font-bold text-sm hover:bg-gold hover:text-dark transition"><i class="fa-solid fa-right-from-bracket mr-2"></i> Ceder Liderazgo y Salir</button></div><div id="settings-member-options" class="hidden space-y-3"><button onclick="app.leaveLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-person-walking-arrow-right mr-2"></i> Abandonar Liga</button></div><div id="settings-transfer-list" class="hidden mt-4"><h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Elige al nuevo líder:</h4><div id="transfer-members-container" class="max-h-40 overflow-y-auto space-y-2 custom-scrollbar"></div><button onclick="document.getElementById('settings-transfer-list').classList.add('hidden'); document.getElementById('settings-creator-options').classList.remove('hidden');" class="w-full text-slate-500 text-xs mt-2 py-2">Cancelar</button></div><button onclick="app.closeModals()" class="w-full text-slate-400 py-3 rounded-lg font-bold text-sm mt-4">Cerrar</button></div></div>
     <div id="modal-admin-panel" class="hidden fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[85vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-neonPurple"><i class="fa-solid fa-user-shield mr-2"></i>Control de Liga</h3><button onclick="app.closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button></div><p class="text-[10px] text-slate-500 mb-2">Selecciona un miembro para gestionarlo.</p><div id="admin-members-list" class="scroll-area space-y-2 pr-1"></div></div></div>
 <div id="modal-admin-edit-user" class="hidden fixed inset-0 bg-black/80 z-[95] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up">
