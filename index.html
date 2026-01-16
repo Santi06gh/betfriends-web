@@ -1181,7 +1181,8 @@ stats.listAdmin.forEach(adj => {
                 }
             },
 
-            // --- FUNCIÓN COMPARTIR (AHORA ESTÁ FUERA, CORRECTAMENTE) ---
+           
+            // --- FUNCIÓN COMPARTIR MEJORADA ---
             shareBet(id) {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
@@ -1189,8 +1190,7 @@ stats.listAdmin.forEach(adj => {
                 // 1. TU DOMINIO PÚBLICO
                 const publicUrl = "https://santi06gh.github.io/betfriends-web/"; 
                 
-                // 2. CONSTRUIMOS EL LINK INTELIGENTE
-                // Añadimos ?bet=ID y &league=CODE para saber qué abrir
+                // 2. CONSTRUIMOS EL LINK
                 const smartLink = `${publicUrl}?bet=${id}&league=${l.code}`;
 
                 // Mensaje
@@ -1199,15 +1199,19 @@ stats.listAdmin.forEach(adj => {
                 
                 const fullMsg = `${title}\n${text}\n${smartLink}`;
 
-                // LÓGICA DE COMPARTIR (IGUAL QUE ANTES)
+                // --- AQUÍ ESTÁ LA MAGIA PARA LA APP ---
+                // Si la App ha inyectado el puente "AndroidApp", lo usamos:
+                if (window.AndroidApp) {
+                    window.AndroidApp.share(title, text, smartLink);
+                    return; // ¡Terminamos aquí, la App se encarga del resto!
+                }
+                // -------------------------------------
+
+                // Si no es la app (es Chrome normal), usamos lo de siempre:
                 if (navigator.share) {
                     navigator.share({ title: title, text: text, url: smartLink })
                     .catch((e) => console.log('Error share', e));
                 } 
-                else if (/Android/i.test(navigator.userAgent)) {
-                    const androidIntent = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(fullMsg)};end`;
-                    window.location.href = androidIntent;
-                }
                 else {
                     navigator.clipboard.writeText(fullMsg).then(() => this.toast("Enlace copiado"));
                 }
