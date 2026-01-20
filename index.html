@@ -423,6 +423,7 @@ const auth = firebase.auth();
                     if(!document.getElementById('view-leagues').classList.contains('hidden')) this.renderLeaguesList();
                     
                     this.checkAndNotify();
+                    this.checkDeepLinks(); 
                 });
             },
 
@@ -1180,38 +1181,90 @@ stats.listAdmin.forEach(adj => {
                 }
             },
 
-            // --- FUNCIÓN COMPARTIR (AHORA ESTÁ FUERA, CORRECTAMENTE) ---
+           
+            // --- FUNCIÓN COMPARTIR MEJORADA ---
             shareBet(id) {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
                 
-                // Mensaje completo
-                const title = `🔥 ¡Apuesta en BetFriends!`;
-                const text = `⚽ *${b.title}*\n🏆 Liga: ${l.name}\n🔑 Código: ${l.code}\n\n¡Entra y participa!`;
-                const url = window.location.href;
-                const fullMsg = `${title}\n${text}\n${url}`;
+                // 1. TU DOMINIO PÚBLICO
+                const publicUrl = "https://santi06gh.github.io/betfriends-web/"; 
+                
+                // 2. CONSTRUIMOS EL LINK
+                const smartLink = `${publicUrl}?bet=${id}&league=${l.code}`;
 
-                // 1. INTENTAR API NATIVA (Navegadores modernos)
-                if (navigator.share) {
-                    navigator.share({
-                        title: title,
-                        text: text,
-                        url: url
-                    }).catch((error) => console.log('Error compartiendo', error));
-                } 
-                // 2. TRUCO PARA APK ANDROID (CORREGIDO)
-                else if (/Android/i.test(navigator.userAgent)) {
-                    // AQUÍ ESTABA EL ERROR: Usamos las cadenas exactas que Android espera
-                    // action: android.intent.action.SEND (No la constante de Java)
-                    // extra: android.intent.extra.TEXT
-                    const androidIntent = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(fullMsg)};end`;
-                    window.location.href = androidIntent;
+                // Mensaje
+                const title = `🔥 ¡Apuesta en BetFriends!`;
+                const text = `📢 *${b.title}*\n🏆 Liga: ${l.name}\n👇 Toca para entrar:`;
+                
+                const fullMsg = `${title}\n${text}\n${smartLink}`;
+
+                // --- AQUÍ ESTÁ LA MAGIA PARA LA APP ---
+                // Si la App ha inyectado el puente "AndroidApp", lo usamos:
+                if (window.AndroidApp) {
+                    window.AndroidApp.share(title, text, smartLink);
+                    return; // ¡Terminamos aquí, la App se encarga del resto!
                 }
-                // 3. FALLBACK (PC o iPhone antiguo)
+                // -------------------------------------
+
+                // Si no es la app (es Chrome normal), usamos lo de siempre:
+                if (navigator.share) {
+                    navigator.share({ title: title, text: text, url: smartLink })
+                    .catch((e) => console.log('Error share', e));
+                } 
                 else {
-                    navigator.clipboard.writeText(fullMsg).then(() => {
-                        this.toast("Enlace copiado al portapapeles");
-                    });
+                    navigator.clipboard.writeText(fullMsg).then(() => this.toast("Enlace copiado"));
+                }
+            },
+
+checkDeepLinks() {
+                // 1. Leer parámetros de la URL
+                const params = new URLSearchParams(window.location.search);
+                const betId = params.get('bet');
+                const leagueCode = params.get('league');
+
+                if (betId && leagueCode) {
+                    console.log("🔗 Deep Link detectado:", betId);
+
+                    // 2. Buscar la liga
+                    const l = this.data.leagues.find(x => x.code === leagueCode);
+                    
+                    if (l) {
+                        // Si no estamos en esa liga, entramos visualmente
+                        if (this.data.currentLeagueId !== l.id) {
+                            this.selectLeague(l.id);
+                        }
+
+                        // 3. Buscar y abrir la apuesta
+                        // Pequeño timeout para dar tiempo a que cargue la interfaz
+                        setTimeout(() => {
+                            const b = l.bets.find(x => String(x.id) === String(betId));
+                            if (b) {
+                                if (b.status === 'resolved') {
+                                    // Si está resuelta, filtramos historial y mostramos
+                                    this.filterBets('resolved');
+                                    // Expandir detalles (opcional, requiere lógica extra)
+                                    this.toast("Mostrando apuesta del enlace 🔗");
+                                } else {
+                                    // Si está activa, abrimos el modal de apostar/ver
+                                    this.filterBets(b.status === 'active' ? 'active' : 'pending');
+                                    this.joinBetModal(b.id);
+                                    this.toast("Has entrado desde WhatsApp 🚀");
+                                }
+                                
+                                // Limpiamos la URL para que no se abra siempre al recargar
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            } else {
+                                this.toast("La apuesta ya no existe", "error");
+                            }
+                        }, 1000); // Esperamos 1 segundo a que todo renderice
+                    } else {
+                        // Si el usuario no tiene esa liga, podrías abrir el modal de "Unirse a Liga"
+                        // y pre-rellenar el código.
+                        this.openModal('join-league');
+                        document.getElementById('join-league-code').value = leagueCode;
+                        this.toast("Únete a la liga para ver la apuesta");
+                    }
                 }
             },
            renderBets(l) {
@@ -1785,7 +1838,69 @@ stats.listAdmin.forEach(adj => {
             joinBetModal(id) {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
-if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
+
+                // --- 🛡️ INICIO BLOQUEO SEGURIDAD (NUEVO) ---
+                // Si el usuario ya está en la lista de participantes:
+                if (b.participants.includes(this.data.user)) {
+                    document.getElementById('modal-action').classList.remove('hidden');
+                    document.getElementById('action-title').innerText = "✅ Apuesta Realizada";
+                    
+                    // Recuperamos qué apostó para mostrárselo
+                    let mySel = "Participando";
+                    let myWager = b.amount; 
+
+                    // Lógica para recuperar el texto según el tipo de apuesta
+                    if (b.selections && b.selections[this.data.user]) {
+                        if (b.type === 'bank') {
+                            // En banca guardamos objeto {option, wager, odd}
+                            const rec = b.selections[this.data.user];
+                            mySel = `${rec.option} (x${rec.odd})`;
+                            myWager = rec.wager;
+                        } else {
+                            // En las otras guardamos el string directo
+                            mySel = b.selections[this.data.user];
+                        }
+                    }
+
+                    // Pintamos el Ticket (Solo lectura)
+                    document.getElementById('action-content').innerHTML = `
+                        <div class="bg-slate-800 p-6 rounded-xl text-center border border-neonGreen/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex flex-col items-center gap-2 mt-2">
+                            <div class="bg-neonGreen/20 text-neonGreen w-12 h-12 rounded-full flex items-center justify-center text-xl mb-1">
+                                <i class="fa-solid fa-ticket"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Tu Selección</p>
+                                <p class="text-xl text-white font-bold">${mySel}</p>
+                            </div>
+                            <div class="w-full h-px bg-slate-700 my-1"></div>
+                            <div class="flex gap-2 items-center">
+                                <span class="text-xs text-slate-400">Jugado:</span>
+                                <span class="text-neonGreen font-mono font-bold text-lg">${myWager} 💰</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 text-center mt-6">
+                            <i class="fa-solid fa-lock mr-1"></i> No puedes modificar tu apuesta.
+                        </p>
+                    `;
+
+                    // Ocultamos los controles de entrada de datos y botones
+                    document.getElementById('action-bet-input-container').classList.add('hidden');
+                    document.getElementById('action-dynamic-list').innerHTML = '';
+                    document.getElementById('action-dynamic-list').classList.add('hidden');
+                    document.getElementById('action-confirm-btn').classList.add('hidden');
+                    
+                    return; // 🛑 ESTO DETIENE LA FUNCIÓN AQUÍ. IMPOSIBLE APOSTAR DOBLE.
+                }
+                // --- FIN BLOQUEO SEGURIDAD ---
+
+                if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
+
+                // Restauramos visibilidad (por si el bloque de seguridad la ocultó antes)
+                document.getElementById('action-content').innerHTML = ''; 
+                document.getElementById('action-dynamic-list').classList.remove('hidden');
+                document.getElementById('action-confirm-btn').classList.remove('hidden');
+
+                // --- A PARTIR DE AQUÍ ES TU CÓDIGO ORIGINAL EXACTO ---
                 document.getElementById('modal-action').classList.remove('hidden');
                 document.getElementById('action-title').innerText = b.type === 'bank' ? "Apostar" : "Unirse";
                 document.getElementById('action-content').innerText = b.type === 'bank' ? "Elige y pon cantidad:" : "Entrada: " + b.amount;
