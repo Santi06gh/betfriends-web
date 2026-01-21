@@ -171,22 +171,26 @@
             </div>
 
             <div class="flex gap-2 overflow-x-auto py-1 shrink-0 no-scrollbar">
-                <button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white transition-all">Activas</button>
+                <button onclick="app.filterBets('events')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 transition-all relative">
+                    <i class="fa-solid fa-calendar-star mr-1"></i> Eventos
+                    <span id="badge-events" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark">0</span>
+                </button>
+                
+                <button onclick="app.filterBets('active')" class="filter-btn active px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 bg-neonPurple text-white transition-all relative">
+                    Activas
+                    <span id="badge-active" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark">0</span>
+                </button>
+                
                 <button onclick="app.filterBets('pending')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all">
                     Pendientes 
-                    <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark animate-pulse">0</span>
+                    <span id="badge-pending" class="hidden absolute -top-1 -right-1 bg-danger text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full border border-dark">0</span>
                 </button>
+                
                 <button onclick="app.filterBets('resolved')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 transition-all">Historial</button>
             </div>
-
-            <div id="bets-container" class="space-y-4 pb-20">
-                <div class="text-center text-slate-500 py-10">
-                    <i class="fa-solid fa-ghost text-4xl mb-2 opacity-30"></i>
-                    <p>Cargando...</p>
+<div id="bets-container" class="space-y-3 pb-20 mt-4 min-h-[200px]">
                 </div>
-            </div>
-        </main>
-    </div>
+        </main> </div>
 
     <div id="modal-notifications" class="hidden fixed inset-0 bg-black/80 z-[70] flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border-t border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-white"><i class="fa-solid fa-bell mr-2 text-neonPurple"></i>Notificaciones</h3><button onclick="app.closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button></div><div id="notifications-list" class="scroll-area space-y-3"></div><button onclick="app.closeModals()" class="w-full bg-slate-700 text-white py-3 rounded-lg font-bold text-sm mt-4 shrink-0">Cerrar</button></div></div>
     <div id="modal-league-settings" class="hidden fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Opciones de Liga</h3><div id="settings-creator-options" class="hidden space-y-3"><p class="text-xs text-slate-400 mb-2">Eres el creador de esta liga.</p><button onclick="app.openAdminPanel()" class="w-full bg-slate-800 border border-neonPurple text-neonPurple py-3 rounded-xl font-bold text-sm hover:bg-neonPurple hover:text-white transition flex items-center justify-center gap-2 mb-2"><i class="fa-solid fa-user-shield"></i> Panel de Control</button><div class="h-px bg-slate-700 my-2"></div><button onclick="app.deleteLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash-can mr-2"></i> Eliminar Liga para Todos</button><button onclick="app.showTransferList()" class="w-full bg-gold/10 border border-gold text-gold py-3 rounded-xl font-bold text-sm hover:bg-gold hover:text-dark transition"><i class="fa-solid fa-right-from-bracket mr-2"></i> Ceder Liderazgo y Salir</button></div><div id="settings-member-options" class="hidden space-y-3"><button onclick="app.leaveLeague()" class="w-full bg-danger/10 border border-danger text-danger py-3 rounded-xl font-bold text-sm hover:bg-danger hover:text-white transition"><i class="fa-solid fa-person-walking-arrow-right mr-2"></i> Abandonar Liga</button></div><div id="settings-transfer-list" class="hidden mt-4"><h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Elige al nuevo líder:</h4><div id="transfer-members-container" class="max-h-40 overflow-y-auto space-y-2 custom-scrollbar"></div><button onclick="document.getElementById('settings-transfer-list').classList.add('hidden'); document.getElementById('settings-creator-options').classList.remove('hidden');" class="w-full text-slate-500 text-xs mt-2 py-2">Cancelar</button></div><button onclick="app.closeModals()" class="w-full text-slate-400 py-3 rounded-lg font-bold text-sm mt-4">Cerrar</button></div></div>
@@ -274,11 +278,25 @@
     <div id="modal-create-league" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[90vh] flex flex-col"><h3 class="text-lg font-bold text-white mb-4 shrink-0">Configurar Nueva Liga</h3><div class="scroll-area space-y-4"><div class="mb-4"><label class="text-xs text-slate-400 uppercase font-bold">Nombre</label><input type="text" id="new-league-name" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: La Liga de los Reyes"></div><div class="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden"><div class="bg-slate-800 p-2 border-b border-slate-700"><h4 class="text-neonPurple text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-gavel mr-1"></i> Reglas Económicas</h4></div><div class="p-4 space-y-5"><div class="flex justify-between items-center"><div><label class="text-sm font-bold text-white block">Saldo Inicial</label><p class="text-[10px] text-slate-500">Fichas al entrar.</p></div><input type="number" id="conf-start-balance" class="neon-input w-20 p-1 text-center font-mono font-bold text-neonGreen text-sm rounded" value="1000"></div><div class="flex justify-between items-center"><div><label class="text-sm font-bold text-white block">Bono Diario</label><p class="text-[10px] text-slate-500">Regalo cada 24h.</p></div><div class="flex items-center gap-2"><input type="number" id="conf-daily-bonus" class="neon-input w-16 p-1 text-center font-mono text-xs rounded disabled:opacity-50" value="50"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="check-daily-bonus" class="sr-only peer" checked onchange="document.getElementById('conf-daily-bonus').disabled = !this.checked"><div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neonGreen"></div></label></div></div><div class="flex justify-between items-center pt-2 border-t border-slate-700/50"><div><label class="text-sm font-bold text-white block">Modo Casino 🎰</label><p class="text-[10px] text-slate-500">Permitir jugar contra la Banca.</p></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="check-allow-bank" class="sr-only peer"><div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neonPurple"></div></label></div></div></div></div><div class="grid grid-cols-2 gap-3 mt-6 shrink-0"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.createLeague()" class="bg-gradient-to-r from-neonPurple to-violet-600 text-white py-3 rounded-lg font-bold text-sm shadow-lg hover:shadow-neonPurple/25 transition">Crear Liga</button></div></div></div>
     <div id="modal-join-league" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up"><h3 class="text-lg font-bold text-white mb-4">Unirse a Liga</h3><label class="text-xs text-slate-400 uppercase font-bold">Código de Acceso</label><input type="text" id="join-league-code" class="neon-input w-full p-3 rounded-lg mt-1 mb-4 font-mono text-center uppercase tracking-widest" placeholder="ABCD12"><div class="grid grid-cols-2 gap-3"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cancelar</button><button onclick="app.joinLeague()" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm shadow-lg">Entrar</button></div></div></div>
     <div id="modal-ranking" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up max-h-[80vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-gold"><i class="fa-solid fa-crown mr-2"></i>Clasificación</h3><button onclick="app.closeModals()" class="text-slate-400"><i class="fa-solid fa-xmark text-xl"></i></button></div><p class="text-[10px] text-slate-500 mb-2">Toca un jugador para ver su perfil.</p><div id="ranking-list" class="scroll-area pr-2"></div></div></div>
-    <div id="modal-create-bet" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-[30rem] rounded-t-2xl sm:rounded-2xl flex flex-col border-t border-slate-700 slide-up p-6 max-h-[90vh]"><h3 class="text-lg font-bold text-white mb-4 shrink-0">Nueva Apuesta</h3><div class="scroll-area space-y-4"><div><label class="text-xs text-slate-400 uppercase font-bold">Tipo</label><select id="create-type" onchange="app.toggleCreateFields()" class="neon-select w-full p-3 rounded-lg mt-1 bg-slate-800 text-white font-bold"><option value="duel">⚔️ Duelo (1 vs 1)</option><option value="group">💰 Bote General</option><option value="custom" selected>📊 Porra / Quiniela</option><option value="bank" id="opt-bank" class="hidden text-neonPurple font-bold">🎰 Contra la Banca</option></select></div><div><label class="text-xs text-slate-400 uppercase font-bold">Título</label><input type="text" id="create-title" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: Ganador del Partido"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Entrada (Fichas)</label><input type="number" id="create-amount" class="neon-input w-full p-3 rounded-lg mt-1 text-neonGreen font-bold" placeholder="50"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Visibilidad</label><div class="flex bg-slate-800 rounded-lg p-1 mt-2 mb-3"><button onclick="app.setInviteMode('public')" id="btn-mode-public" class="flex-1 py-2 text-xs font-bold rounded bg-neonPurple text-white transition">Pública</button><button onclick="app.setInviteMode('private')" id="btn-mode-private" class="flex-1 py-2 text-xs font-bold rounded text-slate-400 hover:text-white transition">Privada</button></div><div id="invite-list-container" class="hidden"><p class="text-[10px] text-slate-500 mb-2">Selecciona invitados:</p><div id="invite-checklist" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1"></div></div></div><div id="field-deadline" class="hidden mb-4 bg-slate-800/50 p-2 rounded border border-slate-700">
+    <div id="modal-create-bet" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm"><div class="bg-card w-full sm:w-[30rem] rounded-t-2xl sm:rounded-2xl flex flex-col border-t border-slate-700 slide-up p-6 max-h-[90vh]"><h3 class="text-lg font-bold text-white mb-4 shrink-0">Nueva Apuesta</h3><div class="scroll-area space-y-4"><div><label class="text-xs text-slate-400 uppercase font-bold">Tipo</label><select id="create-type" onchange="app.toggleCreateFields()" class="neon-select w-full p-3 rounded-lg mt-1 bg-slate-800 text-white font-bold"><option value="duel">⚔️ Duelo (1 vs 1)</option><option value="group">💰 Bote General</option><option value="custom" selected>📊 Porra / Quiniela</option><option value="bank" id="opt-bank" class="hidden text-neonPurple font-bold">🎰 Contra la Banca</option><option value="combinada" id="opt-combinada" class="hidden text-neonPurple font-bold">🧩 Combinada / Multi-Bloque</option></select></div><div><label class="text-xs text-slate-400 uppercase font-bold">Título</label><input type="text" id="create-title" class="neon-input w-full p-3 rounded-lg mt-1" placeholder="Ej: Ganador del Partido"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Entrada (Fichas)</label><input type="number" id="create-amount" class="neon-input w-full p-3 rounded-lg mt-1 text-neonGreen font-bold" placeholder="50"></div><div><label class="text-xs text-slate-400 uppercase font-bold">Visibilidad</label><div class="flex bg-slate-800 rounded-lg p-1 mt-2 mb-3"><button onclick="app.setInviteMode('public')" id="btn-mode-public" class="flex-1 py-2 text-xs font-bold rounded bg-neonPurple text-white transition">Pública</button><button onclick="app.setInviteMode('private')" id="btn-mode-private" class="flex-1 py-2 text-xs font-bold rounded text-slate-400 hover:text-white transition">Privada</button></div><div id="invite-list-container" class="hidden"><p class="text-[10px] text-slate-500 mb-2">Selecciona invitados:</p><div id="invite-checklist" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1"></div></div></div><div id="field-deadline" class="hidden mb-4 bg-slate-800/50 p-2 rounded border border-slate-700">
                 <label class="text-xs text-slate-400 uppercase font-bold block mb-1">Fecha y Hora de Cierre</label>
                 <input type="datetime-local" id="create-deadline" class="neon-input w-full p-2 rounded text-sm text-white">
                 <p class="text-[9px] text-slate-500 mt-1">Pasada esta fecha, la apuesta se cierra automáticamente.</p>
-            </div><div id="field-options" class="block"><div class="flex justify-between items-center mb-2"><label class="text-xs text-slate-400 uppercase font-bold">Opciones</label><button onclick="app.addOptionInput()" class="text-neonPurple text-xs font-bold">+ Añadir</button></div><div id="options-list" class="space-y-2"></div></div><button onclick="app.createBet()" class="w-full bg-neonPurple py-4 rounded-xl font-bold text-white shadow-lg mt-4 uppercase tracking-wider">CREAR</button><button onclick="app.closeModals()" class="w-full text-slate-400 py-2 text-sm">Cancelar</button></div></div></div>
+            </div><div id="field-options" class="block mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-xs text-slate-400 uppercase font-bold">Opciones</label>
+                    <button onclick="app.addOptionInput()" class="text-neonPurple text-xs font-bold">+ Añadir</button>
+                </div>
+                <div id="options-list" class="space-y-2"></div>
+            </div>
+
+            <div id="field-blocks" class="hidden mb-4">
+                <div class="flex justify-between items-center mb-2 bg-slate-800 p-2 rounded border border-slate-700">
+                    <label class="text-xs text-slate-400 uppercase font-bold"><i class="fa-solid fa-layer-group mr-1"></i> Eventos de la Jornada</label>
+                    <button onclick="app.addBlockInput()" class="text-neonPurple text-xs font-bold hover:text-white transition">+ Añadir Bloque</button>
+                </div>
+                <div id="blocks-container" class="space-y-3 max-h-60 overflow-y-auto pr-1 custom-scrollbar"></div>
+            </div><button onclick="app.createBet()" class="w-full bg-neonPurple py-4 rounded-xl font-bold text-white shadow-lg mt-4 uppercase tracking-wider">CREAR</button><button onclick="app.closeModals()" class="w-full text-slate-400 py-2 text-sm">Cancelar</button></div></div></div>
     <div id="modal-action" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 slide-up flex flex-col max-h-[80vh]"><h3 id="action-title" class="text-lg font-bold text-white mb-2 shrink-0">Acción</h3><p id="action-content" class="text-sm text-slate-400 mb-4 shrink-0">Detalles</p><div id="action-bet-input-container" class="hidden mb-4 bg-slate-800 p-3 rounded-lg border border-slate-600 shrink-0"><label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Tu Apuesta</label><div class="flex items-center gap-2"><input type="number" id="action-bet-amount" class="neon-input w-full p-2 rounded text-neonGreen font-bold font-mono text-lg" placeholder="0"><span class="text-xs text-slate-500 font-bold">Fichas</span></div><p id="action-potential-win" class="text-[10px] text-gold mt-2 text-right">Ganancia: 0</p></div><div id="action-dynamic-list" class="scroll-area mb-4 border-t border-b border-slate-700/50 py-2"></div><div class="grid grid-cols-2 gap-3 shrink-0"><button onclick="app.closeModals()" class="bg-slate-700 text-slate-300 py-3 rounded-lg font-bold text-sm">Cerrar</button><button id="action-confirm-btn" class="bg-neonGreen text-dark py-3 rounded-lg font-bold text-sm">Confirmar</button></div></div></div>
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 text-white px-4 py-2 rounded-full shadow-2xl z-[100] transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2 min-w-max"><i class="fa-solid fa-circle-info text-neonPurple text-xs"></i><span id="toast-msg" class="font-medium text-xs">Mensaje</span></div>
 <div id="modal-history" class="hidden fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
@@ -591,19 +609,121 @@ this.appStartTime = Date.now();
                 try { const ok = document.execCommand('copy'); if(ok) this.toast("Código copiado"); else this.toast("Error al copiar", "error"); } catch (err) { this.toast("Copia manualmente", "error"); }
                 document.body.removeChild(textArea);
             },
-            isUserWinner(b, user) { if(b.status !== 'resolved') return false; if(b.type === 'bank') { const r = b.selections ? b.selections[user] : null; return r && r.option === b.winningOption; } if(b.type === 'custom') { return b.selections && b.selections[user] === b.winningOption; } return b.winner === user; },
-            getNotificationStats(l) { if(!l) return {pending:0, wins:0, losses:0, listPending:[], listWins:[], listLosses:[], listAdmin:[], newPending:0, adminUpdates:0}; const me = this.data.user; const lastCheck = l.members[me]?.lastViewedNotifications || 0; const listPending = l.bets.filter(b => { if (b.status !== 'active') return false; if (b.creator === me) return false; if (b.participants.includes(me)) return false; if (b.type === 'duel') return b.invites && b.invites.includes(me); if (b.invites && b.invites.includes(me)) return true; if (!b.invites || b.invites.length === 0) return true; return false; }); const newPending = listPending.filter(b => b.id > lastCheck).length; const listWins = l.bets.filter(b => { if (b.status !== 'resolved') return false; if (b.resolvedAt && b.resolvedAt <= lastCheck) return false; return this.isUserWinner(b, me); }); const listLosses = l.bets.filter(b => { if (b.status !== 'resolved') return false; if (b.resolvedAt && b.resolvedAt <= lastCheck) return false; if (b.type === 'admin') return false; const participated = b.participants.includes(me); if (!participated) return false; const isWinner = this.isUserWinner(b, me); const isRefund = b.winner === "Nadie (Devuelto)"; return !isWinner && !isRefund; }); const listAdmin = l.bets.filter(b => { if (b.status !== 'resolved') return false; if (b.type !== 'admin') return false; if (!b.participants.includes(me)) return false; if (b.resolvedAt && b.resolvedAt <= lastCheck) return false; return true; }); return { pending: listPending.length, newPending: newPending, wins: listWins.length, losses: listLosses.length, adminUpdates: listAdmin.length, listPending, listWins, listLosses, listAdmin }; },
+            isUserWinner(b, user) { 
+                if(b.status !== 'resolved') return false; 
+                
+                // CASO A: Contra la Banca
+                if(b.type === 'bank') { 
+                    let r = b.selections ? b.selections[user] : null; 
+                    // CORRECCIÓN: Si es un array (lista), cogemos el último intento
+                    if (Array.isArray(r)) r = r[r.length - 1];
+                    return r && r.option === b.winningOption; 
+                } 
+                
+                // CASO B: Porra / Custom
+                if(b.type === 'custom') { 
+                    let s = b.selections ? b.selections[user] : null;
+                    // CORRECCIÓN: Soporte para arrays en porras
+                    if (Array.isArray(s)) s = s[s.length - 1];
+                    return s === b.winningOption; 
+                } 
+                
+                // CASO C: Duelo normal
+                return b.winner === user; 
+            },
+            getNotificationStats(l) { 
+                if(!l) return {pending:0, wins:0, losses:0, listPending:[], listWins:[], listLosses:[], listAdmin:[], newPending:0, adminUpdates:0}; 
+                const me = this.data.user; 
+                const lastCheck = l.members[me]?.lastViewedNotifications || 0; 
+                
+                // Pendientes (Invitaciones) - Sin cambios
+                const listPending = l.bets.filter(b => b.status === 'active' && b.invites && b.invites.includes(me) && !b.participants.includes(me)); 
+                const newPending = listPending.filter(b => b.id > lastCheck).length; 
+                
+                // Admin - Sin cambios
+                const listAdmin = l.bets.filter(b => b.status === 'resolved' && b.type === 'admin' && b.participants.includes(me) && b.resolvedAt > lastCheck);
+
+                // --- NUEVA LÓGICA DESGLOSADA PARA VICTORIAS Y DERROTAS ---
+                let listWins = [];
+                let listLosses = [];
+
+                l.bets.forEach(b => {
+                    if (b.status !== 'resolved') return;
+                    if (b.resolvedAt <= lastCheck) return; // Ya vista
+                    if (b.type === 'admin') return;
+                    if (!b.participants.includes(me)) return;
+
+                    // A) COMBINADAS: Miramos ticket a ticket
+                    if (b.type === 'combinada') {
+                        const tickets = b.selections[me];
+                        if (tickets && Array.isArray(tickets)) {
+                            tickets.forEach((t, idx) => {
+                                let isWinner = true;
+                                for (const [blockId, pickObj] of Object.entries(t.picks)) {
+                                    // Comparamos con resultado oficial
+                                    if (!b.officialResults || b.officialResults[blockId] !== pickObj.name) {
+                                        isWinner = false; break;
+                                    }
+                                }
+                                
+                                // Generamos nombre específico
+                                const isSingle = Object.keys(t.picks).length === 1;
+                                const title = isSingle ? Object.values(t.picks)[0].blockTitle : `Combinada ${b.title}`;
+                                
+                                // Creamos un objeto "fake" para la notificación
+                                const notifObj = { id: b.id + '-' + idx, title: title, resolvedAt: b.resolvedAt, originalId: b.id };
+                                
+                                if (isWinner) listWins.push(notifObj);
+                                else listLosses.push(notifObj);
+                            });
+                        }
+                    }
+                    // B) RESTO DE APUESTAS
+                    else {
+                        const isWinner = this.isUserWinner(b, me);
+                        
+                        // CORRECCIÓN: Si el ganador contiene "Nadie", es una cancelación (neutra)
+                        const isNeutral = b.winner && b.winner.includes("Nadie");
+
+                        if (!isNeutral) {
+                            // Solo si NO es neutral, decidimos si es victoria o derrota
+                            if (isWinner) listWins.push(b);
+                            else listLosses.push(b);
+                        }
+                    }
+                });
+
+                return { pending: listPending.length, newPending: newPending, wins: listWins.length, losses: listLosses.length, adminUpdates: listAdmin.length, listPending, listWins, listLosses, listAdmin }; 
+            },
             showNativeToast(t) { const el=document.getElementById('native-notification'); document.getElementById('native-notification-text').innerText=t; el.classList.add('show'); if(navigator.vibrate) navigator.vibrate(200); setTimeout(()=>el.classList.remove('show'),5000); },
             handleNotificationClick() { document.getElementById('native-notification').classList.remove('show'); this.openNotificationsModal(); },
             checkAndNotify() {
                 if(!this.data.user) return;
                 const me = this.data.user;
-
                 if (!this.notifiedIds) this.notifiedIds = [];
-                if (!this.appStartTime) {
-                    this.appStartTime = Date.now();
-                    return;
-                }
+                if (!this.appStartTime) { this.appStartTime = Date.now(); return; }
+
+const listCancelled = [];
+                this.data.leagues.forEach(l => {
+                    if(l.members[me]) {
+                        // Buscamos apuestas mías que se hayan cancelado por rechazo recientemente
+                        const cancelled = l.bets.filter(b => 
+                            b.status === 'resolved' && 
+                            b.creator === me &&
+                            b.winner === "Nadie (Cancelada por Rechazo)" &&
+                            b.resolvedAt > this.appStartTime 
+                        );
+                        listCancelled.push(...cancelled);
+                    }
+                });
+
+                listCancelled.forEach(b => {
+                    const uniqueId = 'cancel-' + b.id;
+                    if (!this.notifiedIds.includes(uniqueId)) {
+                        this.notifiedIds.push(uniqueId);
+                        this.showNativeToast(`🚫 Cancelada: ${b.title}`);
+                    }
+                });
 
                 let tWins = 0, tLosses = 0, tAdmin = 0;
                 let lastWonTitle = "";
@@ -613,53 +733,121 @@ this.appStartTime = Date.now();
                     if(l.members[me]) {
                         const stats = this.getNotificationStats(l);
                         
-                        // --- DETECTAR AJUSTES DE ADMIN ---
-stats.listAdmin.forEach(adj => {
-    // CORRECCIÓN 1: Usamos adj.id para que el identificador sea único y exacto
-    const adjId = 'adj-' + adj.id; 
-    
-    // CORRECCIÓN 2: Usamos adj.resolvedAt (que es número) en vez de adj.timestamp (que es texto)
-    // para comparar correctamente con this.appStartTime
-    if (adj.resolvedAt > this.appStartTime && !this.notifiedIds.includes(adjId)) {
-        this.notifiedIds.push(adjId);
-        tAdmin++;
-        // LANZAMOS EL BANNER AL INSTANTE
-        this.showNativeToast(`El administrador ha ajustado tu saldo ⚖️`);
-    }
-});
-
-                        // --- DETECTAR VICTORIAS ---
-                        stats.listWins.forEach(b => {
-                            if (b.resolvedAt > this.appStartTime && !this.notifiedIds.includes(b.id)) {
-                                tWins++;
-                                lastWonTitle = b.title;
-                                this.notifiedIds.push(b.id);
+                        // --- 1. DETECTAR AJUSTES DE ADMIN ---
+                        stats.listAdmin.forEach(adj => {
+                            const adjId = 'adj-' + adj.id; 
+                            if (adj.resolvedAt > this.appStartTime && !this.notifiedIds.includes(adjId)) {
+                                this.notifiedIds.push(adjId); 
+                                tAdmin++;
+                                this.showNativeToast(`El administrador ha ajustado tu saldo ⚖️`);
                             }
                         });
 
-                        // --- DETECTAR DERROTAS ---
-                        stats.listLosses.forEach(b => {
-                            if (b.resolvedAt > this.appStartTime && !this.notifiedIds.includes(b.id)) {
-                                tLosses++;
-                                lastLostTitle = b.title;
-                                this.notifiedIds.push(b.id);
+                        // --- 2. DETECTAR VICTORIAS ---
+                        // Ahora 'obj' puede ser un Ticket {id: "123-0", title: "Madrid", ...}
+                        stats.listWins.forEach(obj => {
+                            const uniqueId = obj.id.toString(); // Aseguramos string
+                            if (obj.resolvedAt > this.appStartTime && !this.notifiedIds.includes(uniqueId)) {
+                                tWins++; 
+                                lastWonTitle = obj.title;
+                                this.notifiedIds.push(uniqueId);
+                            }
+                        });
+
+                        // --- 3. DETECTAR DERROTAS ---
+                        stats.listLosses.forEach(obj => {
+                            const uniqueId = obj.id.toString();
+                            if (obj.resolvedAt > this.appStartTime && !this.notifiedIds.includes(uniqueId)) {
+                                tLosses++; 
+                                lastLostTitle = obj.title;
+                                this.notifiedIds.push(uniqueId);
                             }
                         });
                     }
                 });
 
-                // Notificaciones de apuestas (solo si no hubo admin para no solapar banners)
+                // --- 4. LANZAR BANNERS ---
                 if (tAdmin === 0) {
                     if (tWins > 0) {
-                        const m = tWins === 1 ? `¡Has ganado en "${lastWonTitle}"!` : `¡Has ganado ${tWins} apuestas!`;
+                        // Si ganas varias, aviso genérico. Si es una, nombre específico.
+                        const m = tWins === 1 ? `¡Ganaste: ${lastWonTitle}!` : `¡Has ganado ${tWins} apuestas!`;
                         this.showNativeToast(m + " 🏆");
-                    } else if (tLosses > 0) {
-                        const m = tLosses === 1 ? `Has perdido en "${lastLostTitle}".` : `Has perdido ${tLosses} apuestas.`;
-                        this.showNativeToast(m + " 😢");
+                    } 
+                    
+                    // Si ganas y pierdes a la vez, el segundo banner espera 3s para no pisarse
+                    if (tLosses > 0) {
+                        const m = tLosses === 1 ? `Perdiste: ${lastLostTitle}` : `Has perdido ${tLosses} apuestas.`;
+                        setTimeout(() => this.showNativeToast(m + " 😢"), tWins > 0 ? 3500 : 0);
                     }
                 }
             },
-            openNotificationsModal() { const l=this.getCurrentLeague(); const lst=document.getElementById('notifications-list'); lst.innerHTML=''; const stats = this.getNotificationStats(l); if (stats.listAdmin.length > 0) { lst.innerHTML += `<div class="text-[10px] text-slate-400 uppercase font-bold mb-2 ml-1">Ajustes de Comisionado</div>`; stats.listAdmin.forEach(b => { const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-slate-500 flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-slate-300 text-xs font-bold"><i class="fa-solid fa-scale-balanced mr-1"></i> Ajuste Saldo</p><p class="text-[10px] text-white">${b.winningOption}</p></div><div class="bg-slate-700 text-slate-400 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('resolved'); }; lst.appendChild(d); }); } if (stats.listWins.length > 0) { lst.innerHTML += `<div class="text-[10px] text-gold uppercase font-bold mb-2 ml-1 mt-4">Victorias Recientes</div>`; stats.listWins.forEach(b => { const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-gold flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-gold text-xs font-bold"><i class="fa-solid fa-trophy mr-1"></i> ¡Ganaste!</p><p class="text-[10px] text-white">${b.title}</p></div><div class="bg-gold/10 text-gold w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('resolved'); }; lst.appendChild(d); }); } if (stats.listLosses.length > 0) { lst.innerHTML += `<div class="text-[10px] text-danger uppercase font-bold mb-2 ml-1 mt-4">Derrotas Recientes</div>`; stats.listLosses.forEach(b => { const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-danger flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-danger text-xs font-bold"><i class="fa-solid fa-heart-crack mr-1"></i> Perdiste</p><p class="text-[10px] text-white">${b.title}</p></div><div class="bg-danger/10 text-danger w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('resolved'); }; lst.appendChild(d); }); } if (stats.listPending.length > 0) { lst.innerHTML += `<div class="text-[10px] text-slate-400 uppercase font-bold mb-2 ml-1 mt-4">Invitaciones / Pendientes</div>`; stats.listPending.forEach(b => { const c=this.getMember(l,b.creator).nickname; const d=document.createElement('div'); d.className="bg-slate-800 p-3 rounded-lg border-l-4 border-neonPurple flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; d.innerHTML=`<div><p class="text-white text-xs font-bold">${b.title}</p><p class="text-[10px] text-slate-400">De ${c} • ${b.amount} fichas</p></div><div class="bg-neonPurple/20 text-neonPurple w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></div>`; d.onclick=()=>{ this.closeModals(); this.filterBets('pending'); setTimeout(()=>this.joinBetModal(b.id),300); }; lst.appendChild(d); }); } if (stats.listPending.length === 0 && stats.listWins.length === 0 && stats.listLosses.length === 0 && stats.listAdmin.length === 0) { lst.innerHTML=`<div class="text-center text-slate-500 py-8"><i class="fa-regular fa-bell-slash text-3xl mb-2 opacity-50"></i><p class="text-xs">Sin notificaciones nuevas</p></div>`; } l.members[this.data.user].lastViewedNotifications = Date.now(); this.saveLeagueToCloud(l); this.renderDashboard(); this.openModal('notifications'); },
+            openNotificationsModal() { 
+                const l = this.getCurrentLeague(); 
+                const lst = document.getElementById('notifications-list'); 
+                lst.innerHTML = ''; 
+                const stats = this.getNotificationStats(l); 
+                
+                // 1. AJUSTES DE ADMIN
+                if (stats.listAdmin.length > 0) { 
+                    lst.innerHTML += `<div class="text-[10px] text-slate-400 uppercase font-bold mb-2 ml-1">Ajustes de Comisionado</div>`; 
+                    stats.listAdmin.forEach(b => { 
+                        const d = document.createElement('div'); 
+                        d.className = "bg-slate-800 p-3 rounded-lg border-l-4 border-slate-500 flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; 
+                        d.innerHTML = `<div><p class="text-slate-300 text-xs font-bold"><i class="fa-solid fa-scale-balanced mr-1"></i> Ajuste Saldo</p><p class="text-[10px] text-white">${b.winningOption}</p></div><div class="bg-slate-700 text-slate-400 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>`; 
+                        d.onclick = () => { this.closeModals(); this.filterBets('resolved'); }; 
+                        lst.appendChild(d); 
+                    }); 
+                } 
+                
+                // 2. VICTORIAS (Ahora muestra el nombre específico del Ticket)
+                if (stats.listWins.length > 0) { 
+                    lst.innerHTML += `<div class="text-[10px] text-gold uppercase font-bold mb-2 ml-1 mt-4">Victorias Recientes</div>`; 
+                    stats.listWins.forEach(obj => { 
+                        const d = document.createElement('div'); 
+                        d.className = "bg-slate-800 p-3 rounded-lg border-l-4 border-gold flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; 
+                        // Usamos obj.title para ver "Madrid-Barça" en vez de "Jornada 30"
+                        d.innerHTML = `<div><p class="text-gold text-xs font-bold"><i class="fa-solid fa-trophy mr-1"></i> ¡Ganaste!</p><p class="text-[10px] text-white">${obj.title}</p></div><div class="bg-gold/10 text-gold w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></div>`; 
+                        d.onclick = () => { this.closeModals(); this.filterBets('resolved'); }; 
+                        lst.appendChild(d); 
+                    }); 
+                } 
+                
+                // 3. DERROTAS (Ahora muestra el nombre específico del Ticket)
+                if (stats.listLosses.length > 0) { 
+                    lst.innerHTML += `<div class="text-[10px] text-danger uppercase font-bold mb-2 ml-1 mt-4">Derrotas Recientes</div>`; 
+                    stats.listLosses.forEach(obj => { 
+                        const d = document.createElement('div'); 
+                        d.className = "bg-slate-800 p-3 rounded-lg border-l-4 border-danger flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; 
+                        // Usamos obj.title para ver "Madrid-Barça" en vez de "Jornada 30"
+                        d.innerHTML = `<div><p class="text-danger text-xs font-bold"><i class="fa-solid fa-heart-crack mr-1"></i> Perdiste</p><p class="text-[10px] text-white">${obj.title}</p></div><div class="bg-danger/10 text-danger w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></div>`; 
+                        d.onclick = () => { this.closeModals(); this.filterBets('resolved'); }; 
+                        lst.appendChild(d); 
+                    }); 
+                } 
+                
+                // 4. PENDIENTES
+                if (stats.listPending.length > 0) { 
+                    lst.innerHTML += `<div class="text-[10px] text-slate-400 uppercase font-bold mb-2 ml-1 mt-4">Invitaciones / Pendientes</div>`; 
+                    stats.listPending.forEach(b => { 
+                        const c = this.getMember(l, b.creator).nickname; 
+                        const d = document.createElement('div'); 
+                        d.className = "bg-slate-800 p-3 rounded-lg border-l-4 border-neonPurple flex justify-between items-center cursor-pointer hover:bg-slate-700 mb-2"; 
+                        d.innerHTML = `<div><p class="text-white text-xs font-bold">${b.title}</p><p class="text-[10px] text-slate-400">De ${c} • ${b.amount} fichas</p></div><div class="bg-neonPurple/20 text-neonPurple w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></div>`; 
+                        d.onclick = () => { this.closeModals(); this.filterBets('pending'); setTimeout(() => this.joinBetModal(b.id), 300); }; 
+                        lst.appendChild(d); 
+                    }); 
+                } 
+                
+                // 5. ESTADO VACÍO Y GUARDADO
+                if (stats.listPending.length === 0 && stats.listWins.length === 0 && stats.listLosses.length === 0 && stats.listAdmin.length === 0) { 
+                    lst.innerHTML = `<div class="text-center text-slate-500 py-8"><i class="fa-regular fa-bell-slash text-3xl mb-2 opacity-50"></i><p class="text-xs">Sin notificaciones nuevas</p></div>`; 
+                } 
+                
+                l.members[this.data.user].lastViewedNotifications = Date.now(); 
+                this.saveLeagueToCloud(l); 
+                this.renderDashboard(); 
+                this.openModal('notifications'); 
+            },
             getMember(l,u) { if(!l.members[u]) return {balance:0,nickname:u,avatar:null}; return (typeof l.members[u]==='number')?{balance:l.members[u],nickname:u,avatar:null}:l.members[u]; },
             getAvatarHtml(m,s='sm') { return m.avatar?`<img src="${m.avatar}" class="avatar-circle avatar-${s} border-neonPurple" alt="${m.nickname}">`:`<div class="avatar-circle avatar-${s} bg-slate-700 text-slate-400">${m.nickname.substring(0,2).toUpperCase()}</div>`; },
             openFullscreenImage(src) { if(!src) return; document.getElementById('fullscreen-image-src').src=src; document.getElementById('modal-fullscreen-image').classList.remove('hidden'); },
@@ -682,27 +870,59 @@ stats.listAdmin.forEach(adj => {
                 document.getElementById('view-profile-name').innerHTML = m.nickname + debtHtml;
                 document.getElementById('view-profile-balance').innerText = m.balance;
                 
-                // --- (BLOQUE ELIMINADO: AQUÍ ESTABA EL BOTÓN DE PRÉSTAMO QUE NO QUERÍAS) ---
-
-                // 2. CÁLCULOS: Estadísticas Generales
+                // 2. CÁLCULOS: Estadísticas Generales (MODIFICADO PARA TICKETS)
                 let totalWins = 0, totalPlayed = 0;
                 
                 const userBets = l.bets.filter(b => b.status === 'resolved' && b.type !== 'admin' && b.participants.includes(u));
-                userBets.sort((a, b) => a.id - b.id); 
+                userBets.sort((a, b) => a.id - b.id); // Ordenamos cronológicamente (antiguo -> nuevo)
 
                 let maxStreak = 0;
                 let currentStreak = 0;
 
                 userBets.forEach(b => {
-                    totalPlayed++;
-                    if (this.isUserWinner(b, u)) {
-                        totalWins++;
-                        currentStreak++;
-                    } else {
-                        if (currentStreak > maxStreak) maxStreak = currentStreak;
-                        currentStreak = 0;
+                    // A) SI ES COMBINADA: Analizamos Ticket a Ticket
+                    if (b.type === 'combinada') {
+                        const userTickets = b.selections ? b.selections[u] : [];
+                        const ticketsArr = Array.isArray(userTickets) ? userTickets : (userTickets ? [userTickets] : []);
+                        
+                        ticketsArr.forEach(t => {
+                            totalPlayed++;
+                            
+                            // Comprobar si este ticket ganó
+                            let isTicketWinner = true;
+                            if (b.officialResults && t.picks) {
+                                for (const [blockId, pickObj] of Object.entries(t.picks)) {
+                                    if (b.officialResults[blockId] !== pickObj.name) {
+                                        isTicketWinner = false; break;
+                                    }
+                                }
+                            } else { isTicketWinner = false; }
+
+                            if (isTicketWinner) {
+                                totalWins++;
+                                currentStreak++;
+                            } else {
+                                if (currentStreak > maxStreak) maxStreak = currentStreak;
+                                currentStreak = 0;
+                            }
+                        });
+                    }
+                    // B) SI ES APUESTA NORMAL
+                    else {
+                        // Ignorar devoluciones (no rompen racha ni suman jugada real)
+                        if (b.winner && b.winner.includes("Nadie")) return;
+
+                        totalPlayed++;
+                        if (this.isUserWinner(b, u)) {
+                            totalWins++;
+                            currentStreak++;
+                        } else {
+                            if (currentStreak > maxStreak) maxStreak = currentStreak;
+                            currentStreak = 0;
+                        }
                     }
                 });
+                
                 if (currentStreak > maxStreak) maxStreak = currentStreak;
 
                 document.getElementById('view-profile-wins').innerText = totalWins;
@@ -1087,50 +1307,44 @@ stats.listAdmin.forEach(adj => {
                 const mem = this.getMember(l, user);
                 const base = l.startBalance || 1000;
 
-                // INFO BÁSICA
+                // 1. INFO BÁSICA
                 document.getElementById('dash-league-name').innerText = l.name;
                 document.getElementById('dash-league-code').innerText = l.code;
                 document.getElementById('dash-my-nickname').innerText = mem.nickname;
 
-                // FUNCION COPIAR CÓDIGO
                 this.copyCode = () => {
                     navigator.clipboard.writeText(l.code).then(() => this.toast('Código copiado'));
                 };
 
-                // GESTIÓN DE SALDO (Colores y Estados)
+                // 2. GESTIÓN DE SALDO
                 const balWrapper = document.getElementById('balance-wrapper');
                 const balText = document.getElementById('dash-balance');
                 const balIcon = document.getElementById('balance-icon');
 
                 balText.innerText = mem.balance;
                 
-                // Reseteo de estilos
+                // Reseteo estilos
                 balWrapper.className = "flex items-center gap-1.5 mt-0.5 cursor-pointer transition active:scale-95 w-fit px-2 py-0.5 rounded";
                 balText.className = "font-mono font-bold text-sm leading-none";
 
                 if (mem.debt && mem.debt > 0) {
-                    // DEUDA: Rojo
                     balWrapper.classList.add('bg-danger/10', 'border', 'border-danger/30', 'animate-pulse');
                     balText.classList.add('text-danger');
                     balText.classList.remove('text-neonGreen', 'text-orange-400');
                     balIcon.className = "fa-solid fa-skull text-[10px] text-danger";
-                } 
-                else if (mem.balance < (base * 0.10)) {
-                    // POBRE: Naranja
+                } else if (mem.balance < (base * 0.10)) {
                     balWrapper.classList.remove('bg-danger/10', 'border', 'border-danger/30', 'animate-pulse');
                     balText.classList.add('text-orange-400');
                     balText.classList.remove('text-neonGreen', 'text-danger');
                     balIcon.className = "fa-solid fa-coins text-[10px] text-orange-400";
-                } 
-                else {
-                    // NORMAL: Verde
+                } else {
                     balWrapper.classList.remove('bg-danger/10', 'border', 'border-danger/30', 'animate-pulse');
                     balText.classList.add('text-neonGreen');
                     balText.classList.remove('text-danger', 'text-orange-400');
                     balIcon.className = "fa-solid fa-coins text-[10px] text-neonGreen";
                 }
 
-                // AVATAR
+                // 3. AVATAR
                 const avDiv = document.getElementById('dash-my-avatar');
                 if (mem.avatar) {
                     avDiv.innerHTML = `<img src="${mem.avatar}" class="w-full h-full object-cover">`;
@@ -1138,7 +1352,7 @@ stats.listAdmin.forEach(adj => {
                     avDiv.innerHTML = `<span>${mem.nickname.substring(0,2).toUpperCase()}</span>`;
                 }
 
-                // BONO DIARIO (Lógica de tiempo)
+                // 4. BONO DIARIO
                 const btnDaily = document.getElementById('btn-header-daily');
                 if (!l.settings?.dailyBonus) {
                     btnDaily.classList.add('hidden');
@@ -1146,9 +1360,7 @@ stats.listAdmin.forEach(adj => {
                     btnDaily.classList.remove('hidden');
                     const last = new Date(mem.lastBonusDate || 0);
                     const now = new Date();
-                    const isSameDay = last.getDate() === now.getDate() && 
-                                      last.getMonth() === now.getMonth() && 
-                                      last.getFullYear() === now.getFullYear();
+                    const isSameDay = last.getDate() === now.getDate() && last.getMonth() === now.getMonth() && last.getFullYear() === now.getFullYear();
 
                     if (!isSameDay) {
                         btnDaily.className = "flex items-center gap-1.5 bg-gradient-to-r from-neonGreen to-emerald-600 text-dark px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg shadow-neonGreen/20 animate-pulse active:scale-95 transition";
@@ -1162,7 +1374,6 @@ stats.listAdmin.forEach(adj => {
                         const diffMs = tomorrow - now;
                         const diffHrs = Math.floor((diffMs % 86400000) / 3600000);
                         const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
-                        
                         btnDaily.className = "flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-slate-400 px-3 py-1.5 rounded-full text-[10px] font-mono cursor-not-allowed";
                         btnDaily.innerHTML = `<i class="fa-regular fa-clock text-[9px]"></i> <span>${diffHrs}h ${diffMins}m</span>`;
                         btnDaily.onclick = null;
@@ -1170,8 +1381,10 @@ stats.listAdmin.forEach(adj => {
                     }
                 }
 
+                // 5. RENDERIZAR APUESTAS
                 this.renderBets(l);
-                // Notificaciones (Punto rojo)
+
+                // 6. NOTIFICACIONES
                 const stats = this.getNotificationStats(l);
                 const totalNotif = stats.newPending + stats.wins + stats.losses + stats.adminUpdates;
                 const badge = document.getElementById('header-bell-badge');
@@ -1179,8 +1392,38 @@ stats.listAdmin.forEach(adj => {
                      if (totalNotif > 0) badge.classList.remove('hidden');
                      else badge.classList.add('hidden');
                 }
-            },
 
+                // 7. CÁLCULO DE GLOBOS (BADGES) EN LOS BOTONES
+                // Contar EVENTOS
+                const cEvents = l.bets.filter(b => b.status === 'active' && (b.type === 'bank' || b.type === 'combinada')).length;
+                
+                // Contar ACTIVAS
+                const cActive = l.bets.filter(b => b.status === 'active' && b.type !== 'bank' && b.type !== 'combinada' && (b.participants.includes(user) || b.creator === user)).length;
+                
+                // Contar PENDIENTES
+                const cPending = l.bets.filter(b => {
+                    if (b.status !== 'active') return false;
+                    if (b.type === 'bank' || b.type === 'combinada') return false;
+                    if (b.creator === user) return false;
+                    if (b.participants.includes(user)) return false;
+                    if (b.rejectedBy && b.rejectedBy.includes(user)) return false;
+                    return (b.invites && b.invites.includes(user)) || (!b.invites || b.invites.length === 0);
+                }).length;
+
+                // FUNCIÓN AUXILIAR
+                const updateBadge = (id, count) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerText = count;
+                        el.classList[count > 0 ? 'remove' : 'add']('hidden');
+                    }
+                };
+
+                // ACTUALIZAR GLOBOS
+                updateBadge('badge-events', cEvents);
+                updateBadge('badge-active', cActive);
+                updateBadge('badge-pending', cPending);
+            },
            
             // --- FUNCIÓN COMPARTIR MEJORADA ---
             shareBet(id) {
@@ -1275,33 +1518,47 @@ checkDeepLinks() {
                 const me = this.data.user;
 
                 // 1. FILTRADO (Exactamente igual que tu versión)
-                if (this.data.filter === 'active') {
-                    visibleBets = l.bets.filter(b => b.status === 'active' && 
-                        (b.participants.includes(me) || b.creator === me || !b.invites || b.invites.length === 0 || b.invites.includes(me))
+                if (this.data.filter === 'events') {
+                    visibleBets = l.bets.filter(b => 
+                        b.status === 'active' && 
+                        (b.type === 'bank' || b.type === 'combinada')
                     );
-                    visibleBets = visibleBets.filter(b => {
-                        if (b.participants.includes(me) || b.creator === me) return true;
-                        if (b.invites && b.invites.includes(me)) return false; 
-                        return true;
-                    });
 
-                } else if (this.data.filter === 'pending') {
+                // B) ACTIVAS (Mis retos personales)
+                // Solo Duelos/Porras donde YA estoy dentro.
+                } else if (this.data.filter === 'active') {
+                    visibleBets = l.bets.filter(b => 
+                        b.status === 'active' && 
+                        b.type !== 'bank' && b.type !== 'combinada' && // No mostramos eventos aquí
+                        (b.participants.includes(me) || b.creator === me)
+                    );
+
+                // C) PENDIENTES (Invitaciones)
+                // Solo Duelos/Porras donde NO estoy dentro.
+                } else if (this.data.filter === 'pending' || this.data.filter === 'events') {
                     visibleBets = l.bets.filter(b => {
                         if (b.status !== 'active') return false;
+                        if (b.type === 'bank' || b.type === 'combinada') return false; // Los eventos no van aquí
+                        
                         if (b.creator === me) return false;
                         if (b.participants.includes(me)) return false;
                         if (b.rejectedBy && b.rejectedBy.includes(me)) return false;
-                        if (b.invites && b.invites.includes(me)) return true;
-                        return false;
+                        
+                        // Si hay invitación explícita
+                        if (b.invites && b.invites.length > 0) return b.invites.includes(me);
+                        
+                        // Si es pública (ej. Bote entre amigos abierto)
+                        return (!b.invites || b.invites.length === 0);
                     });
 
+                // D) HISTORIAL
                 } else if (this.data.filter === 'resolved') {
-                    visibleBets = l.bets.filter(b => b.status === 'resolved');
-                }
-
-                if (visibleBets.length === 0) {
-                    container.innerHTML = `<div class="text-center text-slate-500 py-10"><i class="fa-solid fa-ghost text-4xl mb-2 opacity-30"></i><p>No hay apuestas aquí.</p></div>`;
-                    return;
+                    visibleBets = l.bets.filter(b => 
+                        b.status === 'resolved' && 
+                        // FILTRO CLAVE: Si el ganador incluye "Nadie", la ocultamos.
+                        // Así solo se ven las partidas jugadas con ganadores reales o ajustes de Admin.
+                        (!b.winner || !b.winner.includes("Nadie"))
+                    );
                 }
 
                 // --- 2. ORDENACIÓN INTELIGENTE (EL ÚNICO CAMBIO) ---
@@ -1343,42 +1600,35 @@ checkDeepLinks() {
                 let avatarHtml = ''; 
                 let metaHtml = ''; 
 
-                // --- 1. FECHAS Y CIERRE ---
                 const isTimeExpired = b.closingTime && Date.now() > b.closingTime;
                 const isLocked = b.locked || isTimeExpired; 
-                
                 let timeLabel = '';
                 if (b.closingTime && b.status === 'active') {
                     const d = new Date(b.closingTime);
                     const dateStr = d.toLocaleString('es-ES', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                     const colorTime = isTimeExpired ? 'text-danger border-danger/30' : 'text-orange-400 border-orange-400/30';
-                    // Nota: 'whitespace-nowrap' evita que la fecha se parta en dos líneas
-                    timeLabel = `<span class="text-[9px] ${colorTime} font-bold ml-1 border px-1 rounded whitespace-nowrap inline-block mt-1" title="Cierre automático"><i class="fa-regular fa-clock mr-1"></i>${dateStr}</span>`;
+                    timeLabel = `<span class="text-[9px] ${colorTime} font-bold ml-1 border px-1 rounded whitespace-nowrap inline-block mt-1"><i class="fa-regular fa-clock mr-1"></i>${dateStr}</span>`;
                 }
 
-                // --- 2. CABECERA ---
-                if (b.type === 'bank') { 
+                if (b.type === 'bank' || b.type === 'combinada') { 
                     avatarHtml = `<div class="avatar-circle avatar-sm bg-gradient-to-br from-amber-400 to-orange-600 text-white border-none shadow-lg flex items-center justify-center"><i class="fa-solid fa-crown text-xs"></i></div>`; 
                     metaHtml = `<div class="text-[10px] text-amber-400 mt-0.5 font-bold uppercase tracking-wider">Evento de Liga 🏆</div>`; 
                 } else if (b.type === 'admin') { 
                     avatarHtml = `<div class="avatar-circle avatar-sm bg-slate-600 text-white border-none shadow-lg flex items-center justify-center"><i class="fa-solid fa-gavel text-xs"></i></div>`; 
-                    metaHtml = `<div class="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Ajuste de Comisionado ⚖️</div>`; 
+                    metaHtml = `<div class="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Ajuste Admin ⚖️</div>`; 
                 } else { 
                     avatarHtml = this.getAvatarHtml(cd,'sm'); 
                     const tMap = { duel: 'Duelo', group: 'Bote', custom: 'Porra' }; 
                     metaHtml = `<div class="text-xs text-slate-500 mt-0.5">de ${cd.nickname} · ${tMap[b.type]||b.type}</div>`; 
                 } 
-                
-                // Candado de privada (inline-block para que fluya con el texto)
-                if(b.invites&&b.invites.length>0) pt=`<span class="text-[10px] text-slate-400 ml-1 border border-slate-700 px-1 rounded whitespace-nowrap inline-block"><i class="fa-solid fa-lock mr-1"></i>Privada</span>`; 
+                if(b.invites&&b.invites.length>0) pt=`<span class="text-[10px] text-slate-400 ml-1 border border-slate-700 px-1 rounded whitespace-nowrap inline-block"><i class="fa-solid fa-lock mr-1"></i>Privada</span>`;
 
-                // --- 3. ESTADOS Y BOTONES ---
                 if(this.data.filter==='pending') { 
                     bg=`<span class="text-gold bg-gold/10 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">PROPUESTA</span>`; 
                     if(b.invites&&b.invites.length>0) inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-1">Invitados: ${b.invites.map(u=>this.getMember(l,u).nickname).join(', ')}</div>`; 
                     acts=`<div class="grid grid-cols-2 gap-2 mt-3"><button onclick="app.rejectBet(${b.id})" class="bg-slate-700 py-2 rounded text-xs font-bold text-white">Rechazar</button><button onclick="app.joinBetModal(${b.id})" class="bg-neonGreen text-dark py-2 rounded text-xs font-bold">Aceptar (${b.amount})</button></div>`; 
                 
-                } else if(this.data.filter==='active') { 
+                } else if(this.data.filter==='active' || this.data.filter==='events') { 
                     if (isLocked) {
                         bg=`<span class="text-danger bg-danger/10 px-2 py-0.5 rounded text-[10px] font-bold border border-danger/20 whitespace-nowrap"><i class="fa-solid fa-lock mr-1"></i>CERRADA</span>`;
                     } else {
@@ -1388,30 +1638,39 @@ checkDeepLinks() {
                     inf=`<div class="mt-2 text-[10px] text-slate-500 border-t border-slate-700/50 pt-2"><div class="uppercase font-bold text-slate-600 mb-1">Participantes (${b.participants.length}):</div><div class="flex flex-wrap gap-1">${b.participants.map(u=>`<div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-full border border-slate-700">${this.getAvatarHtml(this.getMember(l,u),'sm')}<span class="text-[10px] text-slate-300">${this.getMember(l,u).nickname}</span></div>`).join('')}</div></div>`; 
                     
                     if(ic) { 
-                        const lockBtn = `<button onclick="app.toggleBetLock(${b.id})" class="flex-1 border ${b.locked ? 'border-neonGreen text-neonGreen' : 'border-slate-500 text-slate-400'} py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition mr-1" title="${b.locked ? 'Abrir' : 'Cerrar entradas'}"><i class="fa-solid ${b.locked ? 'fa-lock-open' : 'fa-lock'}"></i></button>`;
+                        const lockBtn = `<button onclick="app.toggleBetLock(${b.id})" class="flex-1 border ${b.locked ? 'border-neonGreen text-neonGreen' : 'border-slate-500 text-slate-400'} py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition mr-1"><i class="fa-solid ${b.locked ? 'fa-lock-open' : 'fa-lock'}"></i></button>`;
                         const resolveBtn = `<button onclick="app.resolveBetModal(${b.id})" class="flex-[4] border border-neonPurple text-neonPurple py-2 rounded-xl text-xs font-bold hover:bg-neonPurple hover:text-white transition">Resolver Evento</button>`;
                         const cancelBtn = `<button onclick="app.cancelBet(${b.id})" class="w-full mt-2 border border-danger text-danger py-2 rounded-xl text-xs font-bold hover:bg-danger hover:text-white transition"><i class="fa-solid fa-trash mr-1"></i> Cancelar</button>`;
 
-                        if (b.type === 'custom' && !b.participants.includes(me) && !isLocked) {
-                            acts = `<button onclick="app.joinBetModal(${b.id})" class="w-full mb-2 bg-gradient-to-r from-neonGreen to-emerald-600 text-dark py-2 rounded-xl text-xs font-bold shadow-lg animate-pulse">🎯 Elige tu opción</button>`;
+                        if ((b.type === 'combinada' || (b.type === 'custom' && !b.participants.includes(me))) && !isLocked) {
+                            acts = `<button onclick="app.joinBetModal(${b.id})" class="w-full mb-2 bg-gradient-to-r from-neonGreen to-emerald-600 text-dark py-2 rounded-xl text-xs font-bold shadow-lg animate-pulse">${b.type === 'combinada' ? '🧩 Realizar mi Combinada' : '🎯 Elige tu opción'}</button>`;
                             acts += `<div class="flex gap-1">${lockBtn}${resolveBtn}</div>${cancelBtn}`;
                         } else if (b.type === 'bank') {
                              if (!b.selections?.[me] && !isLocked) {
                                 acts = `<button onclick="app.joinBetModal(${b.id})" class="w-full mb-2 bg-slate-700 text-white py-2 rounded text-xs font-bold">Jugar contra la Banca</button>`;
                             } else if (b.selections?.[me]) {
-                                acts = `<div class="mb-2 text-xs bg-slate-800 p-2 rounded text-center text-slate-400 border border-slate-700">Tu apuesta: <span class="text-white font-bold">${b.selections[me].option}</span></div>`;
+                                // CORRECCIÓN PARA VISUALIZAR APUESTA EXISTENTE
+                                let rec = b.selections[me];
+                                if (Array.isArray(rec)) rec = rec[rec.length-1];
+                                acts = `<div class="mb-2 text-xs bg-slate-800 p-2 rounded text-center text-slate-400 border border-slate-700">Tu apuesta: <span class="text-white font-bold">${rec.option}</span></div>`;
                             }
                             acts += `<div class="flex gap-1">${lockBtn}${resolveBtn}</div>${cancelBtn}`;
                         } else {
                             acts = `<div class="flex gap-1 mt-2">${lockBtn}${resolveBtn}</div>${cancelBtn}`;
                         }
-
                     } else { 
-                        const s=b.selections?b.selections[me]:null;
+                        let s=b.selections?b.selections[me]:null;
+                        // CORRECCIÓN VISUAL
+                        if (Array.isArray(s) && b.type !== 'combinada') s = s[s.length-1];
+
                         if (isLocked && !b.participants.includes(me)) {
                             acts=`<div class="mt-3 text-xs bg-danger/10 border border-danger/30 p-2 rounded text-center text-danger font-bold"><i class="fa-solid fa-lock mr-1"></i> Apuestas Cerradas</div>`;
                         } else if (b.participants.includes(me)) {
-                            acts=`<div class="mt-3 text-xs bg-slate-800 p-2 rounded text-center text-slate-400">${s?`Tu apuesta: <span class="text-white font-bold">${(typeof s==='object')?s.option:s}</span>`:'Estás dentro'}</div>`;
+                            if (b.type === 'combinada') {
+                                acts=`<button onclick="app.joinBetModal(${b.id})" class="w-full mt-2 bg-slate-700 text-white py-2 rounded-xl text-xs font-bold border border-slate-600">Ver mis Tickets / Apostar más</button>`;
+                            } else {
+                                acts=`<div class="mt-3 text-xs bg-slate-800 p-2 rounded text-center text-slate-400">${s?`Tu apuesta: <span class="text-white font-bold">${(typeof s==='object')?s.option:s}</span>`:'Estás dentro'}</div>`;
+                            }
                         } else {
                             acts=`<button onclick="app.joinBetModal(${b.id})" class="w-full mt-2 bg-neonGreen text-dark py-2 rounded-xl text-xs font-bold shadow-lg">Unirse / Apostar</button>`;
                         }
@@ -1421,83 +1680,104 @@ checkDeepLinks() {
                     if (b.type === 'admin') { 
                         const targetUser = b.participants[0]; 
                         const targetMember = this.getMember(l, targetUser); 
-                        const isPositive = b.winningOption.includes('+'); 
-                        const colorClass = isPositive ? 'text-neonGreen' : 'text-danger'; 
-                        acts = `<div class="mt-3 text-xs bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center"><div class="flex items-center gap-2">${this.getAvatarHtml(targetMember, 'sm')}<span class="font-bold text-white">${targetMember.nickname}</span></div><div class="${colorClass} font-mono font-bold text-sm">${b.winningOption}</div></div><div class="text-[9px] text-right text-slate-500 mt-1">${b.timestamp}</div>`; 
+                        acts = `<div class="mt-3 text-xs bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center"><div class="flex items-center gap-2">${this.getAvatarHtml(targetMember, 'sm')}<span class="font-bold text-white">${targetMember.nickname}</span></div><div class="${b.winningOption.includes('+')?'text-neonGreen':'text-danger'} font-mono font-bold text-sm">${b.winningOption}</div></div>`; 
                     } else { 
                         const listHtml = b.participants.map(p => { 
                             const m = this.getMember(l, p); 
-                            let wager = b.amount; 
-                            let prize = 0; 
-                            let isWinner = false; 
-                            let selectionHtml = ''; 
-                            if (b.type === 'bank') { 
-                                const record = b.selections ? b.selections[p] : null; 
-                                if (record) { 
-                                    wager = record.wager; 
-                                    const pickedOption = record.option; 
-                                    const correct = pickedOption === b.winningOption; 
-                                    if (correct) { isWinner = true; prize = Math.floor(record.wager * record.odd); } 
-                                    selectionHtml = `<div class="text-[10px] text-slate-400">Apostó: <span class="${correct?'text-neonGreen':'text-slate-500'} font-bold">${pickedOption} (x${record.odd})</span></div>`; 
-                                } 
-                            } else { 
-                                let winnersList = []; 
-                                if (b.type === 'custom') { 
-                                    winnersList = Object.entries(b.selections || {}).filter(([u, s]) => s === b.winningOption).map(([u]) => u); 
-                                } else { 
-                                    if (l.members[b.winner] || typeof l.members[b.winner] === 'object') winnersList = [b.winner]; 
-                                } 
-                                const potPrize = winnersList.length > 0 ? Math.floor(b.pot / winnersList.length) : 0; 
-                                isWinner = winnersList.includes(p); 
-                                prize = isWinner ? potPrize : 0; 
-                                if (b.type === 'custom' && b.selections && b.selections[p]) { 
-                                    const picked = b.selections[p]; 
-                                    const correct = picked === b.winningOption; 
-                                    selectionHtml = `<div class="text-[10px] text-slate-400">Eligió: <span class="${correct?'text-neonGreen':'text-slate-500'} font-bold">${picked}</span></div>`; 
-                                } 
+                            
+                            // A) COMBINADA
+                            if (b.type === 'combinada') {
+                                const userTickets = b.selections ? b.selections[p] : [];
+                                const ticketsArr = Array.isArray(userTickets) ? userTickets : (userTickets ? [userTickets] : []);
+                                if (ticketsArr.length === 0) return '';
+                                const ticketsRows = ticketsArr.map((t, i) => {
+                                    let isWinner = true;
+                                    if (b.officialResults && t.picks) {
+                                        for (const [blockId, pickObj] of Object.entries(t.picks)) {
+                                            if (b.officialResults[blockId] !== pickObj.name) { isWinner = false; break; }
+                                        }
+                                    } else { isWinner = false; }
+                                    const prize = isWinner ? Math.floor(t.wager * t.totalOdd) : 0;
+                                    const color = isWinner ? 'text-neonGreen' : 'text-red-400';
+                                    const icon = isWinner ? 'fa-check' : 'fa-xmark';
+                                    const picksDetails = Object.values(t.picks).map(pick => 
+                                        `<div class="flex justify-between items-center border-b border-white/5 pb-0.5 mb-0.5 last:border-0 last:mb-0 last:pb-0"><span class="text-slate-300 truncate pr-2 w-2/3">${pick.blockTitle}</span><div class="text-right"><span class="text-white font-bold">${pick.name}</span><span class="text-neonPurple text-[9px] ml-1">x${pick.odd}</span></div></div>`
+                                    ).join('');
+                                    return `<div class="mt-2 bg-black/20 p-2 rounded border ${isWinner ? 'border-neonGreen/30' : 'border-white/5'}"><div class="flex justify-between items-center mb-2 border-b border-white/10 pb-1"><div class="text-[10px] ${color} font-bold"><i class="fa-solid ${icon}"></i> Ticket #${i+1}</div><div class="text-[9px] text-slate-500 font-mono">Cuota Total: <span class="text-neonPurple">x${t.totalOdd.toFixed(2)}</span></div></div><div class="text-[10px] mb-2 pl-1 border-l-2 border-slate-700">${picksDetails}</div><div class="flex justify-between items-center text-[10px] pt-1 font-mono"><span class="text-slate-500">Entrada: ${t.wager}</span><span class="${isWinner ? 'text-neonGreen font-bold' : 'text-slate-600'}">Ganó: ${prize}</span></div></div>`;
+                                }).join('');
+                                return `<div class="bg-slate-800/50 p-2 rounded mb-2 border border-slate-700/50"><div class="flex items-center gap-2 mb-1">${this.getAvatarHtml(m, 'sm')}<span class="text-xs font-bold text-white">${m.nickname}</span></div><div class="pl-1">${ticketsRows}</div></div>`;
                             } 
-                            return `<div class="flex justify-between items-center bg-slate-800/50 p-2 rounded mb-1 border border-slate-700/50"><div class="flex items-center gap-2">${this.getAvatarHtml(m, 'sm')}<div><div class="text-xs font-bold ${isWinner ? 'text-neonGreen' : 'text-white'}">${m.nickname}</div>${selectionHtml}</div></div><div class="text-right text-[10px]"><div class="text-slate-400">Entrada: ${wager}</div><div class="${isWinner ? 'text-neonGreen font-bold' : 'text-slate-600'}">Ganó: ${prize}</div></div></div>`; 
+                            
+                            // B) BANCA / CUSTOM (CON ARREGLO)
+                            else {
+                                let wager = b.amount; let prize = 0; let isWinner = false; let selectionHtml = ''; 
+                                
+                                if (b.type === 'bank') { 
+                                    let record = b.selections ? b.selections[p] : null; 
+                                    // 🔥 AQUÍ ARREGLAMOS LA VISUALIZACIÓN
+                                    if (Array.isArray(record)) record = record[record.length - 1];
+
+                                    if (record) { 
+                                        wager = record.wager; 
+                                        const correct = record.option === b.winningOption; 
+                                        if (correct) { isWinner = true; prize = Math.floor(record.wager * record.odd); } 
+                                        selectionHtml = `<div class="text-[10px] text-slate-400">Apostó: <span class="${correct?'text-neonGreen':'text-slate-500'} font-bold">${record.option} (x${record.odd})</span></div>`; 
+                                    } 
+                                } else { 
+                                    let winnersList = (b.type === 'custom') ? Object.entries(b.selections || {}).filter(([u, s]) => {
+                                        // 🔥 ARREGLO
+                                        const val = Array.isArray(s) ? s[s.length-1] : s;
+                                        return val === b.winningOption;
+                                    }).map(([u]) => u) : (l.members[b.winner] ? [b.winner] : []);
+                                    
+                                    const potPrize = winnersList.length > 0 ? Math.floor(b.pot / winnersList.length) : 0; 
+                                    isWinner = winnersList.includes(p); prize = isWinner ? potPrize : 0; 
+                                    
+                                    if (b.type === 'custom' && b.selections && b.selections[p]) { 
+                                        let picked = b.selections[p];
+                                        if (Array.isArray(picked)) picked = picked[picked.length - 1]; // ARREGLO
+                                        const correct = picked === b.winningOption; 
+                                        selectionHtml = `<div class="text-[10px] text-slate-400">Eligió: <span class="${correct?'text-neonGreen':'text-slate-500'} font-bold">${picked}</span></div>`; 
+                                    } 
+                                } 
+                                return `<div class="flex justify-between items-center bg-slate-800/50 p-2 rounded mb-1 border border-slate-700/50"><div class="flex items-center gap-2">${this.getAvatarHtml(m, 'sm')}<div><div class="text-xs font-bold ${isWinner ? 'text-neonGreen' : 'text-white'}">${m.nickname}</div>${selectionHtml}</div></div><div class="text-right text-[10px]"><div class="text-slate-400">Entrada: ${wager}</div><div class="${isWinner ? 'text-neonGreen font-bold' : 'text-slate-600'}">Ganó: ${prize}</div></div></div>`; 
+                            }
                         }).join(''); 
-                        acts=`<div class="mt-3 pt-3 border-t border-slate-700/50"><div class="flex justify-between items-center mb-2"><span class="text-xs text-slate-400 font-bold uppercase">Resultado:</span><span class="text-neonGreen font-bold text-sm bg-slate-800 px-3 py-1 rounded border border-neonGreen/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]">${b.winningOption || b.winner}</span></div><details class="group"><summary class="list-none cursor-pointer text-xs text-center text-slate-500 hover:text-white transition bg-slate-800/50 p-2 rounded flex items-center justify-center gap-2 select-none font-bold uppercase tracking-wider"><span>Ver Detalles</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition-transform"></i></summary><div class="mt-3 space-y-3 bg-slate-800/50 p-3 rounded text-xs text-slate-300 border border-slate-700"><div class="grid grid-cols-2 gap-2"><div class="bg-dark p-2 rounded text-center border border-slate-700"><div class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">${b.type === 'bank' ? 'Volumen Total' : 'Bote Total'}</div><div class="text-neonGreen font-mono font-bold text-lg">${b.pot}</div></div><div class="bg-dark p-2 rounded text-center border border-slate-700"><div class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Fecha</div><div class="text-white font-mono text-sm pt-1">${b.timestamp || '-'}</div></div></div><div><div class="text-[10px] text-slate-500 uppercase font-bold mb-2 border-b border-slate-600 pb-1">Desglose</div><div class="flex flex-col gap-1">${listHtml}</div></div></div></details></div>`; 
+
+                        let resultHeader = b.winningOption;
+                        if (b.type === 'combinada') resultHeader = "🏁 Ver Desglose";
+                        if (b.winner === "Nadie (Devuelto)") resultHeader = "Reembolso";
+
+                        acts=`<div class="mt-3 pt-3 border-t border-slate-700/50"><div class="flex justify-between items-center mb-2"><span class="text-xs text-slate-400 font-bold uppercase">Resultado:</span><span class="text-neonGreen font-bold text-sm bg-slate-800 px-3 py-1 rounded border border-neonGreen/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]">${resultHeader}</span></div><details class="group"><summary class="list-none cursor-pointer text-xs text-center text-slate-500 hover:text-white transition bg-slate-800/50 p-2 rounded flex items-center justify-center gap-2 select-none font-bold uppercase tracking-wider"><span>Ver Detalles</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition-transform"></i></summary><div class="mt-3 space-y-3 bg-slate-800/50 p-3 rounded text-xs text-slate-300 border border-slate-700"><div class="grid grid-cols-2 gap-2"><div class="bg-dark p-2 rounded text-center border border-slate-700"><div class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">${b.type === 'bank' || b.type === 'combinada' ? 'Volumen Total' : 'Bote Total'}</div><div class="text-neonGreen font-mono font-bold text-lg">${b.pot}</div></div><div class="bg-dark p-2 rounded text-center border border-slate-700"><div class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Fecha</div><div class="text-white font-mono text-sm pt-1">${b.timestamp || '-'}</div></div></div><div><div class="text-[10px] text-slate-500 uppercase font-bold mb-2 border-b border-slate-600 pb-1">Desglose por Jugador</div><div class="flex flex-col gap-1">${listHtml}</div></div></div></details></div>`; 
                     } 
                 } 
 
-                // --- 4. RENDER FINAL (AQUÍ ESTÁ LA CORRECCIÓN DE LAYOUT) ---
-                
-                const shareBtn = (b.status === 'active' || b.status === 'pending') 
-                    ? `<button onclick="app.shareBet(${b.id})" class="text-slate-500 hover:text-white transition p-1" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>` 
-                    : '';
-
-                // Usamos 'shrink-0' en la derecha para que NO se encoja.
-                // Usamos 'break-words' en la izquierda para que el texto salte de línea.
-                c.innerHTML+=`
-                <div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg relative">
-                    <div class="flex justify-between items-start gap-3">
-                        
-                        <div class="flex gap-3 min-w-0 flex-1">
-                            <div class="pt-1 shrink-0">${avatarHtml}</div>
-                            <div class="min-w-0 flex-1">
-                                <h4 class="font-bold text-white text-sm break-words leading-tight">${b.title} ${pt} ${timeLabel}</h4>
-                                ${metaHtml}
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col items-end gap-1 shrink-0 ml-1">
-                            <div class="flex items-center gap-2">
-                                ${shareBtn}
-                                <div class="text-neonGreen font-mono font-bold">${b.pot}</div>
-                            </div>
-                            <div>${bg}</div>
-                        </div>
-
-                    </div>
-                    ${(b.type==='custom'||b.type==='bank')&&b.status!=='resolved'?`<div class="flex gap-1 mt-2 overflow-x-auto opacity-60 ml-10 no-scrollbar">${b.options.map(o=>`<span class="text-[10px] border border-slate-600 px-2 rounded-full whitespace-nowrap">${o}</span>`).join('')}</div>`:''} 
-                    <div class="ml-0 sm:ml-10">${inf}${acts}</div>
-                </div>`; 
+                const shareBtn = (b.status === 'active' || b.status === 'pending') ? `<button onclick="app.shareBet(${b.id})" class="text-slate-500 hover:text-white transition p-1"><i class="fa-solid fa-share-nodes"></i></button>` : '';
+                c.innerHTML+=`<div class="bg-card p-4 rounded-xl border border-slate-700 shadow-lg relative"><div class="flex justify-between items-start gap-3"><div class="flex gap-3 min-w-0 flex-1"><div class="pt-1 shrink-0">${avatarHtml}</div><div class="min-w-0 flex-1"><h4 class="font-bold text-white text-sm break-words leading-tight">${b.title} ${pt} ${timeLabel}</h4>${metaHtml}</div></div><div class="flex flex-col items-end gap-1 shrink-0 ml-1"><div class="flex items-center gap-2">${shareBtn}<div class="text-neonGreen font-mono font-bold">${b.pot}</div></div><div>${bg}</div></div></div>${(b.type==='custom'||b.type==='bank')&&b.status!=='resolved'?`<div class="flex gap-1 mt-2 overflow-x-auto opacity-60 ml-10 no-scrollbar">${b.options.map(o=>`<span class="text-[10px] border border-slate-600 px-2 rounded-full whitespace-nowrap">${o}</span>`).join('')}</div>`:''} <div class="ml-0 sm:ml-10">${inf}${acts}</div></div>`; 
             },
+openProfileModal() { 
+                const l = this.getCurrentLeague();
+                if (!l) return;
+
+                const m = this.getMember(l, this.data.user);
                 
-         openProfileModal() { const l=this.getCurrentLeague(); const m=this.getMember(l,this.data.user); document.getElementById('profile-nickname').value=m.nickname; document.getElementById('profile-preview').innerHTML=m.avatar?`<img src="${m.avatar}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-user text-4xl"></i>`; this.data.tempAvatar=m.avatar; this.openModal('profile'); },
-            handleImageUpload(i) {
+                // Referencias seguras al HTML
+                const nickInput = document.getElementById('profile-nickname');
+                const preview = document.getElementById('profile-preview');
+                
+                if (nickInput) nickInput.value = m.nickname;
+                
+                if (preview) {
+                    preview.innerHTML = m.avatar 
+                        ? `<img src="${m.avatar}" class="w-full h-full object-cover">` 
+                        : `<i class="fa-solid fa-user text-4xl"></i>`;
+                }
+
+                this.data.tempAvatar = m.avatar;
+                this.openModal('profile'); 
+            },
+
+handleImageUpload(i) {
                 if (i.files && i.files[0]) {
                     const file = i.files[0];
                     const reader = new FileReader();
@@ -1523,7 +1803,6 @@ checkDeepLinks() {
                     reader.readAsDataURL(file);
                 }
             },
-
             closeCropModal() {
                 document.getElementById('modal-crop').classList.add('hidden');
                 document.getElementById('modal-crop').classList.remove('flex');
@@ -1655,16 +1934,46 @@ checkDeepLinks() {
                         textClass='text-danger'; 
                     }
 
-                    // 2. LÓGICA DE RACHA (FUEGO)
+                    // 2. LÓGICA DE RACHA (FUEGO) - CORREGIDA PARA TICKETS 
                     let streak = 0;
                     if(l.bets) {
+                        // Filtramos apuestas resueltas donde participa el usuario
                         const myBets = l.bets.filter(b => b.status === 'resolved' && b.type !== 'admin' && b.participants.includes(k));
-                        // Nota: isUserWinner debe estar definida en tu app para que esto funcione
-                        // Si no tienes isUserWinner a mano, podrías usar m.streak si lo guardas
-                         for (let b of myBets) {
-                             if (this.isUserWinner && this.isUserWinner(b, k)) streak++;
-                             else break;
-                         }
+                        
+                        // Ordenamos: Más reciente primero
+                        myBets.sort((a,b) => (b.resolvedAt || b.id) - (a.resolvedAt || a.id));
+
+                        for (let b of myBets) {
+                            let keepGoing = true;
+
+                            // A) COMBINADA: Miramos tickets (del último al primero)
+                            if (b.type === 'combinada') {
+                                const userTickets = b.selections ? b.selections[k] : [];
+                                const ticketsArr = Array.isArray(userTickets) ? userTickets : (userTickets ? [userTickets] : []);
+                                // Importante: Invertimos para ver el último ticket jugado primero
+                                const reversed = [...ticketsArr].reverse();
+
+                                for (let t of reversed) {
+                                    let isWin = true;
+                                    if (b.officialResults && t.picks) {
+                                        for (const [blockId, pickObj] of Object.entries(t.picks)) {
+                                            if (b.officialResults[blockId] !== pickObj.name) { isWin = false; break; }
+                                        }
+                                    } else { isWin = false; }
+
+                                    if (isWin) streak++;
+                                    else { keepGoing = false; break; }
+                                }
+                            }
+                            // B) NORMAL
+                            else {
+                                if (b.winner && b.winner.includes("Nadie")) continue; // Las devoluciones no cortan racha
+                                if (this.isUserWinner(b, k)) streak++;
+                                else keepGoing = false;
+                            }
+
+                            if (!keepGoing) break;
+                        }
                     } else if (m.streak) {
                         streak = m.streak;
                     }
@@ -1675,7 +1984,6 @@ checkDeepLinks() {
                         : '';
 
                     // 3. LÓGICA DE DEUDA (VISUAL)
-                    // Si tiene deuda, mostramos una etiquetita roja al lado del nombre
                     const debtIcon = (m.debt && m.debt > 0)
                         ? `<div class="flex items-center gap-1 text-[9px] text-red-400 border border-red-500/30 px-1 rounded bg-red-900/20 font-bold whitespace-nowrap ml-1" title="Deuda pendiente"><i class="fa-solid fa-file-invoice-dollar"></i> -${m.debt}</div>`
                         : '';
@@ -1708,75 +2016,274 @@ checkDeepLinks() {
                 }); 
                 this.openModal('ranking'); 
             },
-            filterBets(t) { this.data.filter=t; document.querySelectorAll('.filter-btn').forEach(b=>{ b.className="filter-btn px-4 py-1 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all"; if(b.innerText.toLowerCase().includes(t==='active'?'activas':(t==='pending'?'pendientes':'historial'))) {b.classList.remove('text-slate-400'); b.classList.add('bg-neonPurple','text-white');} if(b.innerText.includes('Pendientes')){ const bg=document.getElementById('badge-pending'); if(!bg.classList.contains('hidden')) b.appendChild(bg); } }); this.renderDashboard(); },
+            filterBets(t) { 
+                this.data.filter = t; 
+                document.querySelectorAll('.filter-btn').forEach(b => { 
+                    // 1. Estilo base (mantenemos 'relative' para que el globo se posicione bien)
+                    b.className = "filter-btn px-4 py-1.5 rounded-full text-xs font-bold border border-slate-600 text-slate-400 relative transition-all"; 
+                    
+                    const txt = b.innerText.toLowerCase();
+                    const isActive = 
+                        (t === 'events' && txt.includes('eventos')) ||
+                        (t === 'active' && txt.includes('activas')) ||
+                        (t === 'pending' && txt.includes('pendientes')) ||
+                        (t === 'resolved' && txt.includes('historial'));
+
+                    // 2. Estilo activo (morado)
+                    if (isActive) {
+                        b.classList.remove('text-slate-400'); 
+                        b.classList.add('bg-neonPurple', 'text-white');
+                    }
+                    
+                    // NOTA: Los globos (span) están DENTRO del botón, así que al cambiar la clase del padre no se borran.
+                }); 
+                
+                this.renderDashboard(); 
+            },
             openModal(id) { document.getElementById(`modal-${id}`).classList.remove('hidden'); },
             closeModals() { document.querySelectorAll('[id^="modal-"]').forEach(el=>el.classList.add('hidden')); },
             toast(m,t='s') { const el=document.getElementById('toast'); el.querySelector('span').innerText=m; el.querySelector('i').className=t==='error'?'fa-solid fa-circle-xmark text-danger':'fa-solid fa-circle-check text-neonGreen'; el.classList.remove('opacity-0'); setTimeout(()=>el.classList.add('opacity-0'),3000); },
             resetData() { if(confirm("¿Seguro?")) { localStorage.removeItem('betfriends_v2_data'); location.reload(); } },
             toggleCreateFields() { 
-                const t=document.getElementById('create-type').value; 
-                const bPub=document.getElementById('btn-mode-public'); 
-                const bPriv=document.getElementById('btn-mode-private'); 
+                // 1. Definimos 't' una sola vez
+                const t = document.getElementById('create-type').value; 
+                this.createType = t; // Guardamos el tipo para usarlo en otras funciones
+
+                const bPub = document.getElementById('btn-mode-public'); 
+                const bPriv = document.getElementById('btn-mode-private'); 
                 
-                // 1. Mostrar/Ocultar Opciones
-                document.getElementById('field-options').style.display=(t==='custom'||t==='bank')?'block':'none'; 
+                // 2. Mostrar/Ocultar Opciones ANTIGUAS (Solo Custom y Bank)
+                document.getElementById('field-options').style.display = (t==='custom'||t==='bank') ? 'block' : 'none'; 
                 
-                // 2. Mostrar/Ocultar Calendario (Solo Banca y Quiniela)
+                // 3. Mostrar/Ocultar BLOQUES (Solo Combinada)
+                const fieldBlocks = document.getElementById('field-blocks');
+                if(fieldBlocks) fieldBlocks.style.display = (t==='combinada') ? 'block' : 'none';
+
+                // 4. Mostrar/Ocultar Calendario
                 const dateField = document.getElementById('field-deadline');
                 if (dateField) dateField.classList[(t==='custom'||t==='bank') ? 'remove' : 'add']('hidden');
 
-                // 3. Ajustes visuales de siempre
+                // 5. Ajustes visuales
                 document.querySelectorAll('.option-odd').forEach(e=>e.classList[t==='bank'?'remove':'add']('hidden')); 
-                document.getElementById('create-amount').parentElement.style.display=t==='bank'?'none':'block'; 
                 
-                bPub.disabled=false; bPub.classList.remove('opacity-50','cursor-not-allowed'); 
-                bPriv.disabled=false; bPriv.classList.remove('opacity-50','cursor-not-allowed'); 
+                // Ocultamos el precio de entrada en Banca Y Combinada
+                const amountParent = document.getElementById('create-amount').parentElement;
+                if(amountParent) amountParent.style.display = (t==='bank'||t==='combinada') ? 'none' : 'block'; 
                 
-                if(t==='bank') { 
+                // 6. Gestión de Botones (Público/Privado)
+                if(bPub) { bPub.disabled=false; bPub.classList.remove('opacity-50','cursor-not-allowed'); }
+                if(bPriv) { bPriv.disabled=false; bPriv.classList.remove('opacity-50','cursor-not-allowed'); }
+                
+                if(t==='bank' || t==='combinada') { 
                     this.setInviteMode('public'); 
-                    bPriv.disabled=true; bPriv.classList.add('opacity-50','cursor-not-allowed'); 
+                    if(bPriv) { bPriv.disabled=true; bPriv.classList.add('opacity-50','cursor-not-allowed'); }
                 } else if(t==='duel') { 
                     this.setInviteMode('private'); 
-                    bPub.disabled=true; bPub.classList.add('opacity-50','cursor-not-allowed'); 
+                    if(bPub) { bPub.disabled=true; bPub.classList.add('opacity-50','cursor-not-allowed'); }
                 } else { 
                     this.setInviteMode(this.data.inviteMode); 
                 } 
             },
             setInviteMode(m) { this.data.inviteMode=m; document.getElementById('btn-mode-public').className=`flex-1 py-2 text-xs font-bold rounded ${m==='public'?'bg-neonPurple text-white':'text-slate-400 hover:text-white'} transition`; document.getElementById('btn-mode-private').className=`flex-1 py-2 text-xs font-bold rounded ${m==='private'?'bg-neonPurple text-white':'text-slate-400 hover:text-white'} transition`; document.getElementById('invite-list-container').classList[m==='private'?'remove':'add']('hidden'); },
             addOptionInput() { const c=document.getElementById('options-list'); const d=document.createElement('div'); d.className="flex gap-2 mb-2"; d.innerHTML=`<input type="text" class="option-name neon-input flex-1 p-2 rounded text-sm" placeholder="Opción"><input type="number" class="option-odd neon-input w-20 p-2 rounded text-sm text-center border-neonPurple text-neonPurple font-bold ${document.getElementById('create-type').value!=='bank'?'hidden':''}" placeholder="x1.5" step="0.1">`; c.appendChild(d); },
-            openCreateBetModal() { const l=this.getCurrentLeague(); document.getElementById('opt-bank').classList[(l.creator===this.data.user&&l.settings.allowBank)?'remove':'add']('hidden'); document.getElementById('create-type').value='duel'; this.renderInviteList(l); this.toggleCreateFields(); this.openModal('create-bet'); },
-            renderInviteList(l) { const checkList = document.getElementById('invite-checklist'); checkList.innerHTML = ''; this.data.selectedInvites = []; Object.keys(l.members).forEach(key => { if (key !== this.data.user) { const mem = this.getMember(l, key); const div = document.createElement('div'); div.className = "invite-check border border-slate-600 rounded p-2 flex items-center gap-2 cursor-pointer hover:bg-slate-700 transition select-none"; div.innerHTML = `${this.getAvatarHtml(mem, 'sm')} <span class="text-xs font-bold truncate">${mem.nickname}</span>`; div.onclick = () => { if (div.classList.contains('selected')) { div.classList.remove('selected'); this.data.selectedInvites = this.data.selectedInvites.filter(u => u !== key); } else { div.classList.add('selected'); this.data.selectedInvites.push(key); } }; checkList.appendChild(div); } }); },
+// AÑADIR UN BLOQUE (PARTIDO/EVENTO)
+            addBlockInput() {
+                const c = document.getElementById('blocks-container');
+                const blockId = Date.now() + Math.floor(Math.random() * 1000); 
+                
+                const d = document.createElement('div');
+                d.className = "bg-slate-800/50 p-3 rounded-xl border border-slate-700 animate-fade-in relative mb-3";
+                d.id = `block-${blockId}`;
+                
+                d.innerHTML = `
+                    <div class="flex flex-col gap-2 mb-2">
+                        <div class="flex gap-2 items-center">
+                            <input type="text" class="block-title neon-input flex-1 p-2 text-sm font-bold bg-slate-900 border-slate-600" placeholder="Evento (Ej: Madrid vs Barça)">
+                            <button onclick="document.getElementById('block-${blockId}').remove()" class="text-slate-500 hover:text-red-400 transition px-2"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="flex gap-2 items-center bg-slate-900/50 p-1.5 rounded border border-slate-700/50">
+                            <i class="fa-regular fa-clock text-slate-500 text-xs ml-1"></i>
+                            <input type="datetime-local" class="block-deadline neon-input w-full p-1 text-xs bg-transparent border-none focus:ring-0 text-white">
+                        </div>
+                    </div>
+                    <div class="pl-2 border-l-2 border-slate-700 space-y-2" id="opts-container-${blockId}"></div>
+                    <button onclick="app.addOptionToBlock(${blockId})" class="mt-2 text-[10px] text-neonGreen font-bold hover:underline">+ Añadir Opción</button>
+                `;
+                c.appendChild(d);
+                
+                // Añadimos 2 opciones por defecto
+                this.addOptionToBlock(blockId);
+                this.addOptionToBlock(blockId);
+            },
+
+            // AÑADIR OPCIÓN AL BLOQUE
+            addOptionToBlock(blockId) {
+                const c = document.getElementById(`opts-container-${blockId}`);
+                const d = document.createElement('div');
+                d.className = "flex gap-2 items-center";
+                d.innerHTML = `
+                    <input type="text" class="opt-name neon-input flex-1 p-1 text-xs bg-slate-800" placeholder="Opción (Ej: 1)">
+                    <input type="number" class="opt-odd neon-input w-20 p-1 text-xs text-center text-neonPurple font-bold border-neonPurple/30" placeholder="x1.50" step="0.01">
+                    <button onclick="this.parentElement.remove()" class="text-slate-600 hover:text-red-400 px-1"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                c.appendChild(d);
+            },
+            openCreateBetModal() { 
+                const l = this.getCurrentLeague();
+                const isCreator = l.creator === this.data.user;
+
+                // 1. Lógica para "Contra la Banca" (Ya existía)
+                document.getElementById('opt-bank').classList[(isCreator && l.settings.allowBank) ? 'remove' : 'add']('hidden');
+                
+                // 2. LÓGICA PARA "COMBINADA" (NUEVO)
+                const optComb = document.getElementById('opt-combinada');
+                if (optComb) {
+                    // Solo mostramos esta opción si eres el ADMIN
+                    optComb.classList[isCreator ? 'remove' : 'add']('hidden');
+                }
+
+                // Reseteamos el selector
+                document.getElementById('create-type').value = 'duel';
+                
+                this.renderInviteList(l); 
+                this.toggleCreateFields(); 
+                this.openModal('create-bet'); 
+            },
+            renderInviteList(l) { 
+                const checkList = document.getElementById('invite-checklist'); 
+                checkList.innerHTML = ''; 
+                this.data.selectedInvites = []; 
+                
+                Object.keys(l.members).forEach(key => { 
+                    if (key !== this.data.user) { 
+                        const mem = this.getMember(l, key); 
+                        const div = document.createElement('div'); 
+                        div.className = "invite-check border border-slate-600 rounded p-2 flex items-center gap-2 cursor-pointer hover:bg-slate-700 transition select-none"; 
+                        div.innerHTML = `${this.getAvatarHtml(mem, 'sm')} <span class="text-xs font-bold truncate">${mem.nickname}</span>`; 
+                        
+                        div.onclick = () => { 
+                            // Leemos el tipo de apuesta actual
+                            const type = this.createType || document.getElementById('create-type').value;
+
+                            // LÓGICA 1 VS 1 (RADIO BUTTON)
+                            if (type === 'duel') {
+                                // Desmarcar a todos los demás
+                                Array.from(checkList.children).forEach(c => c.classList.remove('selected'));
+                                this.data.selectedInvites = [];
+                                
+                                // Marcar solo al nuevo
+                                div.classList.add('selected');
+                                this.data.selectedInvites.push(key);
+                            } 
+                            // LÓGICA BOTE (CHECKBOX MÚLTIPLE)
+                            else {
+                                if (div.classList.contains('selected')) { 
+                                    div.classList.remove('selected'); 
+                                    this.data.selectedInvites = this.data.selectedInvites.filter(u => u !== key); 
+                                } else { 
+                                    div.classList.add('selected'); 
+                                    this.data.selectedInvites.push(key); 
+                                } 
+                            }
+                        }; 
+                        checkList.appendChild(div); 
+                    } 
+                }); 
+            },
             createBet() {
                 const l = this.getCurrentLeague();
                 const t = document.getElementById('create-type').value;
                 const ti = document.getElementById('create-title').value.trim();
-                
-                // Leemos la cantidad. Si es banca es 0, si no, lo que ponga el usuario.
-                let a = t === 'bank' ? 0 : parseInt(document.getElementById('create-amount').value);
                 const me = this.data.user;
 
+                // 1. LEEMOS LA CANTIDAD
+                // Si es Banca o Combinada, la entrada inicial es 0 (el usuario decide cuánto apostar luego).
+                let a = (t === 'bank' || t === 'combinada') ? 0 : parseInt(document.getElementById('create-amount').value);
+
                 if (!ti) return this.toast("Falta título", "error");
-                
-                // --- 🛡️ VALIDACIÓN DE CANTIDAD (NUEVO) ---
-                // Si NO es contra la banca, la entrada es obligatoria y debe ser >= 1
-                if (t !== 'bank') {
+
+                // --- 🛡️ VALIDACIÓN DE CANTIDAD ---
+                // Si NO es banca NI combinada, la entrada es obligatoria
+                if (t !== 'bank' && t !== 'combinada') {
                     if (isNaN(a) || a < 1) {
                         return this.toast("La entrada debe ser mínimo 1 ficha", "error");
                     }
                 }
-                // ------------------------------------------
 
                 // LEEMOS LA FECHA EXACTA
                 const dateInput = document.getElementById('create-deadline').value;
                 const closingTime = dateInput ? new Date(dateInput).getTime() : null;
 
+                // VALIDACIÓN DE INVITADOS (PRIVADA)
                 if (this.data.inviteMode === 'private') {
-                    if (t === 'group' && this.data.selectedInvites.length < 2) return this.toast("Mínimo 2 invitados para Bote", "error");
-                    if (this.data.selectedInvites.length < 1) return this.toast("Selecciona al menos 1 invitado", "error");
+                    if (t !== 'bank' && t !== 'combinada') {
+                        // REGLAS PARA DUELO
+                        if (t === 'duel') {
+                            if (this.data.selectedInvites.length === 0) return this.toast("Elige a tu rival", "error");
+                            if (this.data.selectedInvites.length > 1) return this.toast("En 1vs1 solo puedes elegir 1 rival", "error");
+                        }
+                        // REGLAS PARA BOTE (GROUP)
+                        else if (t === 'group') {
+                            if (this.data.selectedInvites.length < 2) return this.toast("Mínimo 2 invitados para Bote", "error");
+                        }
+                        // REGLA GENERAL (Por si acaso)
+                        else {
+                            if (this.data.selectedInvites.length < 1) return this.toast("Selecciona al menos 1 invitado", "error");
+                        }
+                    }
                 }
 
-                let o = [], od = {};
-                if (t === 'custom' || t === 'bank') {
+                // --- RECOPILACIÓN DE DATOS (NUEVO BLOQUE GRANDE) ---
+                let blocksData = []; // Para combinadas
+                let o = [], od = {}; // Para las antiguas (Custom/Bank)
+
+                // A) SI ES COMBINADA: Leemos los bloques del HTML
+                if (t === 'combinada') {
+                    const blockDivs = document.getElementById('blocks-container').children;
+                    if (blockDivs.length === 0) return this.toast("Añade al menos 1 bloque/partido", "error");
+
+                    for (let bd of blockDivs) {
+                        const bTitle = bd.querySelector('.block-title').value.trim();
+                        // Leemos la fecha del bloque
+                        const bDateVal = bd.querySelector('.block-deadline').value;
+                        const bClosingTime = bDateVal ? new Date(bDateVal).getTime() : null;
+
+                        if (!bTitle) return this.toast("Pon título a todos los eventos", "error");
+                        
+                        let opts = [];
+                        // Seleccionamos todas las filas que parezcan opciones
+                        const optDivs = bd.querySelectorAll('.flex.gap-2'); 
+                        
+                        for (let od of optDivs) {
+                            // CORRECCIÓN IMPORTANTE:
+                            // Buscamos los inputs dentro de la fila
+                            const nameInput = od.querySelector('.opt-name');
+                            const oddInput = od.querySelector('.opt-odd');
+
+                            // Si no encontramos los inputs (es decir, es la fila del Título o la Fecha), SALTAMOS
+                            if (!nameInput || !oddInput) continue;
+
+                            const name = nameInput.value.trim();
+                            const odd = parseFloat(oddInput.value);
+                            
+                            // Guardamos solo si es válido
+                            if (name && odd >= 1) {
+                                opts.push({ name: name, odd: odd });
+                            }
+                        }
+                        
+                        if (opts.length < 2) return this.toast(`El evento "${bTitle}" necesita mín. 2 opciones`, "error");
+                        
+                        blocksData.push({
+                            id: Date.now() + Math.random(), 
+                            title: bTitle,
+                            options: opts,
+                            closingTime: bClosingTime 
+                        });
+                    }
+                }
+                // B) SI ES TIPO ANTIGUO (Custom / Bank)
+                else if (t === 'custom' || t === 'bank') {
                     for (let r of document.getElementById('options-list').children) {
                         const n = r.querySelector('.option-name').value.trim();
                         const v = r.querySelector('.option-odd').value;
@@ -1788,27 +2295,34 @@ checkDeepLinks() {
                     if (o.length < 2) return this.toast("Mínimo 2 opciones", "error");
                 }
 
+                // --- CREAMOS EL OBJETO APUESTA ---
                 const b = { 
                     id: Date.now(), 
                     type: t, 
                     creator: me, 
                     title: ti, 
                     amount: a, 
-                    pot: 0, 
-                    participants: [], 
-                    invites: t === 'bank' ? [] : (this.data.inviteMode === 'private' ? this.data.selectedInvites : []), 
+                    // El bote empieza en 0 para combinadas/banca (crece cuando la gente apuesta)
+                    pot: (t !== 'bank' && t !== 'custom' && t !== 'combinada') ? a : 0, 
+                    // En combinadas/banca/custom no te unes automáticamente al crear
+                    participants: (t !== 'bank' && t !== 'custom' && t !== 'combinada') ? [me] : [], 
+                    invites: (t === 'bank' || t === 'combinada') ? [] : (this.data.inviteMode === 'private' ? this.data.selectedInvites : []), 
                     status: 'active', 
-                    options: o, 
-                    odds: od, 
+                    
+                    // ✅ DATOS NUEVOS GUARDADOS AQUÍ
+                    blocks: blocksData,      // Array de bloques (Solo combinada)
+                    options: o,              // Array simple (Solo custom/bank)
+                    odds: od,                // Objeto cuotas (Solo bank)
+                    
                     selections: {}, 
                     timestamp: new Date().toLocaleDateString(),
                     locked: false,           
                     closingTime: closingTime 
                 };
 
-                // Lógica de cobro al crear (Solo Duelo y Bote pagan al crear)
-                // La Quiniela (Custom) NO paga al crear, el creador paga al unirse después eligiendo opción
-                if (t !== 'bank' && t !== 'custom') {
+                // LÓGICA DE COBRO (Solo Duelo y Bote pagan al crear)
+                // Combinada, Banca y Quiniela (Custom) NO pagan al crear
+                if (t !== 'bank' && t !== 'custom' && t !== 'combinada') {
                     if (l.members[me].balance < a) return this.toast("Saldo bajo", "error");
                     
                     // 1. RESTAR SALDO
@@ -1824,319 +2338,474 @@ checkDeepLinks() {
                         timestamp: Date.now()
                     });
 
-                    b.pot = a;
-                    b.participants.push(me);
+                    b.pot = a; // Aseguramos que el bote inicial refleje el pago
+                    // Nota: b.participants ya se añadió arriba en la creación del objeto
                 }
 
                 l.bets.unshift(b);
                 this.saveLeagueToCloud(l);
                 this.closeModals();
                 this.renderDashboard();
-                this.toast("Creado con éxito");
+                this.toast("¡Apuesta Creada!");
                 this.checkAndNotify();
             },
-            joinBetModal(id) {
+            joinBetModal(id, forceNew = false) {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
+                const me = this.data.user;
+                
+                // 1. CÁLCULO DE CADUCIDAD GLOBAL (Para Banca, Porras, etc.)
+                // Si es combinada, la caducidad global no nos importa tanto (miramos bloque a bloque),
+                // a menos que TODA la combinada esté cerrada manualmente.
+                const isExpiredGlobal = b.closingTime && Date.now() > b.closingTime;
 
-                // --- 🛡️ INICIO BLOQUEO SEGURIDAD (NUEVO) ---
-                // Si el usuario ya está en la lista de participantes:
-                if (b.participants.includes(this.data.user)) {
-                    document.getElementById('modal-action').classList.remove('hidden');
-                    document.getElementById('action-title').innerText = "✅ Apuesta Realizada";
-                    
-                    // Recuperamos qué apostó para mostrárselo
-                    let mySel = "Participando";
-                    let myWager = b.amount; 
-
-                    // Lógica para recuperar el texto según el tipo de apuesta
-                    if (b.selections && b.selections[this.data.user]) {
-                        if (b.type === 'bank') {
-                            // En banca guardamos objeto {option, wager, odd}
-                            const rec = b.selections[this.data.user];
-                            mySel = `${rec.option} (x${rec.odd})`;
-                            myWager = rec.wager;
-                        } else {
-                            // En las otras guardamos el string directo
-                            mySel = b.selections[this.data.user];
+                // --- GESTIÓN DE PARTICIPACIÓN PREVIA (Igual que antes) ---
+                if (b.participants.includes(me) && !forceNew) {
+                    if (b.type === 'combinada') {
+                        const records = b.selections ? b.selections[me] : null;
+                        let historyHtml = '';
+                        if (records) {
+                            const tickets = Array.isArray(records) ? records : [records];
+                            tickets.forEach((t, idx) => {
+                                const isSingle = t.picks && Object.keys(t.picks).length === 1;
+                                const ticketTitle = isSingle ? Object.values(t.picks)[0].blockTitle : "Combinada Múltiple";
+                                const picksList = Object.values(t.picks || {}).map(p => 
+                                    `<li>${p.name} <span class="text-neonPurple text-[10px]">x${p.odd}</span> <span class="text-[9px] text-slate-500">(${p.blockTitle})</span></li>`
+                                ).join('');
+                                historyHtml += `<div class="bg-slate-800 p-3 rounded border border-slate-600 mb-2 relative overflow-hidden"><div class="absolute top-0 right-0 bg-slate-700 text-[9px] px-2 py-0.5 rounded-bl text-slate-400">#${idx + 1}</div><div class="text-[10px] text-neonGreen font-bold uppercase mb-1">${ticketTitle}</div><ul class="text-left list-disc list-inside text-xs text-slate-300 ml-2 space-y-1">${picksList}</ul><div class="flex justify-between items-center text-[10px] text-slate-400 border-t border-slate-700 pt-1 mt-2"><span>Jugado: <b class="text-white">${t.wager}</b></span><span>Cuota x${(t.totalOdd||1).toFixed(2)}</span></div></div>`;
+                            });
                         }
+                        document.getElementById('modal-action').classList.remove('hidden');
+                        document.getElementById('action-title').innerText = b.title;
+                        
+                        // Botón nueva apuesta (siempre visible en combinadas, el bloqueo es interno)
+                        const btnNewBet = `<button onclick="app.joinBetModal(${id}, true)" class="w-full bg-gradient-to-r from-neonPurple to-violet-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-neonPurple/50 transition animate-pulse border border-white/10"><i class="fa-solid fa-plus mr-2"></i> Realizar Nueva Apuesta</button>`;
+                        
+                        document.getElementById('action-content').innerHTML = `<div class="mb-4"><p class="text-xs text-slate-400 mb-2 uppercase font-bold text-center">Tus Tickets Activos</p><div class="max-h-60 overflow-y-auto pr-1 custom-scrollbar">${historyHtml}</div></div>${btnNewBet}<button onclick="app.closeModals()" class="w-full mt-2 text-slate-400 text-xs py-2">Cerrar</button>`;
+                        document.getElementById('action-bet-input-container').classList.add('hidden');
+                        document.getElementById('action-dynamic-list').classList.add('hidden');
+                        document.getElementById('action-confirm-btn').classList.add('hidden');
+                        return; 
+                    } else {
+                        // Lógica estándar para Banca/Porra (Ya participaste)
+                        document.getElementById('modal-action').classList.remove('hidden');
+                        document.getElementById('action-title').innerText = "✅ Apuesta Realizada";
+                        let mySel = "Participando";
+                        let myWager = 0;
+                        let record = b.selections ? b.selections[me] : null;
+                        if (Array.isArray(record)) record = record[record.length - 1]; 
+                        if (record) {
+                            if (b.type === 'bank') { mySel = `${record.option} (x${record.odd})`; myWager = record.wager; } 
+                            else { mySel = (typeof record === 'object') ? record.option || "Participando" : record; myWager = b.amount; }
+                        }
+                        document.getElementById('action-content').innerHTML = `<div class="bg-slate-800 p-6 rounded-xl text-center border border-neonGreen/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex flex-col items-center gap-2 mt-2"><div class="bg-neonGreen/20 text-neonGreen w-12 h-12 rounded-full flex items-center justify-center text-xl mb-1"><i class="fa-solid fa-ticket"></i></div><div><p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Estado</p><div class="text-white font-bold text-lg">${mySel}</div></div><div class="w-full h-px bg-slate-700 my-1"></div><div class="flex gap-2 items-center"><span class="text-xs text-slate-400">Jugado:</span><span class="text-neonGreen font-mono font-bold text-lg">${myWager} 💰</span></div></div><p class="text-[10px] text-slate-500 text-center mt-6"><i class="fa-solid fa-lock mr-1"></i> Ya has participado.</p><button onclick="app.closeModals()" class="w-full mt-4 bg-slate-700 text-white py-2 rounded-lg font-bold text-sm">Cerrar</button>`;
+                        document.getElementById('action-bet-input-container').classList.add('hidden');
+                        document.getElementById('action-dynamic-list').classList.add('hidden');
+                        document.getElementById('action-confirm-btn').classList.add('hidden');
+                        return;
                     }
-
-                    // Pintamos el Ticket (Solo lectura)
-                    document.getElementById('action-content').innerHTML = `
-                        <div class="bg-slate-800 p-6 rounded-xl text-center border border-neonGreen/30 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex flex-col items-center gap-2 mt-2">
-                            <div class="bg-neonGreen/20 text-neonGreen w-12 h-12 rounded-full flex items-center justify-center text-xl mb-1">
-                                <i class="fa-solid fa-ticket"></i>
-                            </div>
-                            <div>
-                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Tu Selección</p>
-                                <p class="text-xl text-white font-bold">${mySel}</p>
-                            </div>
-                            <div class="w-full h-px bg-slate-700 my-1"></div>
-                            <div class="flex gap-2 items-center">
-                                <span class="text-xs text-slate-400">Jugado:</span>
-                                <span class="text-neonGreen font-mono font-bold text-lg">${myWager} 💰</span>
-                            </div>
-                        </div>
-                        <p class="text-[10px] text-slate-500 text-center mt-6">
-                            <i class="fa-solid fa-lock mr-1"></i> No puedes modificar tu apuesta.
-                        </p>
-                    `;
-
-                    // Ocultamos los controles de entrada de datos y botones
-                    document.getElementById('action-bet-input-container').classList.add('hidden');
-                    document.getElementById('action-dynamic-list').innerHTML = '';
-                    document.getElementById('action-dynamic-list').classList.add('hidden');
-                    document.getElementById('action-confirm-btn').classList.add('hidden');
-                    
-                    return; // 🛑 ESTO DETIENE LA FUNCIÓN AQUÍ. IMPOSIBLE APOSTAR DOBLE.
                 }
-                // --- FIN BLOQUEO SEGURIDAD ---
 
-                if (b.locked) return this.toast("⛔ Apuestas Cerradas", "error");
+                // BLOQUEO GLOBAL (Solo si no es combinada, o si la combinada está cerrada manualmente por admin)
+                if (b.type !== 'combinada' && (b.locked || isExpiredGlobal)) return this.toast("⛔ Tiempo agotado: La apuesta está cerrada", "error");
+                if (b.type === 'combinada' && b.locked) return this.toast("⛔ Apuestas Cerradas por Admin", "error");
 
-                // Restauramos visibilidad (por si el bloque de seguridad la ocultó antes)
+                // --- PANTALLA NUEVA APUESTA ---
                 document.getElementById('action-content').innerHTML = ''; 
                 document.getElementById('action-dynamic-list').classList.remove('hidden');
                 document.getElementById('action-confirm-btn').classList.remove('hidden');
-
-                // --- A PARTIR DE AQUÍ ES TU CÓDIGO ORIGINAL EXACTO ---
                 document.getElementById('modal-action').classList.remove('hidden');
-                document.getElementById('action-title').innerText = b.type === 'bank' ? "Apostar" : "Unirse";
-                document.getElementById('action-content').innerText = b.type === 'bank' ? "Elige y pon cantidad:" : "Entrada: " + b.amount;
                 
-                const lst = document.getElementById('action-dynamic-list');
-                lst.innerHTML = '';
-                let s = null, odd = 0;
-                
-                const ic = document.getElementById('action-bet-input-container');
-                const i = document.getElementById('action-bet-amount');
-                const p = document.getElementById('action-potential-win');
+                document.getElementById('action-title').innerText = b.title;
+                let instructions = "¿Te unes al reto?";
+                if(b.type === 'combinada') instructions = "Arma tu combinada (Eventos disponibles):";
+                else if(b.type === 'bank') instructions = "Elige cantidad:";
+                else if(b.options && b.options.length > 0) instructions = "Elige tu opción:";
+                else instructions = `Entrada: ${b.amount} fichas`; 
 
-                if (b.type === 'bank') {
+                document.getElementById('action-content').innerText = instructions;
+                
+                const listContainer = document.getElementById('action-dynamic-list');
+                listContainer.innerHTML = '';
+                const ic = document.getElementById('action-bet-input-container');
+                const iAmount = document.getElementById('action-bet-amount');
+                const pWin = document.getElementById('action-potential-win');
+
+                if (b.type === 'bank' || b.type === 'combinada') {
                     ic.classList.remove('hidden');
-                    i.value = '';
-                    i.oninput = () => { const v = parseInt(i.value) || 0; if (s) p.innerText = "Ganarás: " + Math.floor(v * odd); };
+                    iAmount.value = '';
+                    pWin.innerText = 'Ganancia: 0';
+                    this.tempPicks = {}; 
+                    const updateMath = () => {
+                        const w = parseInt(iAmount.value) || 0;
+                        if (b.type === 'combinada') {
+                            const picks = Object.values(this.tempPicks);
+                            const totalOdd = picks.reduce((acc, p) => acc * p.odd, 1);
+                            pWin.innerHTML = `Cuota: <span class="text-neonPurple">x${totalOdd.toFixed(2)}</span> | Gana: <span class="text-gold font-bold">${Math.floor(w * totalOdd)}</span>`;
+                        } else if (b.type === 'bank' && this.simpleOdd) {
+                            pWin.innerHTML = `Gana: <span class="text-gold font-bold">${Math.floor(w * this.simpleOdd)}</span>`;
+                        }
+                    };
+                    iAmount.oninput = updateMath;
+                } else { ic.classList.add('hidden'); }
+
+                this.simplePick = null; this.simpleOdd = 0;
+
+                // --- RENDERIZADO DE OPCIONES (CON LÓGICA DE BLOQUES CADUCADOS) ---
+                if (b.type === 'combinada') {
+                    b.blocks.forEach(block => {
+                        // 🔥 VERIFICAR SI ESTE BLOQUE ESPECÍFICO HA CADUCADO
+                        const isBlockExpired = block.closingTime && Date.now() > block.closingTime;
+                        
+                        const div = document.createElement('div');
+                        // Si caducó, lo ponemos oscuro y con borde rojo suave
+                        div.className = `mb-3 p-2 rounded border transition ${isBlockExpired ? 'bg-black/40 border-danger/30 opacity-70' : 'bg-slate-800/50 border-slate-700'}`;
+                        
+                        let timeLabel = '';
+                        if (block.closingTime) {
+                            const d = new Date(block.closingTime);
+                            const dateStr = d.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+                            timeLabel = `<span class="text-[9px] ${isBlockExpired ? 'text-danger' : 'text-slate-500'} font-normal ml-2">(${dateStr})</span>`;
+                        }
+
+                        div.innerHTML = `<div class="flex justify-between items-center mb-2"><span class="text-[10px] ${isBlockExpired ? 'text-danger' : 'text-slate-400'} uppercase font-bold">${block.title} ${timeLabel}</span>${isBlockExpired ? '<span class="text-[9px] bg-danger text-white px-1 rounded">CERRADO</span>' : ''}</div>`;
+                        
+                        const grid = document.createElement('div'); grid.className = "flex flex-wrap gap-2";
+                        
+                        block.options.forEach(opt => {
+                            const btn = document.createElement('button');
+                            
+                            if (isBlockExpired) {
+                                // ESTILO DESACTIVADO
+                                btn.className = "flex-1 min-w-[30%] bg-slate-900/50 p-2 rounded text-xs font-bold border border-transparent text-slate-600 cursor-not-allowed";
+                                btn.innerHTML = `${opt.name} <span class="text-slate-700 text-[9px]">x${opt.odd}</span>`;
+                                btn.disabled = true; 
+                            } else {
+                                // ESTILO ACTIVO
+                                btn.className = "flex-1 min-w-[30%] bg-slate-700 p-2 rounded text-xs font-bold border border-transparent text-slate-300 transition hover:bg-slate-600";
+                                btn.innerHTML = `${opt.name} <span class="text-neonPurple text-[9px]">x${opt.odd}</span>`;
+                                btn.onclick = () => {
+                                    // Deseleccionar hermanos
+                                    Array.from(grid.children).forEach(c => c.className = "flex-1 min-w-[30%] bg-slate-700 p-2 rounded text-xs font-bold border border-transparent text-slate-300 transition opacity-50");
+                                    // Activar este
+                                    btn.className = "flex-1 min-w-[30%] bg-slate-900 p-2 rounded text-xs font-bold border border-neonGreen text-neonGreen shadow-lg";
+                                    this.tempPicks[block.id] = { name: opt.name, odd: opt.odd, blockTitle: block.title }; 
+                                    if(iAmount.value) iAmount.oninput();
+                                };
+                            }
+                            grid.appendChild(btn);
+                        });
+                        div.appendChild(grid); listContainer.appendChild(div);
+                    });
                 } else {
-                    ic.classList.add('hidden');
+                    // Lógica antigua para Banca/Porra (sin bloques)
+                    if (b.options && b.options.length > 0) {
+                        b.options.forEach(opt => {
+                            const btn = document.createElement('button');
+                            const oddVal = (b.type==='bank' && b.odds) ? b.odds[opt] : 0;
+                            btn.className = "w-full text-left bg-slate-700 p-3 rounded mb-1 hover:bg-slate-600 transition flex justify-between";
+                            btn.innerHTML = `<span>${opt}</span> ${oddVal ? `<span class="text-neonPurple font-bold">x${oddVal}</span>` : ''}`;
+                            btn.onclick = () => {
+                                Array.from(listContainer.children).forEach(c => c.classList.remove('border-neonGreen', 'text-neonGreen', 'bg-slate-900'));
+                                btn.classList.add('border-neonGreen', 'text-neonGreen', 'bg-slate-900');
+                                this.simplePick = opt; this.simpleOdd = oddVal;
+                                if(iAmount.value) iAmount.oninput();
+                            };
+                            listContainer.appendChild(btn);
+                        });
+                    } else {
+                        listContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-xs italic">Pulsa confirmar para unirte a la apuesta.</div>`;
+                    }
                 }
 
-                (b.type === 'custom' || b.type === 'bank' ? b.options : []).forEach(opt => {
-                    const d = document.createElement('div');
-                    d.className = "bg-slate-700 p-3 rounded cursor-pointer hover:bg-slate-600 border border-transparent flex justify-between mb-1";
-                    d.innerHTML = b.type === 'bank' ? `${opt} <span class="text-neonPurple font-bold">x${b.odds[opt]}</span>` : opt;
-                    d.onclick = () => {
-                        Array.from(lst.children).forEach(x => x.classList.remove('border-neonGreen', 'text-neonGreen'));
-                        d.classList.add('border-neonGreen', 'text-neonGreen');
-                        s = opt;
-                        if (b.type === 'bank') { odd = b.odds[opt]; i.oninput(); }
-                    };
-                    lst.appendChild(d);
-                });
-
+                // --- 3. CONFIRMACIÓN Y VALIDACIÓN FINAL ---
                 document.getElementById('action-confirm-btn').onclick = () => {
-                    const c = b.type === 'bank' ? parseInt(i.value) : b.amount;
-                    if (!c || c <= 0) return this.toast("Cantidad mal", "error");
-                    if (l.members[this.data.user].balance < c) return this.toast("Sin saldo", "error");
-                    if ((b.type === 'custom' || b.type === 'bank') && !s) return this.toast("Elige opción", "error");
-
-                    l.members[this.data.user].balance -= c;
-                    b.pot += c;
-
-                    // HISTORIAL
-                    this.addTransaction(l, this.data.user, 'bet', c, `Apuesta: ${b.title}`);
-
-                    if (b.type === 'bank') {
-                        if (!b.selections) b.selections = {};
-                        b.selections[this.data.user] = { option: s, wager: c, odd: odd };
-                        if (!b.participants.includes(this.data.user)) b.participants.push(this.data.user);
-                    } else {
-                        if (!b.selections) b.selections = {};
-                        b.selections[this.data.user] = s;
-                        if (!b.participants.includes(this.data.user)) b.participants.push(this.data.user);
+                    // Seguridad global para NO combinadas
+                    if (b.type !== 'combinada' && b.closingTime && Date.now() > b.closingTime) {
+                         this.closeModals(); this.renderDashboard(); 
+                         return this.toast("⛔ ¡Demasiado tarde! Se acabó el tiempo.", "error");
                     }
+
+                    const wager = (b.type === 'bank' || b.type === 'combinada') ? parseInt(iAmount.value) : b.amount;
+                    if (!wager || wager <= 0) return this.toast("Introduce cantidad válida", "error");
+                    if (l.members[me].balance < wager) return this.toast("Saldo insuficiente", "error");
+                    
+                    let ticketData = null;
+                    let betDisplayName = b.title; 
+
+                    if (b.type === 'combinada') {
+                        const picksArr = Object.values(this.tempPicks);
+                        if (picksArr.length === 0) return this.toast("Elige al menos 1 partido activo", "error");
+                        if (picksArr.length === 1) betDisplayName = "Apuesta: " + picksArr[0].blockTitle; 
+                        else betDisplayName = "Combinada: " + b.title; 
+                        const totalOdd = picksArr.reduce((acc, p) => acc * p.odd, 1);
+                        ticketData = { picks: this.tempPicks, wager: wager, totalOdd: totalOdd, timestamp: Date.now() };
+                    } 
+                    else if (b.type === 'bank') {
+                        if (!this.simplePick) return this.toast("Elige una opción", "error");
+                        ticketData = { option: this.simplePick, wager: wager, odd: this.simpleOdd };
+                    }
+                    else {
+                        if (b.options && b.options.length > 0) {
+                             if (!this.simplePick) return this.toast("Elige una opción", "error");
+                             ticketData = this.simplePick;
+                        } else { ticketData = "Participando"; }
+                    }
+
+                    // COBRO Y GUARDADO
+                    l.members[me].balance -= wager;
+                    b.pot = (b.pot || 0) + wager;
+                    if (!b.selections) b.selections = {};
+                    if (b.type === 'combinada') {
+                        if (!b.selections[me]) b.selections[me] = [];
+                        if (!Array.isArray(b.selections[me])) b.selections[me] = [ b.selections[me] ];
+                        b.selections[me].push(ticketData);
+                    } else { b.selections[me] = ticketData; }
+
+                    if (!b.participants.includes(me)) b.participants.push(me);
+                    this.addTransaction(l, me, 'bet', wager, betDisplayName);
                     this.saveLeagueToCloud(l);
                     this.closeModals();
                     this.renderDashboard();
-                    this.toast("Hecho");
+                    this.toast("¡Apuesta Realizada! 🍀");
                 };
             },
             resolveBetModal(id) {
                 const l = this.getCurrentLeague();
                 const b = l.bets.find(x => x.id === id);
                 
-                // --- PREPARAR INTERFAZ VISUAL ---
+                // 1. PREPARAR INTERFAZ
                 document.getElementById('modal-action').classList.remove('hidden');
-                document.getElementById('action-title').innerText = "Resolver Apuesta";
-                document.getElementById('action-content').innerText = "¿Quién ha ganado?";
+                document.getElementById('action-title').innerText = "Resolver Evento";
+                document.getElementById('action-content').innerText = b.type === 'combinada' ? "Marca resultados:" : "¿Quién ha ganado?";
                 document.getElementById('action-bet-input-container').classList.add('hidden');
                 
                 const lst = document.getElementById('action-dynamic-list');
+                lst.classList.remove('hidden'); 
                 lst.innerHTML = '';
+                
+                const btnConfirm = document.getElementById('action-confirm-btn');
+                btnConfirm.classList.remove('hidden');
+
+                this.adminResults = {}; 
                 let w = null; 
 
-                // Mostrar opciones
-                const ops = (b.type === 'bank' || b.type === 'custom') ? b.options : b.participants;
-                ops.forEach(c => {
-                    const btn = document.createElement('button');
-                    btn.className = "w-full text-left bg-slate-700 p-3 rounded mb-2 hover:bg-slate-600 font-bold transition";
-                    btn.innerText = c;
-                    btn.onclick = () => {
-                        w = c; 
-                        lst.innerHTML = `<div class="text-center py-4 text-neonGreen text-xl font-bold border border-neonGreen rounded bg-slate-800 animate-pulse">Ganador: ${c}</div>`;
-                    };
-                    lst.appendChild(btn);
-                });
+                // 2. RENDERIZAR OPCIONES
+                if (b.type === 'combinada') {
+                    b.blocks.forEach(block => {
+                        const blDiv = document.createElement('div');
+                        blDiv.className = "mb-4 bg-slate-800 p-2 rounded border border-slate-700";
+                        blDiv.innerHTML = `<div class="text-xs text-slate-300 font-bold uppercase mb-2 text-center border-b border-slate-600 pb-1">${block.title}</div>`;
+                        block.options.forEach(opt => {
+                            const btn = document.createElement('button');
+                            btn.className = "w-full text-left p-2 rounded mb-1 text-xs font-bold bg-slate-700 hover:bg-slate-600 transition text-slate-300";
+                            btn.innerText = opt.name;
+                            btn.onclick = () => {
+                                Array.from(blDiv.querySelectorAll('button')).forEach(bt => bt.className = "w-full text-left p-2 rounded mb-1 text-xs font-bold bg-slate-700 hover:bg-slate-600 transition text-slate-300 opacity-50");
+                                btn.className = "w-full text-left p-2 rounded mb-1 text-xs font-bold bg-neonGreen text-dark shadow-lg";
+                                this.adminResults[block.id] = opt.name;
+                            };
+                            blDiv.appendChild(btn);
+                        });
+                        lst.appendChild(blDiv);
+                    });
+                } else {
+                    const ops = (b.type === 'bank' || b.type === 'custom') ? b.options : b.participants;
+                    ops.forEach(c => {
+                        const btn = document.createElement('button');
+                        btn.className = "w-full text-left bg-slate-700 p-3 rounded mb-2 hover:bg-slate-600 font-bold transition";
+                        btn.innerText = c;
+                        btn.onclick = () => {
+                            w = c; this.adminResults = { main: c };
+                            lst.innerHTML = `<div class="text-center py-4 text-neonGreen text-xl font-bold border border-neonGreen rounded bg-slate-800 animate-pulse">Ganador: ${c}</div>`;
+                        };
+                        lst.appendChild(btn);
+                    });
+                }
 
-                // --- ACCIÓN AL CONFIRMAR ---
-                document.getElementById('action-confirm-btn').onclick = () => {
-                    if (!w) return; 
+                // 3. CONFIRMAR Y PAGAR
+                btnConfirm.onclick = () => {
+                    if (b.type === 'combinada' && Object.keys(this.adminResults).length < b.blocks.length) return this.toast("Marca todos los resultados", "error");
+                    if (b.type !== 'combinada' && !w) return;
                     
-                    b.winningOption = w;
-                    b.status = 'resolved';
-b.resolvedTime = Date.now();
-                    b.winner = w;
-                    b.resolvedAt = Date.now();
+                    b.winningOption = w; 
+                    b.status = 'resolved'; 
+                    b.resolvedTime = Date.now(); 
+                    b.winner = w; 
+                    b.resolvedAt = Date.now(); 
+                    b.officialResults = this.adminResults;
 
-                    // Función auxiliar de racha
+                    // AUX: Calcular Racha Histórica (BLINDADA)
                     const getStreak = (userId) => {
                         let streak = 0;
-                        const myBets = l.bets.filter(bet => bet.status === 'resolved' && bet.id !== b.id && bet.type !== 'admin' && bet.participants.includes(userId));
-                        myBets.sort((x, y) => y.resolvedAt - x.resolvedAt);
-                        for (let bet of myBets) {
-                            if (this.isUserWinner(bet, userId)) streak++;
-                            else break; 
+                        const history = l.bets.filter(bet => bet.status === 'resolved' && bet.id !== b.id && bet.type !== 'admin' && bet.participants.includes(userId));
+                        history.sort((x, y) => (y.resolvedAt || y.id) - (x.resolvedAt || x.id)); // Recientes primero
+
+                        for (let bet of history) {
+                            let keepGoing = true;
+                            
+                            // Lógica Combinada
+                            if (bet.type === 'combinada') {
+                                const userTickets = bet.selections ? bet.selections[userId] : [];
+                                const ticketsArr = Array.isArray(userTickets) ? userTickets : (userTickets ? [userTickets] : []);
+                                const reversed = [...ticketsArr].reverse();
+
+                                for (let t of reversed) {
+                                    let isWin = true;
+                                    if (bet.officialResults && t.picks) {
+                                        for (const [blockId, pickObj] of Object.entries(t.picks)) {
+                                            if (bet.officialResults[blockId] !== pickObj.name) { isWin = false; break; }
+                                        }
+                                    } else { isWin = false; }
+                                    
+                                    if (isWin) streak++; else { keepGoing = false; break; } 
+                                }
+                            } 
+                            // Lógica Normal (Duelo, Banca, Porra)
+                            else {
+                                if (bet.winner === "Nadie (Devuelto)") continue;
+                                // Aquí usamos la función isUserWinner arreglada (Paso 1)
+                                if (this.isUserWinner(bet, userId)) streak++; else keepGoing = false;
+                            }
+                            if (!keepGoing) break;
                         }
                         return streak;
                     };
 
-                    // --- FUNCIÓN DE PAGO CON LÓGICA DE EMBARGO ---
+                    // AUX: Función Pagar
+                    let txCounter = 0; 
                     const payUser = (userId, basePrize, bonusAmount, wagerPaid, concept) => {
-                        const m = l.members[userId];
-                        if (!m) return;
+                        const m = l.members[userId]; if (!m) return; if (!m.transactions) m.transactions = [];
                         
-                        if (!m.transactions) m.transactions = [];
-
-                        // 1. INGRESO DEL PREMIO BASE
                         m.balance += basePrize;
-                        m.transactions.unshift({
-                            type: 'win',
-                            amount: basePrize,
-                            desc: concept,
-                            date: new Date().toLocaleString(),
-                            timestamp: Date.now()
+                        m.transactions.unshift({ 
+                            type: 'win', 
+                            amount: basePrize, 
+                            desc: concept, 
+                            date: new Date().toLocaleString(), 
+                            timestamp: Date.now() + (txCounter++) 
                         });
-
-                        // 2. INGRESO DEL BONUS (Si hay)
+                        
                         if (bonusAmount > 0) {
                             m.balance += bonusAmount;
-                            m.transactions.unshift({
-                                type: 'bonus',
-                                amount: bonusAmount,
-                                desc: `Bono Racha 🔥`,
-                                date: new Date().toLocaleString(),
-                                timestamp: Date.now() + 1
+                            m.transactions.unshift({ 
+                                type: 'bonus', 
+                                amount: bonusAmount, 
+                                desc: `Bono Racha 🔥`, 
+                                date: new Date().toLocaleString(), 
+                                timestamp: Date.now() + (txCounter++) 
                             });
+                            if(userId === this.data.user) this.toast(`¡Bono de racha aplicado! +${bonusAmount}`);
                         }
 
-                        // 3. COBRO DE DEUDA (SISTEMA DE EMBARGO)
-                        const totalIncome = basePrize + bonusAmount;
-                        const profit = totalIncome - wagerPaid; // Beneficio neto real
-
-                        if (profit > 0 && m.debt && m.debt > 0) {
-                            
-                            // LÓGICA CLAVE:
-                            // Si está embargado (isGarnished) -> Cobramos 70% del beneficio.
-                            // Si es deuda normal -> Intentamos cobrar el 100% del beneficio (comportamiento clásico).
-                            let percentageToPay = m.isGarnished ? 0.70 : 1.0;
-                            
-                            let amountForDebt = Math.floor(profit * percentageToPay);
-                            
-                            // El pago real no puede superar lo que debe
-                            const payment = Math.min(m.debt, amountForDebt);
-                            
-                            if (payment > 0) {
-                                m.balance -= payment; 
-                                m.debt -= payment;    
-                                
-                                // Si paga toda la deuda, es libre del embargo
-                                if (m.debt <= 0) {
-                                    m.debt = 0;
-                                    if(m.isGarnished) {
-                                        m.isGarnished = false;
-                                        this.toast(`¡${m.nickname} ha salido de la bancarrota! 🎉`);
-                                    }
-                                }
-
-                                m.transactions.unshift({
-                                    type: 'debt_pay',
-                                    amount: -payment,
-                                    desc: m.isGarnished ? 'Cobro Embargo (70%) ⚖️' : 'Cobro Deuda (Beneficios) 🧾',
-                                    date: new Date().toLocaleString(),
-                                    timestamp: Date.now() + 2 
+                        const profit = (basePrize + bonusAmount) - wagerPaid;
+                        if (profit > 0 && m.debt > 0) {
+                            const pay = Math.min(m.debt, Math.floor(profit * (m.isGarnished ? 0.7 : 1)));
+                            if(pay > 0) {
+                                m.balance -= pay; m.debt -= pay;
+                                m.transactions.unshift({ 
+                                    type: 'debt_pay', 
+                                    amount: -pay, 
+                                    desc: 'Cobro Deuda Auto', 
+                                    date: new Date().toLocaleString(), 
+                                    timestamp: Date.now() + (txCounter++) 
                                 });
-                                
-                                if (m.isGarnished) {
-                                    this.toast(`Embargo aplicado a beneficios: -${payment}`, 'info');
-                                }
                             }
                         }
                     };
-                    // ---------------------------------------------------------------
 
-                    if (b.type === 'bank') {
-                        // --- CONTRA LA BANCA ---
+                    // --- LÓGICA DE REPARTO ---
+                    
+                    // A) COMBINADA
+                    if (b.type === 'combinada') {
+                        let winnersCount = 0;
+                        b.participants.forEach(uid => {
+                            const userTickets = b.selections[uid]; 
+                            if (!userTickets || !Array.isArray(userTickets)) return;
+                            
+                            // Leemos la racha histórica CORRECTA
+                            let currentStreak = getStreak(uid); 
+
+                            userTickets.forEach((ticket) => {
+                                let isTicketWinner = true;
+                                for (const [blockId, pickObj] of Object.entries(ticket.picks)) {
+                                    if (this.adminResults[blockId] !== pickObj.name) { isTicketWinner = false; break; }
+                                }
+                                
+                                if (isTicketWinner) {
+                                    winnersCount++;
+                                    const prize = Math.floor(ticket.wager * ticket.totalOdd);
+                                    const isSingle = Object.keys(ticket.picks).length === 1;
+                                    const tName = isSingle ? Object.values(ticket.picks)[0].blockTitle : `Combinada ${b.title}`;
+                                    
+                                    // Sumamos la victoria ACTUAL a la racha histórica
+                                    // 37 históricas + 1 actual = 38.
+                                    currentStreak++; 
+                                    
+                                    let bonus = 0;
+                                    // Ahora sí: 38 >= 3 -> ¡BONO!
+                                    if (currentStreak >= 3) {
+                                        bonus = Math.round(prize * 0.15); 
+                                    }
+
+                                    payUser(uid, prize, bonus, ticket.wager, `Victoria: ${tName}`);
+                                    
+                                } else {
+                                    currentStreak = 0;
+                                }
+                            });
+                        });
+                        this.toast(`Resuelto. ${winnersCount} tickets ganadores.`);
+                    }
+                    
+                    // B) BANCA
+                    else if (b.type === 'bank') {
                         Object.keys(b.selections).forEach(u => {
-                            const r = b.selections[u];
+                            let r = b.selections[u];
+                            if (Array.isArray(r)) r = r[r.length - 1]; 
+
                             if (r && r.option === w && l.members[u]) {
                                 let winAmount = Math.floor(r.wager * r.odd);
                                 const currentStreak = getStreak(u);
-                                let bonus = 0;
-                                
-                                if (currentStreak >= 3) {
-                                    bonus = Math.floor(winAmount * 0.15);
-                                    this.toast(`¡Bonus Racha (+${bonus}) para ${l.members[u].nickname}! 🔥`);
-                                }
-                                
-                                // Pasamos winAmount y bonus SEPARADOS
+                                let bonus = ((currentStreak + 1) >= 3) ? Math.round(winAmount * 0.15) : 0;
                                 payUser(u, winAmount, bonus, r.wager, `Victoria: ${b.title}`);
                             }
                         });
-                    } else {
-                        // --- ENTRE AMIGOS ---
+                    } 
+                    
+                    // C) CUSTOM / AMIGOS
+                    else {
                         let ws = [];
-                        if (b.type === 'custom') ws = Object.entries(b.selections || {}).filter(([u, s]) => s === w).map(([u]) => u);
-                        else ws = [w];
+                        if (b.type === 'custom') {
+                             ws = Object.entries(b.selections || {}).filter(([u, s]) => {
+                                 const pick = Array.isArray(s) ? s[s.length-1] : s; 
+                                 return pick === w;
+                             }).map(([u]) => u);
+                        } else { ws = [w]; }
 
-                        if (ws.length > 0) {
+                        if (b.participants.length === 1 && ws.length > 0 && ws.includes(b.participants[0])) {
+                            const survivor = b.participants[0];
+                            if (l.members[survivor]) {
+                                l.members[survivor].balance += b.pot;
+                                if(!l.members[survivor].transactions) l.members[survivor].transactions = [];
+                                l.members[survivor].transactions.unshift({ type: 'refund', amount: b.pot, desc: `Cancelada (Sin rivales): ${b.title}`, date: new Date().toLocaleString(), timestamp: Date.now() });
+                            }
+                            b.winner = "Nadie (Devuelto)";
+                        }
+                        else if (ws.length > 0) {
                             const p = Math.floor(b.pot / ws.length);
                             ws.forEach(x => {
                                 if (l.members[x]) {
                                     const currentStreak = getStreak(x);
-                                    let bonus = 0;
-                                    
-                                    if (currentStreak >= 3 && b.participants.length > 1) {
-                                        bonus = Math.floor(p * 0.15);
-                                        this.toast(`¡Bonus Racha (+${bonus}) para ${l.members[x].nickname}! 🔥`);
-                                    }
-                                    
-                                    // Pasamos p (bote compartido) y bonus SEPARADOS
-                                    payUser(x, p, bonus, b.wager, `Victoria: ${b.title}`);
+                                    let bonus = ((currentStreak + 1) >= 3 && b.participants.length > 1) ? Math.round(p * 0.15) : 0;
+                                    payUser(x, p, bonus, b.amount, `Victoria: ${b.title}`);
                                 }
                             });
                         } else {
-                            // --- DEVOLUCIÓN ---
                             if (l.members[b.creator]) {
                                 l.members[b.creator].balance += b.pot;
-                                
                                 if(!l.members[b.creator].transactions) l.members[b.creator].transactions = [];
-                                l.members[b.creator].transactions.push({
-                                    type: 'refund',
-                                    amount: b.pot,
-                                    desc: `Devolución: ${b.title}`,
-                                    date: new Date().toLocaleString(),
-                                    timestamp: Date.now()
-                                });
+                                l.members[b.creator].transactions.push({ type: 'refund', amount: b.pot, desc: `Devolución: ${b.title}`, date: new Date().toLocaleString(), timestamp: Date.now() });
                             }
                             b.winner = "Nadie (Devuelto)";
                         }
@@ -2146,11 +2815,63 @@ b.resolvedTime = Date.now();
                     this.closeModals();
                     this.renderDashboard();
                     this.checkAndNotify(); 
-                    this.toast("Apuesta resuelta correctamente");
+                    this.toast("Evento resuelto correctamente");
                 };
             },
-            rejectBet(id) { const l=this.getCurrentLeague(); const b=l.bets.find(x=>x.id===id); if(!b.rejectedBy) b.rejectedBy=[]; b.rejectedBy.push(this.data.user); this.saveLeagueToCloud(l); this.renderDashboard(); this.toast("Ocultada"); },
-            checkDailyBonusVisibility(l) { const b=document.getElementById('btn-header-daily'); if(!l.settings?.dailyBonus){ b.classList.add('hidden'); return; } b.classList.remove('hidden'); b.classList.add('flex'); const m=l.members[this.data.user]; const n=new Date(); const la=new Date(m.lastBonusDate||0); if(la.toDateString()!==n.toDateString()){ b.className="flex px-3 py-1.5 rounded-full text-xs font-bold items-center gap-1 transition active:scale-95 border border-white/20 bg-gradient-to-r from-pink-500 to-rose-500 text-white animate-pulse shadow-[0_0_10px_rgba(236,72,153,0.5)] cursor-pointer"; b.innerHTML=`<i class="fa-solid fa-gift animate-bounce"></i> <span>RECLAMAR</span>`; b.onclick=()=>this.claimDailyBonus(); } else { b.className="flex px-3 py-1.5 rounded-full text-[10px] font-bold items-center gap-2 transition border border-slate-700 bg-slate-800 text-slate-500 cursor-not-allowed opacity-70"; b.onclick=null; const t=new Date(); t.setHours(24,0,0,0); const d=t-n; b.innerHTML=`<i class="fa-solid fa-check text-neonGreen"></i> <span>${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m</span>`; } },
+            rejectBet(id) { 
+                const l = this.getCurrentLeague(); 
+                const b = l.bets.find(x => x.id === id); 
+                
+                if(!b) return;
+
+                // 1. Añadir al usuario a la lista de "Rechazados"
+                if (!b.rejectedBy) b.rejectedBy = []; 
+                if (!b.rejectedBy.includes(this.data.user)) {
+                    b.rejectedBy.push(this.data.user); 
+                }
+
+                // 2. LÓGICA DE "JAQUE MATE" (Si todos rechazan)
+                // Solo aplica si es privada (tiene invitados) y NO es un evento masivo
+                if (b.invites && b.invites.length > 0) {
+                    // Comprobamos si queda alguien por responder
+                    // (Alguien que esté en 'invites' pero NO en 'rejectedBy' y NO en 'participants')
+                    const pendingUsers = b.invites.filter(u => 
+                        !b.rejectedBy.includes(u) && !b.participants.includes(u)
+                    );
+
+                    // SI YA NO QUEDA NADIE (Todos rechazaron):
+                    if (pendingUsers.length === 0) {
+                        // A) Devolvemos el dinero al Creador
+                        const creator = l.members[b.creator];
+                        if (creator && b.amount > 0) {
+                            creator.balance += b.amount;
+                            if (!creator.transactions) creator.transactions = [];
+                            creator.transactions.unshift({
+                                type: 'refund',
+                                amount: b.amount,
+                                desc: `Rechazada por todos: ${b.title}`,
+                                date: new Date().toLocaleString(),
+                                timestamp: Date.now()
+                            });
+                        }
+
+                        // B) Cancelamos la apuesta (La marcamos como Resuelta/Cancelada)
+                        b.status = 'resolved';
+                        b.winner = "Nadie (Cancelada por Rechazo)";
+                        b.resolvedAt = Date.now();
+                        
+                        this.saveLeagueToCloud(l);
+                        this.renderDashboard();
+                        this.toast("Rechazada. Al ser el último, la apuesta se ha cancelado. 🚫");
+                        return; // Salimos para no seguir ejecutando
+                    }
+                }
+
+                // Si aún quedan amigos por responder, solo guardamos el rechazo normal
+                this.saveLeagueToCloud(l); 
+                this.renderDashboard(); 
+                this.toast("Apuesta rechazada/ocultada"); 
+            },
             claimDailyBonus() {
                 const l = this.getCurrentLeague();
                 const me = this.data.user;
@@ -2458,7 +3179,75 @@ b.resolvedTime = Date.now();
                         </div>
                     </div>`; 
                 }); // Cierre del forEach
-            } // Cierre de renderLeaguesList
+            }, // Cierre de renderLeaguesList
+showConfirm(msg, callback) {
+                const modal = document.getElementById('modal-confirm');
+                if(!modal) return; 
+                document.getElementById('confirm-msg').innerText = msg;
+                this.pendingCallback = callback; 
+                modal.classList.remove('hidden');
+            },
+
+            confirmYes() {
+                if (this.pendingCallback) this.pendingCallback();
+                this.pendingCallback = null;
+                document.getElementById('modal-confirm').classList.add('hidden');
+            },
+
+            cancelBet(id) {
+                this.showConfirm(
+                    "¿Eliminar evento? Se devolverán las fichas a todos los participantes.", 
+                    () => {
+                        const l = this.getCurrentLeague();
+                        const b = l.bets.find(x => x.id === id);
+                        if (!b) return;
+
+                        // 1. Devolver dinero a los participantes (incluido el creador)
+                        if (b.participants && b.participants.length > 0) {
+                            b.participants.forEach(uid => {
+                                const mem = l.members[uid];
+                                if (mem) {
+                                    let refund = 0;
+                                    const records = b.selections ? b.selections[uid] : null;
+
+                                    // CASO A: Ya había elegido opción (Tickets de combinada o Banca)
+                                    if (records) {
+                                        const tickets = Array.isArray(records) ? records : [records];
+                                        tickets.forEach(t => {
+                                            const val = (typeof t === 'object' && t.wager) ? t.wager : (b.amount || 0);
+                                            refund += val;
+                                        });
+                                    } 
+                                    // CASO B (EL FIX): Está participando (pagó entrada) pero aún no hay registro de selección
+                                    // Esto pasa cuando el Creador acaba de crear un Duelo o Bote.
+                                    else if (b.amount > 0) {
+                                        refund = b.amount;
+                                    }
+
+                                    // Ejecutar devolución
+                                    if (refund > 0) {
+                                        mem.balance += refund;
+                                        if(!mem.transactions) mem.transactions = [];
+                                        mem.transactions.unshift({
+                                            type: 'refund',
+                                            amount: refund,
+                                            desc: `Cancelada: ${b.title}`,
+                                            date: new Date().toLocaleString(),
+                                            timestamp: Date.now()
+                                        });
+                                    }
+                                }
+                            });
+                        }
+
+                        // 2. Borrar la apuesta de la lista
+                        l.bets = l.bets.filter(x => x.id !== id);
+                        this.saveLeagueToCloud(l);
+                        this.renderDashboard();
+                        this.toast("Evento cancelado y fichas devueltas 💰");
+                    }
+                );
+            },
         }; // Cierre del objeto app
 
         window.onload = () => app.init();
